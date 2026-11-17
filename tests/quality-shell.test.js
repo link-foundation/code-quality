@@ -8,6 +8,7 @@ import {
   shellQuality,
   createBaseline,
   checkBaseline,
+  parseKcov,
 } from '../src/quality/index.js';
 
 const source = await readFile(
@@ -45,10 +46,15 @@ function runner(root, options = {}) {
       if (options.coverageError) {
         return { code: 2, stdout: '', stderr: 'fixture error' };
       }
-      await mkdir(args[1], { recursive: true });
+      assert.equal(args[1], '--bash-dont-parse-binary-dir');
+      await mkdir(join(args[2], 'bats'), { recursive: true });
       await writeFile(
-        join(args[1], 'coverage.info'),
-        `SF:${join(root, 'choose.sh')}\nDA:2,1\nDA:3,1\nDA:4,1\nDA:6,0\nDA:8,0\nLF:5\nLH:3\nend_of_record\n`
+        join(args[2], 'bats', 'codecov.json'),
+        JSON.stringify({
+          coverage: {
+            [join(root, 'choose.sh')]: { 2: 1, 3: 1, 4: 1, 6: 0, 8: 0 },
+          },
+        })
       );
       return ok('1..1\nok 1 coverage\n');
     }
@@ -73,6 +79,23 @@ function runner(root, options = {}) {
 }
 
 describe('complete shell measurement contract', () => {
+  it('counts actual kcov line hits and refuses incomplete or malformed measurements', () => {
+    assert.deepEqual(
+      parseKcov('{"coverage":{"a.sh":{"3":2,"4":2,"6":0,"8":2}}}'),
+      { total: 4, covered: 3, linePercent: 75, files: ['a.sh'] }
+    );
+    for (const input of [
+      {},
+      { coverage: {} },
+      { coverage: { 'a.sh': {} } },
+      { coverage: { 'a.sh': { 1: null } } },
+      { coverage: { 'a.sh': { 0: 1 } } },
+      { coverage: { 'a.sh': { 1: -1 } } },
+      { coverage: { 'a.sh': { 1: 1.5 } } },
+    ]) {
+      assert.throws(() => parseKcov(input), /kcov/);
+    }
+  });
   it('measures fresh coverage and all mutants, fingerprints settings and enforces both floors', async () =>
     fixture(async (root) => {
       const report = await shellQuality(root, { run: runner(root) });

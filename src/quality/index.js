@@ -16,5 +16,6 @@ export {
   toolRecipes,
 } from './adapters.js';
 export { shellQuality, shellMutants, parseTap } from './shell.js';
+export { parseKcov } from './coverage.js';
 export { extractEvolution } from './evolution.js';
 export { createQualityServer, apiDescription } from './server.js';

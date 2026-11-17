@@ -70,6 +70,36 @@ Recipes depend on the separately installed tool version and project configuratio
 | Package and container contracts                                                              | existing package tests; `experiments/code-quality/package-smoke.mjs`; Quality engine CI container health/analyze smoke      |
 | Strict inventory refusal                                                                     | `tests/quality-readiness.test.js`; missing/partial/carried records are rejected                                             |
 
+## First candidate CI investigation
+
+All six workflows at `87e5bf203f35a4edb0e65465ec69b4686d77b8ac` were collected
+before the next fix batch. The container API, installed package, read-only Git
+evolution, browser/desktop builds, workflow audit and link checks passed. Three
+failures were preserved locally in `ci-logs/`:
+
+- [Checks and release](https://github.com/link-foundation/code-quality/actions/runs/44127637166):
+  log line 1147 reports an old template package name in `ci-audit-coverage`.
+  Retarget every pending fragment without changing its notes or bump type; verify
+  all headers and run actual release versioning in an isolated metadata copy.
+- [Security](https://github.com/link-foundation/code-quality/actions/runs/44127637054):
+  log lines 3017–3019 identify two `js/polynomial-redos` findings. The downloaded
+  SARIF points to CMake tokenization and trailing-whitespace matching. Original
+  finite 256 KiB probes run in memory-limited Node children with a five-second
+  budget. The old CMake implementation times out; the scanners finish.
+- [Quality engine](https://github.com/link-foundation/code-quality/actions/runs/44127637347):
+  log line 875 reports a kcov timeout. Bounded probes reproduce recursive system
+  script scanning despite `--include-path`; `--bash-dont-parse-binary-dir` avoids
+  it. Further real-tool validation exposed two additional adapter assumptions:
+  kcov 38 suppresses the TAP stream, and kcov 42 emits Codecov JSON rather than
+  LCOV. Pin/checksum upstream kcov 42, validate executable-line hit counts from
+  its canonical report, and preserve the complete TAP/source-inventory checks.
+
+`CODE_QUALITY_DEBUG=1` enables bounded argv/output/duration diagnostics; ordinary
+runs keep tracing off. The original real fixture retains its output and implicit
+exit-status assertions and kills all three mutants. A second original fixture
+uses Bats' `run` helper to inspect output without asserting exit status, so its
+return-value mutant deliberately survives and the score is 66.66.
+
 ## Evolution method and limits
 
 Use a bounded first-parent range (default last 100 commits, hard limit 1000), inspect

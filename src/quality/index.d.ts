@@ -120,6 +120,7 @@ export interface ToolStatus {
   id: string;
   available: boolean;
   version?: string;
+  sha256?: string;
   reason?: string;
 }
 export interface EvolutionIdentity extends Partial<Omit<Abstraction, 'kind'>> {
@@ -230,6 +231,12 @@ export function parseLcov(source: string): {
   files: string[];
 };
 export function parseTap(source: string): { total: number; failed: number };
+export function parseKcov(source: unknown): {
+  total: number;
+  covered: number;
+  linePercent: number;
+  files: string[];
+};
 export interface ShellMutant {
   path: string;
   line: number;

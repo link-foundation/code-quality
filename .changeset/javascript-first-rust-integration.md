@@ -1,5 +1,5 @@
 ---
-'@link-foundation/example-package-name': major
+'@link-foundation/code-quality': major
 ---
 
 Require the reusable JavaScript-first gate's boolean `rust-template-applied`

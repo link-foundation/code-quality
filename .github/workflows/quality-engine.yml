@@ -33,7 +33,13 @@ jobs:
       - name: Install independent toolchain
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y bats shellcheck kcov
+          sudo apt-get install --no-install-recommends -y bats shellcheck libcurl4 libdw1 libbinutils
+          tools="$RUNNER_TEMP/quality-tools"
+          mkdir -p "$tools"
+          curl --fail --location --silent --show-error https://github.com/SimonKagstrom/kcov/releases/download/v42/kcov-amd64.tar.gz -o "$tools/kcov.tar.gz"
+          printf '%s  %s\n' '78aa17a5f6d27a867cc0540b1550051591d350423a1a0ef98d63c9ce7cc10f9d' "$tools/kcov.tar.gz" | sha256sum --check
+          tar -xzf "$tools/kcov.tar.gz" -C "$tools"
+          printf '%s\n' "$tools/usr/local/bin" >> "$GITHUB_PATH"
       - run: npm ci
       - run: node experiments/code-quality/real-shell.mjs
 

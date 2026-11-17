@@ -1,19 +1,12 @@
-import {
-  mkdtemp,
-  rm,
-  cp,
-  readFile,
-  readdir,
-  lstat,
-  writeFile,
-} from 'node:fs/promises';
+import { mkdtemp, rm, cp, readFile, lstat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, relative, resolve } from 'node:path';
 import { readProject } from './project.js';
 import { analyzeFiles, finalizeReport } from './core.js';
 import { validateConfig, positiveInteger } from './config.js';
 import { runProcess } from './process.js';
-import { doctor, runAdapter, parseLcov } from './adapters.js';
+import { doctor, runAdapter } from './adapters.js';
+import { parseKcov } from './coverage.js';
 import { withSyntax, walk, hash } from './syntax.js';
 
 export function parseTap(source) {
@@ -129,32 +122,6 @@ async function copyWorkspace(source, destination) {
   });
 }
 
-async function findLcov(root) {
-  const matches = [];
-  const pending = [root];
-  let count = 0;
-  while (pending.length) {
-    const dir = pending.pop();
-    for (const entry of await readdir(dir, { withFileTypes: true })) {
-      if (++count > 2000) {
-        throw new Error('Coverage directory budget exceeded');
-      }
-      const path = join(dir, entry.name);
-      if (entry.isDirectory()) {
-        pending.push(path);
-      }
-      if (entry.isFile() && entry.name === 'coverage.info') {
-        matches.push(path);
-      }
-    }
-  }
-  const merged = matches.find((path) => path.includes('kcov-merged'));
-  if (!merged && matches.length !== 1) {
-    throw new Error('Expected one aggregate kcov LCOV report');
-  }
-  return merged || matches[0];
-}
-
 async function controlRun(absolute, sources, tests, timeoutMs, run) {
   for (const file of sources) {
     const syntax = await run('bash', ['-n', '--', file.path], {
@@ -205,6 +172,9 @@ async function measureCoverage(
     'kcov',
     [
       `--include-path=${sources.map((file) => join(absolute, file.path)).join(',')}`,
+      // kcov otherwise scans the directory containing Bats (often /usr/bin),
+      // irrespective of --include-path. Only project source belongs here.
+      '--bash-dont-parse-binary-dir',
       coverageDir,
       'bats',
       '--tap',
@@ -219,9 +189,11 @@ async function measureCoverage(
   if (tap.failed || tap.total !== totalTests) {
     throw new Error('Incomplete or failed coverage test run');
   }
-  const coverage = parseLcov(
-    await readFile(await findLcov(coverageDir), 'utf8')
-  );
+  const coveragePath = join(coverageDir, 'bats', 'codecov.json');
+  if ((await lstat(coveragePath)).size > 16_777_216) {
+    throw new Error('kcov coverage report exceeds byte budget');
+  }
+  const coverage = parseKcov(await readFile(coveragePath, 'utf8'));
   const expected = new Set(sources.map((file) => join(absolute, file.path)));
   if (coverage.files.some((path) => !expected.delete(path)) || expected.size) {
     throw new Error(
@@ -371,6 +343,7 @@ export async function shellQuality(
           native: native.method,
           tools: tools.tools,
           timeoutMs,
+          coverage: 'kcov-codecov-json-no-binary-dir-v1',
           operators: 'bash-boolean-comparison-binary-v1',
           grammar: 'tree-sitter-wasms@0.1.13',
         })

@@ -1,6 +1,7 @@
 import { isAbsolute, relative, resolve, sep } from 'node:path';
 import { safePath } from './config.js';
 import { runProcess } from './process.js';
+import { executableHash } from './executable.js';
 
 // These are integration recipes, not claims that those analyzers are reimplemented.
 export const toolRecipes = Object.freeze({
@@ -273,6 +274,9 @@ export async function doctor(adapters, { cwd, run = runProcess } = {}) {
         id: adapter.id,
         available: true,
         version: result.stdout.trim(),
+        ...(run === runProcess
+          ? { sha256: await executableHash(adapter.command, cwd) }
+          : {}),
       });
     } catch (error) {
       results.push({ id: adapter.id, available: false, reason: error.message });

@@ -22,6 +22,7 @@ import {
   shellMutants,
 } from '../src/quality/index.js';
 import { runProcess } from '../src/quality/process.js';
+import { executableHash } from '../src/quality/executable.js';
 import { runQualityCli } from '../bin/code-quality.js';
 import { itUnless, sandboxed } from './helpers/skip.js';
 
@@ -35,6 +36,19 @@ async function fixture(fn) {
 }
 
 describe('project, command and report integration', () => {
+  it('fingerprints changed executable bytes even when version text is unchanged', async () =>
+    fixture(async (root) => {
+      const path = join(root, 'tool');
+      await writeFile(path, '#!/bin/sh\necho fixed-version\n', { mode: 0o755 });
+      const before = await executableHash(path);
+      await writeFile(
+        path,
+        '#!/bin/sh\necho fixed-version\n# changed implementation\n'
+      );
+      const after = await executableHash(path);
+      assert.match(before, /^[a-f0-9]{64}$/);
+      assert.notEqual(before, after);
+    }));
   itUnless(sandboxed)(
     'keeps the existing browser entry point free of Node-only module dependencies',
     async () => {
@@ -193,12 +207,35 @@ describe('external analyzer contracts', () => {
         literal,
       ]);
       assert.equal(result.stdout.trim(), literal);
+      for (const input of ['cmake', 'whitespace']) {
+        const probe = await runProcess(
+          'node',
+          [
+            '--max-old-space-size=128',
+            '--stack-size=512',
+            'experiments/code-quality/input-budgets.mjs',
+            input,
+          ],
+          { timeoutMs: 5000 }
+        );
+        assert.equal(probe.code, 0, probe.stderr);
+      }
       await assert.rejects(
         () =>
-          runProcess('node', ['-e', 'setInterval(()=>{},1000)'], {
-            timeoutMs: 100,
-          }),
-        /timeout/
+          runProcess(
+            'node',
+            [
+              '-e',
+              'console.error("tool diagnostic"); setInterval(()=>{},1000)',
+            ],
+            {
+              timeoutMs: 500,
+            }
+          ),
+        (error) =>
+          /timeout/.test(error.message) &&
+          error.stderr.includes('tool diagnostic') &&
+          error.command === 'node'
       );
       await assert.rejects(
         () =>

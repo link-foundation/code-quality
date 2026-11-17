@@ -1,5 +1,5 @@
 ---
-'@link-foundation/example-package-name': patch
+'@link-foundation/code-quality': patch
 ---
 
 Make release, preview, security and workflow checks report failures accurately;

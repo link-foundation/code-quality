@@ -21,6 +21,16 @@ function consumeArgument(source, match, tokens, errors) {
     return true;
   }
   if (value === '"') {
+    // Consume once from the opening quote. Searching again at every escaped
+    // quote in an unterminated argument makes a global token regex quadratic.
+    for (let index = tokens.lastIndex; index < source.length; index++) {
+      if (source[index] === '\\') {
+        index++;
+      } else if (source[index] === '"') {
+        tokens.lastIndex = index + 1;
+        return true;
+      }
+    }
     errors.push({ index: match.index, message: 'Unclosed quoted argument' });
     tokens.lastIndex = source.length;
     return true;
@@ -41,8 +51,7 @@ function checkArgumentContext(match, depth, errors) {
 
 function readCommands(source, errors) {
   const commands = [];
-  const tokens =
-    /#?\[(=*)\[|#.*|"(?:\\[\s\S]|[^"\\])*"|\\[\s\S]|[A-Za-z_][\w]*|[()]|[^\s]/g;
+  const tokens = /#?\[(=*)\[|#.*|\\[\s\S]|[A-Za-z_][\w]*|[()]|[^\s]/g;
   let depth = 0;
   let current;
   let match;

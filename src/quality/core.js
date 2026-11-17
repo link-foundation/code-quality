@@ -23,7 +23,8 @@ function checkLines(file, rules, add) {
     add('final-newline', 'End the file with a newline', count);
   }
   lines.forEach((line, index) => {
-    if (rules['trailing-whitespace'] && /[\t ]+\r?$/.test(line)) {
+    const last = line.at(line.endsWith('\r') ? -2 : -1);
+    if (rules['trailing-whitespace'] && (last === '\t' || last === ' ')) {
       add('trailing-whitespace', 'Remove trailing whitespace', index + 1);
     }
   });

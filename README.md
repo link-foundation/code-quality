@@ -92,7 +92,8 @@ JSON, SARIF, ESLint, Ruff, Cargo, golangci-lint, PHPStan and ShellCheck output
 adapters refuse malformed reports and failed execution. Executables retain their
 own analysis semantics and licenses.
 
-For trusted shell projects with Bash, ShellCheck, Bats and kcov installed:
+For trusted shell projects with Bash, ShellCheck, Bats and kcov 42 installed
+(real-tool CI checksums the upstream Linux amd64 archive):
 
 ```sh
 node bin/code-quality.js doctor --tools
@@ -100,13 +101,15 @@ node bin/code-quality.js baseline-update ./examples/code-quality/shell --create
 node bin/code-quality.js qa ./examples/code-quality/shell --format json
 ```
 
-Shell QA measures syntax, lint, a complete passing control suite, LCOV and every
+Shell QA measures syntax, lint, a complete passing control suite, kcov Codecov JSON and every
 eligible original boolean/comparison/binary-literal mutant. It refuses partial
 budgets, missing coverage files, skipped tests, changed source and tool timeouts.
 Tests and tools execute as the current user. Baselines preserve file inventory,
 methodology and nondecreasing coverage/mutation floors. Use identical options on
 measurement and update. Plain `check --baseline <file>` also accepts a native
 report baseline created through the library. Reports go to stdout or `--output`.
+Set `CODE_QUALITY_DEBUG=1` to trace subprocess argv, duration and bounded output
+when investigating external tools. Tracing is off by default.
 
 Evolution reads a bounded first-parent Git history without checking out source.
 It tracks syntax identities across unique content/name/structure matches, counts

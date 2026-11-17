@@ -17,6 +17,17 @@ try {
     root,
     { recursive: true }
   );
+  const statusReport = await shellQuality(root);
+  assert.equal(statusReport.passed, true);
+  assert.equal(statusReport.measurement.mutants.length, 3);
+  assert.equal(statusReport.metrics.mutationScore, 100);
+  // Preserve the stronger original fixture: assignment failure is an implicit
+  // Bats assertion. A second original fixture deliberately inspects output only.
+  await cp(
+    new URL('../../examples/code-quality/shell-output-only/', import.meta.url),
+    root,
+    { recursive: true }
+  );
   const source = await readFile(join(root, 'choose.sh'), 'utf8');
   const report = await shellQuality(root);
   assert.equal(report.passed, true);
@@ -36,6 +47,7 @@ try {
     JSON.stringify(
       {
         metrics: report.metrics,
+        statusFixtureMetrics: statusReport.metrics,
         tools: report.measurement.tools,
         mutants: report.measurement.mutants,
       },

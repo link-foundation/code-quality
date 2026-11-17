@@ -33,9 +33,12 @@ belongs inline in this PR, and the subsequent repository move is explicitly late
 - [x] Create extraction issue without moving inline implementation.
 - [x] Implement the initial native JavaScript behavior and original acceptance cases in bulk.
 - [x] Record supported behavior, native adapters and incomplete competitor parity.
-- [ ] Run focused tests and required static checks on the candidate revision.
-- [ ] Review whole diff, commit atomic steps and push the complete batch once.
-- [ ] Collect all same-revision CI failures, fix in one batch, repeat verification.
+- [x] Run focused tests and required static checks on the first candidate revision.
+- [x] Review whole diff, commit atomic steps and push the first complete batch once.
+- [x] Collect all six first-candidate workflows and preserve all three failure logs.
+- [x] Draft combined release metadata, regex and real-tool adapter fixes; preserve original fixture assertions.
+- [x] Verify 44 focused tests on Node, Bun and Deno; static checks, types, real tools and isolated release versioning.
+- [ ] Verify the next exact candidate revision and collect all of its CI results.
 - [ ] Update PR title/body, preserve Fixes #1, mark ready after verification.
 
 "Best on the planet", "all competitors" and "all cases they document" are

@@ -15,6 +15,13 @@ export function runProcess(
 ) {
   positiveInteger(timeoutMs, 'timeoutMs', 300_000);
   positiveInteger(maxOutputBytes, 'maxOutputBytes', 16_777_216);
+  const debug = env.CODE_QUALITY_DEBUG === '1';
+  const started = Date.now();
+  if (debug) {
+    console.error(
+      JSON.stringify({ event: 'quality-process-start', command, args, cwd })
+    );
+  }
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, {
       cwd,
@@ -70,10 +77,33 @@ export function runProcess(
       clearTimeout(timer);
       stdout += decoders.stdout.end();
       stderr += decoders.stderr.end();
+      if (debug) {
+        console.error(
+          JSON.stringify({
+            event: 'quality-process-close',
+            command,
+            code,
+            signal,
+            elapsedMs: Date.now() - started,
+            stdout,
+            stderr,
+          })
+        );
+      }
       if (failure) {
-        reject(failure);
+        reject(
+          Object.assign(failure, { command, code, signal, stdout, stderr })
+        );
       } else if (signal) {
-        reject(new Error(`${command}: terminated by ${signal}`));
+        reject(
+          Object.assign(new Error(`${command}: terminated by ${signal}`), {
+            command,
+            code,
+            signal,
+            stdout,
+            stderr,
+          })
+        );
       } else {
         resolve({ code, stdout, stderr });
       }
