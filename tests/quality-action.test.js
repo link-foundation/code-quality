@@ -58,6 +58,41 @@ describe('consumer Action failure evidence', () => {
     }));
 });
 
+describe('consumer Action percentage policy', () => {
+  it('passes explicit percentage rounding and refuses unsupported policies before installation', async () =>
+    fixture(async (root) => {
+      const env = {
+        GITHUB_WORKSPACE: root,
+        QUALITY_COMMAND: 'qa',
+        QUALITY_INSTALL_TOOLS: 'false',
+        QUALITY_ROUNDING: 'half-up',
+      };
+      assert.equal(
+        await qualityAction(env, {
+          cli: async (args) => {
+            assert.equal(args[args.indexOf('--rounding') + 1], 'half-up');
+            return 0;
+          },
+        }),
+        0
+      );
+      await assert.rejects(
+        qualityAction(
+          { ...env, QUALITY_ROUNDING: 'nearest' },
+          {
+            install: () => {
+              throw new Error('Unexpected install');
+            },
+            cli: () => {
+              throw new Error('Unexpected execution');
+            },
+          }
+        ),
+        /rounding/
+      );
+    }));
+});
+
 describe('consumer Action contract', () => {
   it('runs actual analysis and writes fresh evidence without executing project code', async () =>
     fixture(async (root) => {

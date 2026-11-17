@@ -55,6 +55,47 @@ describe('CLI discovery without a project or external tools', () => {
     assert.deepEqual(result, await invoke(['--version']));
   });
 
+  it('shows command-specific usage, meaningful options and execution requirements', async () => {
+    for (const [args, expected] of [
+      [
+        ['qa'],
+        [
+          'qa [root]',
+          '--script <path>',
+          '--jobs <auto|1..4>',
+          '--rounding <floor|half-up>',
+          'trusted',
+        ],
+      ],
+      [
+        ['baseline', 'check'],
+        ['baseline check [root]', '--baseline-ref <ref>', 'fresh'],
+      ],
+      [
+        ['baseline-update'],
+        ['--create', '--migrate <reason>', '--import-quality-bash <file>'],
+      ],
+      [['evolution'], ['--from <ref>', '--to <ref>', '--max-commits <N>']],
+      [['serve'], ['--host <address>', '--port <N>', 'CODE_QUALITY_TOKEN']],
+      [
+        ['tools', 'install'],
+        [
+          'tools install <new-directory>',
+          'Bash >=5.2',
+          'glibc >=2.36',
+          'Python 3',
+        ],
+      ],
+    ]) {
+      const result = await invoke([...args, '--help']);
+      assert.equal(result.status, 0, result.error);
+      for (const text of expected) {
+        assert.ok(result.output.includes(text), `${args}: ${text}`);
+      }
+      assert.ok(!result.output.includes('Commands:'));
+    }
+  });
+
   it('refuses unknown commands before project configuration or tool lookup', async () => {
     for (const args of [
       ['not-a-command'],

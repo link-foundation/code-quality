@@ -43,6 +43,12 @@
       "path": "docs/case-studies/issue-1/data/cmake-contract-observations.json",
       "sha256": "e525cdf286b86d848160ccd12458195c8ebf39c46bc8348c0cffa6d1b846705c",
       "provenance": "Original finite scripts executed with CMake 3.28.3 using 3.20 policies; twenty syntax cases and ten paired minimum-arity cases; no project build or upstream source inspection"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/shell-comparison-observations.json",
+      "sha256": "ad171f19311c6e385a923a460713916edfa5a8e8c0cc7ee9fbbed575b566655e",
+      "upstreamRelease": "v1.0.0-alpha.5",
+      "provenance": "Two original finite shell fixtures executed by the checksum-verified released CLI and native JavaScript using the same installed tool cache; real QA counts, baseline freshness refusals and native floor-preserving import; no upstream implementation or tests inspected"
     }
   ],
   "primarySources": [
@@ -123,5 +129,5 @@
       "url": "https://cmake.org/cmake/help/latest/command/if.html"
     }
   ],
-  "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. CMake probes use public official language/function/condition documentation and original finite scripts. Tests and engine source are original. External dependencies retain upstream licenses."
+  "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version and black-box QA/report/baseline observations, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. CMake probes use public official language/function/condition documentation and original finite scripts. Tests and engine source are original. External dependencies retain upstream licenses."
 }

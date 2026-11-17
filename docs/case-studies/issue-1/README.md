@@ -286,6 +286,38 @@ compare 20 original syntax scripts and ten formal-parameter fixtures, with both
 sufficient and insufficient invocation arities. No project is built and no
 upstream implementation or test suite is copied.
 
+## Eighth candidate verification and real comparison
+
+All six workflows pass at `3d3d488f997e9204ee41b24ec9ba9f03e4b20f46`.
+[Checks and release](https://github.com/link-foundation/code-quality/actions/runs/44170720471)
+passes every Linux/macOS/Windows Node/Bun/Deno job, including the earlier portable
+path regressions. [Quality engine](https://github.com/link-foundation/code-quality/actions/runs/44170720324)
+passes both native shell architectures, distribution and container contracts.
+[Security](https://github.com/link-foundation/code-quality/actions/runs/44170720412),
+[workflow policy](https://github.com/link-foundation/code-quality/actions/runs/44170720420),
+[links](https://github.com/link-foundation/code-quality/actions/runs/44170720367)
+and [example app](https://github.com/link-foundation/code-quality/actions/runs/44170720371)
+also pass. No failed same-revision workflow remains to investigate.
+
+The ninth draft executes the checksum-verified released quality-bash CLI with
+original fixtures and the same installed external tools as the native engine.
+The arithmetic fixture independently measures 3/5 coverage and 2/3 detected
+mutants in both engines. Native explicit half-up and released rounding report
+66.67; the native default remains floor at 66.66. A second fixture records a
+numeric-literal candidate-set difference. Original regressions initially fail
+because arithmetic operators and explicit rounding are absent; they pass after
+the additions. Both policy choices remain fingerprinted, and existing baseline
+migrations require review. Actual native CLI import keeps the released floor and
+foreign source. The released CLI refuses absent/stale cached measurements.
+See [methods and raw observations](../../shell-measurements.md).
+
+Command-specific usage and meaningful options are available without a project or
+external tools. The existing real-tool CI probe includes the arithmetic fixture
+and explicit Action half-up setting, retaining every original acceptance assertion.
+Exact-candidate and same-revision CI verification of this ninth draft remain pending.
+The strict readiness gate still refuses unfinished compiler semantics and complete
+competitor/proprietary/quality-bash cases.
+
 ## Evolution method and limits
 
 Use a bounded first-parent range (default last 100 commits, hard limit 1000), inspect

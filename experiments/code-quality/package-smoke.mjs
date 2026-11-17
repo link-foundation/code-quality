@@ -38,14 +38,29 @@ try {
     { cwd: root }
   );
   assert.equal(result.code, 0, result.stderr);
+  const help = await runProcess(
+    'node',
+    [
+      'node_modules/@link-foundation/code-quality/bin/code-quality.js',
+      'qa',
+      '--help',
+    ],
+    { cwd: root }
+  );
+  assert.equal(help.code, 0, help.stderr);
+  assert.match(help.stdout, /--rounding <floor\|half-up>/);
   await writeFile(
     join(root, 'smoke.mjs'),
     `import { add } from '@link-foundation/code-quality';
-     import { analyzeFiles } from '@link-foundation/code-quality/quality';
+     import { analyzeFiles, parseKcov, shellMutants } from '@link-foundation/code-quality/quality';
 import assert from 'node:assert/strict';
 assert.equal(add(2, 3), 5);
 const report = await analyzeFiles([{ path: 'a.js', content: 'export const value = 1;\\n' }]);
 assert.equal(report.passed, true);
+assert.equal(parseKcov({coverage:{'a.sh':{1:1,2:1,3:0}}}, {rounding:'half-up'}).linePercent, 66.67);
+const mutants = await shellMutants({path:'math.sh',content:'printf "%s" "$((7 + 3))"\\n'});
+assert.equal(mutants.length, 1);
+assert.equal(mutants[0].replacement, '-');
 console.log('Installed library and CLI passed');\n`
   );
   const smoke = await runProcess('node', ['smoke.mjs'], { cwd: root });

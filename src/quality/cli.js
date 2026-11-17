@@ -25,6 +25,7 @@ import { finalizeReport } from './core.js';
 import { hash } from './syntax.js';
 import { atomicWriteFile, readJsonFile, withFileLock } from './persistence.js';
 import { readCoverageArtifacts } from './artifacts.js';
+import { commandHelp } from './cli-help.js';
 
 const help = `Usage: code-quality <command> [root] [options]
 Commands:
@@ -55,6 +56,7 @@ Options:
   --tools                Execute adapters in the chosen trusted config
   --from <ref> --to <ref> --max-commits <N>  Evolution history bounds
   --max-mutants <N> --timeout-ms <N>        Shell execution bounds
+  --rounding <floor|half-up>                Shell percentage rounding (default floor)
   --host <address> --port <N>              API binding; token from CODE_QUALITY_TOKEN
   --help | --version
 Exit status: 0 passed, 1 findings/gate failed, 2 invalid input or incomplete check.
@@ -98,6 +100,7 @@ function parseArgs(argv) {
     'to',
     'max-commits',
     'max-mutants',
+    'rounding',
     'timeout-ms',
     'host',
     'port',
@@ -329,6 +332,7 @@ async function measuredCommand(context, measured) {
     jobs: options.jobs === 'auto' ? 'auto' : Number(options.jobs || 1),
     onCoverage: context.onCoverage,
     excludedPaths: context.excludedPaths,
+    rounding: options.rounding,
   };
   let report =
     command === 'check'
@@ -472,7 +476,10 @@ export async function runQualityCli(
       return 0;
     }
     if (!parsed.command || parsed.options.help) {
-      await emitOutput(`${help}\n`, context);
+      await emitOutput(
+        `${parsed.command ? commandHelp(parsed.command) : help}\n`,
+        context
+      );
       return 0;
     }
     const handler = handlers[parsed.command];
@@ -496,6 +503,18 @@ export async function runQualityCli(
 }
 
 function validateBaselineOptions(options, command) {
+  if (
+    options.rounding !== undefined &&
+    ![
+      'qa',
+      'coverage',
+      'mutation',
+      'baseline-check',
+      'baseline-update',
+    ].includes(command)
+  ) {
+    throw new Error('--rounding requires a shell measurement command');
+  }
   if (options['import-quality-bash'] !== undefined) {
     if (command !== 'baseline-update') {
       throw new Error(

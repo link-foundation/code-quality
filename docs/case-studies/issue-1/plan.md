@@ -60,8 +60,11 @@ belongs inline in this PR, and the subsequent repository move is explicitly late
 - [x] Implement original CMake literal arity, structural complexity, syntax refusals and unsupported-expansion reporting; compare finite scripts against CMake 3.28.3.
 - [x] Add CMake evolution and custom-rule refusal, version the methodology and preserve existing-baseline migration requirements.
 - [x] Implement tool-free command help/version discovery with original public-contract regressions.
-- [ ] Verify and review the eighth exact candidate, push once after every seventh-candidate CI result and collect all new CI results.
+- [x] Verify and review the eighth exact candidate, push once after every seventh-candidate CI result and collect all six passing same-revision workflows.
 - [ ] Complete the remaining shell diagnostic inventory.
+- [x] Compare the checksum-verified released quality-bash CLI with original source/test fixtures on identical installed tools; retain measured counts, rounding and refusal differences.
+- [x] Add original arithmetic mutations, exact floor/explicit half-up rounding, reviewed-baseline method changes, Action settings and command-specific help.
+- [ ] Verify and review the ninth exact candidate after collecting every eighth-candidate CI result, push once and collect all new CI results.
 - [ ] Complete remaining language semantics and competitor/proprietary documented cases.
 - [ ] Update PR title/body, preserve Fixes #1, mark ready after verification.
 

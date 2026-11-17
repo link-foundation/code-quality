@@ -1,0 +1,584 @@
+{
+  "release": "v1.0.0-alpha.5",
+  "archiveSha256": "66349fa3434ee12ee64afe3fb78a1634ca7332eefa87102c6071fe7536399450",
+  "executableSha256": "6ef1bba6219909713ee6a068d3f9c437c93c701f5271092c8fb4816d6aec627d",
+  "releasedDoctor": {
+    "code": 0,
+    "stdout": "bash: version=5.2.21(1)-release compatible=true \nbats: version=1.14.0 compatible=true \nshellcheck: version=0.11.0 compatible=true \nkcov: version=43+dfsg-1~bpo12+1 compatible=true \n",
+    "stderr": ""
+  },
+  "method": "Original fixtures; released tools install; both engines use that same installed tool cache; one worker, 30-second process budgets",
+  "cases": [
+    {
+      "name": "numeric-condition",
+      "inputs": {
+        "sourceSha256": "b44f5dbf5e0f7ac14dc1136229870c777d42c43a485b5df10d2cfd6dccfc61b5",
+        "testSha256": "1884993adbeaff44be4df3137401be72f963ad517131b59e2a13c04e949ec054"
+      },
+      "original": {
+        "floor": {
+          "method": "b03aa2fe3b3e4dab77eb7625ba26048ae3da7c0931cf5e6657f8076998440a47",
+          "coverage": {
+            "total": 5,
+            "covered": 3,
+            "linePercent": 60,
+            "files": [
+              "$FIXTURE/choose.sh"
+            ]
+          },
+          "metrics": {
+            "linePercent": 60,
+            "mutationScore": 66.66
+          },
+          "mutants": [
+            {
+              "path": "choose.sh",
+              "line": 3,
+              "start": 44,
+              "end": 47,
+              "original": "-eq",
+              "replacement": "-ne",
+              "status": "killed"
+            },
+            {
+              "path": "choose.sh",
+              "line": 3,
+              "start": 48,
+              "end": 49,
+              "original": "1",
+              "replacement": "0",
+              "status": "killed"
+            },
+            {
+              "path": "choose.sh",
+              "line": 9,
+              "start": 121,
+              "end": 122,
+              "original": "0",
+              "replacement": "1",
+              "status": "survived"
+            }
+          ]
+        },
+        "half-up": {
+          "method": "2a350051434cdc3d0b32726a0d4be57f0ed9cd2d94e9826c55e9a490add77f29",
+          "coverage": {
+            "total": 5,
+            "covered": 3,
+            "linePercent": 60,
+            "files": [
+              "$FIXTURE/choose.sh"
+            ]
+          },
+          "metrics": {
+            "linePercent": 60,
+            "mutationScore": 66.67
+          },
+          "mutants": [
+            {
+              "path": "choose.sh",
+              "line": 3,
+              "start": 44,
+              "end": 47,
+              "original": "-eq",
+              "replacement": "-ne",
+              "status": "killed"
+            },
+            {
+              "path": "choose.sh",
+              "line": 3,
+              "start": 48,
+              "end": 49,
+              "original": "1",
+              "replacement": "0",
+              "status": "killed"
+            },
+            {
+              "path": "choose.sh",
+              "line": 9,
+              "start": 121,
+              "end": 122,
+              "original": "0",
+              "replacement": "1",
+              "status": "survived"
+            }
+          ]
+        }
+      },
+      "tools": [
+        {
+          "id": "bash",
+          "available": true,
+          "version": "GNU bash, version 5.2.21(1)-release (x86_64-pc-linux-gnu)\nCopyright (C) 2022 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n\nThis is free software; you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.",
+          "sha256": "bc5945feb8bd26203ebfafea5ce1878bb2e32cb8fb50ab7ae395cfb1e1aaaef1"
+        },
+        {
+          "id": "shellcheck",
+          "available": true,
+          "version": "ShellCheck - shell script analysis tool\nversion: 0.11.0\nlicense: GNU General Public License, version 3\nwebsite: https://www.shellcheck.net",
+          "sha256": "4da528ddb3a4d1b7b24a59d4e16eb2f5fd960f4bd9a3708a15baddbdf1d5a55b"
+        },
+        {
+          "id": "bats",
+          "available": true,
+          "version": "Bats 1.14.0",
+          "sha256": "6b04c75d2657f2059dcd239a59be892d56c6b4603afdf1bc90a63f9ecbf70a7c"
+        },
+        {
+          "id": "kcov",
+          "available": true,
+          "version": "kcov 43+dfsg-1~bpo12+1",
+          "sha256": "2bef05386a9d116c402c68813c732ac2513f22c6259dda07774ab11eab638940"
+        }
+      ],
+      "upstream": {
+        "noMeasurement": {
+          "code": 1,
+          "stdout": "",
+          "stderr": "quality-bash: open $FIXTURE/quality-reports/measurement.json: no such file or directory\n"
+        },
+        "qa": {
+          "code": 1,
+          "stdout": "1..1\nok 1 the positive choice produces yes without asserting its status\n1..1\nok 1 the positive choice produces yes without asserting its status\n1..1\nok 1 the positive choice produces yes without asserting its status\n1..1\nok 1 the positive choice produces yes without asserting its status\n",
+          "stderr": "quality-bash: open $FIXTURE/quality-baseline.json: no such file or directory\n"
+        },
+        "staleMeasurement": {
+          "code": 1,
+          "stdout": "",
+          "stderr": "quality-bash: stale report: sources, tests, helpers or settings changed; rerun measurements\n"
+        },
+        "update": {
+          "code": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "measurement": {
+          "coverageCounts": {
+            "numerator": 3,
+            "denominator": 5
+          },
+          "mutationCounts": {
+            "numerator": 1,
+            "denominator": 2
+          },
+          "fingerprint": "ac13ec9da8147ae3c8f8f143150b698b7ce0caddae889d02a72418038a740213",
+          "baseline": {
+            "$schema": "https://raw.githubusercontent.com/ever-guild/quality-bash/v1.0.0-alpha.3/baseline.schema.json",
+            "files": [
+              "choose.sh"
+            ],
+            "method": {
+              "coverage": {
+                "algorithm": "kcov-ps4-cobertura-lines-v1"
+              },
+              "mutation": {
+                "algorithm": "bash-ast-v1",
+                "operators": [
+                  "condition",
+                  "arithmetic",
+                  "return-code"
+                ],
+                "parser": {
+                  "name": "mvdan.cc/sh/v3",
+                  "version": "v3.12.0"
+                }
+              },
+              "tools": {
+                "bash": "5.2.21(1)-release",
+                "bats": "1.14.0",
+                "kcov": "43+dfsg-1~bpo12+1",
+                "shellcheck": "0.11.0"
+              }
+            },
+            "coverage": {
+              "linePercent": 60
+            },
+            "mutation": {
+              "score": 50
+            }
+          },
+          "qualified": true
+        },
+        "coverage": {
+          "score": {
+            "numerator": 3,
+            "denominator": 5
+          },
+          "files": [
+            {
+              "file": "choose.sh",
+              "covered": 3,
+              "total": 5,
+              "uncovered": [
+                6,
+                7
+              ]
+            }
+          ]
+        },
+        "mutation": {
+          "mutations": [
+            {
+              "id": "80de83588b9c79b5890c88146219455c32c3953312a6f79178fa5e2f6d0dfd63",
+              "file": "choose.sh",
+              "operator": "condition",
+              "offset": 44,
+              "line": 3,
+              "column": 14,
+              "before": "-eq",
+              "after": "-ne",
+              "result": "detected"
+            },
+            {
+              "id": "aa83595f2d0ad8aaf7b7449581fca3f9bf17968560f21c2687dd4ca218d2133a",
+              "file": "choose.sh",
+              "operator": "return-code",
+              "offset": 121,
+              "line": 9,
+              "column": 10,
+              "before": "0",
+              "after": "1",
+              "result": "survived"
+            }
+          ],
+          "score": {
+            "numerator": 1,
+            "denominator": 2
+          },
+          "qualified": true
+        },
+        "baseline": {
+          "$schema": "https://raw.githubusercontent.com/ever-guild/quality-bash/v1.0.0-alpha.3/baseline.schema.json",
+          "files": [
+            "choose.sh"
+          ],
+          "method": {
+            "coverage": {
+              "algorithm": "kcov-ps4-cobertura-lines-v1"
+            },
+            "mutation": {
+              "algorithm": "bash-ast-v1",
+              "operators": [
+                "condition",
+                "arithmetic",
+                "return-code"
+              ],
+              "parser": {
+                "name": "mvdan.cc/sh/v3",
+                "version": "v3.12.0"
+              }
+            },
+            "tools": {
+              "bash": "5.2.21(1)-release",
+              "bats": "1.14.0",
+              "kcov": "43+dfsg-1~bpo12+1",
+              "shellcheck": "0.11.0"
+            }
+          },
+          "coverage": {
+            "linePercent": 60
+          },
+          "mutation": {
+            "score": 50
+          }
+        }
+      }
+    },
+    {
+      "name": "arithmetic",
+      "inputs": {
+        "sourceSha256": "32ca54106ff746aa96825cb72e740d9c192e0b49a74a5d0ed044048bd92f3dff",
+        "testSha256": "051da8e3b872d7fc81bd8538882587da0b8b78d26e20602c9f8f2e14649905d5"
+      },
+      "original": {
+        "floor": {
+          "method": "b03aa2fe3b3e4dab77eb7625ba26048ae3da7c0931cf5e6657f8076998440a47",
+          "coverage": {
+            "total": 5,
+            "covered": 3,
+            "linePercent": 60,
+            "files": [
+              "$FIXTURE/choose.sh"
+            ]
+          },
+          "metrics": {
+            "linePercent": 60,
+            "mutationScore": 66.66
+          },
+          "mutants": [
+            {
+              "path": "choose.sh",
+              "line": 3,
+              "start": 44,
+              "end": 47,
+              "original": "-eq",
+              "replacement": "-ne",
+              "status": "killed"
+            },
+            {
+              "path": "choose.sh",
+              "line": 4,
+              "start": 81,
+              "end": 82,
+              "original": "+",
+              "replacement": "-",
+              "status": "killed"
+            },
+            {
+              "path": "choose.sh",
+              "line": 9,
+              "start": 135,
+              "end": 136,
+              "original": "0",
+              "replacement": "1",
+              "status": "survived"
+            }
+          ]
+        },
+        "half-up": {
+          "method": "2a350051434cdc3d0b32726a0d4be57f0ed9cd2d94e9826c55e9a490add77f29",
+          "coverage": {
+            "total": 5,
+            "covered": 3,
+            "linePercent": 60,
+            "files": [
+              "$FIXTURE/choose.sh"
+            ]
+          },
+          "metrics": {
+            "linePercent": 60,
+            "mutationScore": 66.67
+          },
+          "mutants": [
+            {
+              "path": "choose.sh",
+              "line": 3,
+              "start": 44,
+              "end": 47,
+              "original": "-eq",
+              "replacement": "-ne",
+              "status": "killed"
+            },
+            {
+              "path": "choose.sh",
+              "line": 4,
+              "start": 81,
+              "end": 82,
+              "original": "+",
+              "replacement": "-",
+              "status": "killed"
+            },
+            {
+              "path": "choose.sh",
+              "line": 9,
+              "start": 135,
+              "end": 136,
+              "original": "0",
+              "replacement": "1",
+              "status": "survived"
+            }
+          ]
+        }
+      },
+      "tools": [
+        {
+          "id": "bash",
+          "available": true,
+          "version": "GNU bash, version 5.2.21(1)-release (x86_64-pc-linux-gnu)\nCopyright (C) 2022 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n\nThis is free software; you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.",
+          "sha256": "bc5945feb8bd26203ebfafea5ce1878bb2e32cb8fb50ab7ae395cfb1e1aaaef1"
+        },
+        {
+          "id": "shellcheck",
+          "available": true,
+          "version": "ShellCheck - shell script analysis tool\nversion: 0.11.0\nlicense: GNU General Public License, version 3\nwebsite: https://www.shellcheck.net",
+          "sha256": "4da528ddb3a4d1b7b24a59d4e16eb2f5fd960f4bd9a3708a15baddbdf1d5a55b"
+        },
+        {
+          "id": "bats",
+          "available": true,
+          "version": "Bats 1.14.0",
+          "sha256": "6b04c75d2657f2059dcd239a59be892d56c6b4603afdf1bc90a63f9ecbf70a7c"
+        },
+        {
+          "id": "kcov",
+          "available": true,
+          "version": "kcov 43+dfsg-1~bpo12+1",
+          "sha256": "2bef05386a9d116c402c68813c732ac2513f22c6259dda07774ab11eab638940"
+        }
+      ],
+      "migration": {
+        "code": 0,
+        "output": "Baseline created: $FIXTURE/native-baseline.json\n",
+        "error": "",
+        "importedMetrics": {
+          "linePercent": 60,
+          "mutationScore": 66.67
+        },
+        "sourcePreserved": true
+      },
+      "upstream": {
+        "noMeasurement": {
+          "code": 1,
+          "stdout": "",
+          "stderr": "quality-bash: open $FIXTURE/quality-reports/measurement.json: no such file or directory\n"
+        },
+        "qa": {
+          "code": 1,
+          "stdout": "1..1\nok 1 the positive choice computes ten without asserting its status\n1..1\nok 1 the positive choice computes ten without asserting its status\n1..1\nok 1 the positive choice computes ten without asserting its status\n1..1\nok 1 the positive choice computes ten without asserting its status\n",
+          "stderr": "quality-bash: open $FIXTURE/quality-baseline.json: no such file or directory\n"
+        },
+        "staleMeasurement": {
+          "code": 1,
+          "stdout": "",
+          "stderr": "quality-bash: stale report: sources, tests, helpers or settings changed; rerun measurements\n"
+        },
+        "update": {
+          "code": 0,
+          "stdout": "",
+          "stderr": ""
+        },
+        "measurement": {
+          "coverageCounts": {
+            "numerator": 3,
+            "denominator": 5
+          },
+          "mutationCounts": {
+            "numerator": 2,
+            "denominator": 3
+          },
+          "fingerprint": "d04eab5edfe6fc59163c641621c686ce3c24fd7ffaa48737624698789e3264cb",
+          "baseline": {
+            "$schema": "https://raw.githubusercontent.com/ever-guild/quality-bash/v1.0.0-alpha.3/baseline.schema.json",
+            "files": [
+              "choose.sh"
+            ],
+            "method": {
+              "coverage": {
+                "algorithm": "kcov-ps4-cobertura-lines-v1"
+              },
+              "mutation": {
+                "algorithm": "bash-ast-v1",
+                "operators": [
+                  "condition",
+                  "arithmetic",
+                  "return-code"
+                ],
+                "parser": {
+                  "name": "mvdan.cc/sh/v3",
+                  "version": "v3.12.0"
+                }
+              },
+              "tools": {
+                "bash": "5.2.21(1)-release",
+                "bats": "1.14.0",
+                "kcov": "43+dfsg-1~bpo12+1",
+                "shellcheck": "0.11.0"
+              }
+            },
+            "coverage": {
+              "linePercent": 60
+            },
+            "mutation": {
+              "score": 66.67
+            }
+          },
+          "qualified": true
+        },
+        "coverage": {
+          "score": {
+            "numerator": 3,
+            "denominator": 5
+          },
+          "files": [
+            {
+              "file": "choose.sh",
+              "covered": 3,
+              "total": 5,
+              "uncovered": [
+                6,
+                7
+              ]
+            }
+          ]
+        },
+        "mutation": {
+          "mutations": [
+            {
+              "id": "80de83588b9c79b5890c88146219455c32c3953312a6f79178fa5e2f6d0dfd63",
+              "file": "choose.sh",
+              "operator": "condition",
+              "offset": 44,
+              "line": 3,
+              "column": 14,
+              "before": "-eq",
+              "after": "-ne",
+              "result": "detected"
+            },
+            {
+              "id": "6d22fcd52b357d1c64bf3c3e182b5b404296a5ca4448c9630675dc09f9cd5e08",
+              "file": "choose.sh",
+              "operator": "arithmetic",
+              "offset": 81,
+              "line": 4,
+              "column": 23,
+              "before": "+",
+              "after": "-",
+              "result": "detected"
+            },
+            {
+              "id": "5ea99a8bc59e8f8ae4668d2855413e09e46971d5508f8253f4ae9430c174658c",
+              "file": "choose.sh",
+              "operator": "return-code",
+              "offset": 135,
+              "line": 9,
+              "column": 10,
+              "before": "0",
+              "after": "1",
+              "result": "survived"
+            }
+          ],
+          "score": {
+            "numerator": 2,
+            "denominator": 3
+          },
+          "qualified": true
+        },
+        "baseline": {
+          "$schema": "https://raw.githubusercontent.com/ever-guild/quality-bash/v1.0.0-alpha.3/baseline.schema.json",
+          "files": [
+            "choose.sh"
+          ],
+          "method": {
+            "coverage": {
+              "algorithm": "kcov-ps4-cobertura-lines-v1"
+            },
+            "mutation": {
+              "algorithm": "bash-ast-v1",
+              "operators": [
+                "condition",
+                "arithmetic",
+                "return-code"
+              ],
+              "parser": {
+                "name": "mvdan.cc/sh/v3",
+                "version": "v3.12.0"
+              }
+            },
+            "tools": {
+              "bash": "5.2.21(1)-release",
+              "bats": "1.14.0",
+              "kcov": "43+dfsg-1~bpo12+1",
+              "shellcheck": "0.11.0"
+            }
+          },
+          "coverage": {
+            "linePercent": 60
+          },
+          "mutation": {
+            "score": 66.67
+          }
+        }
+      }
+    }
+  ]
+}

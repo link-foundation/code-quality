@@ -29,6 +29,8 @@ for remaining parity limits.
 | A PR must also satisfy the committed target baseline; invalid/missing Git blobs fail                                   | `tests/quality-baseline-io.test.js`, `tests/quality-action.test.js`                                      |
 | Failed measurement writes new incomplete evidence and preserves earlier bundles                                        | `tests/quality-baseline-io.test.js`, `tests/quality-action.test.js`                                      |
 | Raw HTML, Cobertura and Codecov outputs are bounded; unapproved links fail                                             | `tests/quality-baseline-io.test.js`, actual CLI QA                                                       |
+| Arithmetic operators, exact default floor and explicit half-up rounding are fingerprinted                              | `tests/quality-shell-arithmetic.test.js`, original released-CLI comparison                               |
+| Command help gives relevant options before project/tool lookup                                                         | `tests/quality-cli-help.test.js`                                                                         |
 
 `parseTap` accepts the Bats numbered TAP stream, comments and an optional first
 `TAP version 13` record. Arbitrary TAP extensions such as YAML diagnostics are
@@ -38,7 +40,9 @@ workspace files and comma-containing coverage paths are refused.
 
 This is a finite regression inventory, not an exhaustive upstream diagnostic
 catalog or a proof of numeric methodology equivalence. Native metrics round
-down to two decimals; the upstream release documents half-up rounding. Full
+down to two decimals by default; explicit half-up mode matches the released
+rounding policy and remains fingerprinted. The [original real-tool comparison](shell-measurements.md)
+retains raw counts and operator differences. Full
 quality-bash parity remains partial in the strict readiness inventory. Host
 glibc, Python, dynamically loaded plugins and system configuration are outside
 the managed-library fingerprint. Tool checks detect changes between the two

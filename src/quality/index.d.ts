@@ -281,7 +281,10 @@ export function parseTap(
   source: string,
   options?: { allowAbort?: boolean; expectedTotal?: number }
 ): { total: number; failed: number; aborted?: true; executed?: number };
-export function parseKcov(source: unknown): {
+export function parseKcov(
+  source: unknown,
+  options?: { rounding?: 'floor' | 'half-up' }
+): {
   total: number;
   covered: number;
   linePercent: number;
@@ -309,6 +312,7 @@ export function shellQuality(
     scripts?: string[];
     tests?: string[];
     jobs?: 'auto' | number;
+    rounding?: 'floor' | 'half-up';
     onCoverage?: (directory: string) => Promise<void> | void;
   }
 ): Promise<Report & { measurement: unknown; metrics: Record<string, number> }>;

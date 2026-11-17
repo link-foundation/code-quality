@@ -25,6 +25,9 @@ inputs:
   timeout-ms:
     description: Per-process shell deadline, from 1 to 300000 milliseconds
     default: '30000'
+  rounding:
+    description: Shell percentage rounding, floor or half-up; changing it requires baseline migration
+    default: floor
 outputs:
   reports:
     description: Absolute report directory, also available for failed runs
@@ -57,4 +60,5 @@ runs:
         QUALITY_REPORTS: ${{ inputs.reports }}
         QUALITY_JOBS: ${{ inputs.jobs }}
         QUALITY_TIMEOUT_MS: ${{ inputs.timeout-ms }}
+        QUALITY_ROUNDING: ${{ inputs.rounding }}
       run: node "$QUALITY_ACTION_PATH/scripts/quality-action.mjs"

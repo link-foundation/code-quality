@@ -29,3 +29,8 @@ Measure CMake literal formal parameters and structural decisions, retain nested
 definition identities and refuse unresolved expansions in baselines and evolution.
 Validate command separation and modern escapes. Keep CLI help/version independent
 of project tools, and correct Windows drive and macOS ancestor-alias validation.
+
+Add bounded arithmetic shell mutations and explicit fingerprinted half-up
+percentage rounding with exact count arithmetic. Preserve default floor rounding
+and require reviewed baseline migrations. Provide command-specific CLI help and
+record original black-box measurements against the checksum-verified released CLI.

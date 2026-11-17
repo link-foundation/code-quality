@@ -1,5 +1,6 @@
 // Validate executable-line hit counts from kcov's Codecov JSON.
 import { parseUniqueJson } from './json.js';
+import { percentage, validateRounding } from './percentage.js';
 
 function decodeKcov(source) {
   if (typeof source === 'string' && Buffer.byteLength(source) > 16_777_216) {
@@ -8,7 +9,8 @@ function decodeKcov(source) {
   return typeof source === 'string' ? parseUniqueJson(source) : source;
 }
 
-export function parseKcov(source) {
+export function parseKcov(source, { rounding } = {}) {
+  rounding = validateRounding(rounding);
   const report = decodeKcov(source);
   const object = (value) =>
     value && typeof value === 'object' && !Array.isArray(value);
@@ -44,7 +46,7 @@ export function parseKcov(source) {
   return {
     total,
     covered,
-    linePercent: Math.floor((covered / total) * 10_000) / 100,
+    linePercent: percentage(covered, total, rounding),
     files,
   };
 }

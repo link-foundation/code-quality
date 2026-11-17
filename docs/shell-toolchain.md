@@ -97,7 +97,10 @@ the exact base commit's baseline in addition to the working baseline;
 fails. `enforce-base: 'false'` explicitly disables this additional comparison.
 
 Inputs include root-relative `root`, `baseline` and `reports`, `jobs` (auto
-or 1–4), and `timeout-ms` (1–300000). A symlinked root resolving outside the
+or 1–4), `timeout-ms` (1–300000), and `rounding` (`floor` by default or explicit
+`half-up`). Rounding is fingerprinted; changing it requires a reviewed baseline
+migration. See [measurement policies and original comparisons](shell-measurements.md).
+A symlinked root resolving outside the
 workspace is refused. Arguments are passed directly to JavaScript and
 subprocess argv, without interpolating input into a shell command. Outputs
 `reports` and `manifest` identify the report directory and `latest.json`;

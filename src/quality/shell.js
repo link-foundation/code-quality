@@ -9,6 +9,14 @@ import { doctor, runAdapter } from './adapters.js';
 import { requireBash } from './shell-version.js';
 import { parseKcov } from './coverage.js';
 import { withSyntax, walk, hash } from './syntax.js';
+import { percentage, validateRounding } from './percentage.js';
+
+const arithmeticOperators = new Map([
+  ['+', '-'],
+  ['-', '+'],
+  ['*', '/'],
+  ['/', '*'],
+]);
 
 function tapLines(source) {
   if (Buffer.byteLength(source) > 16_777_216) {
@@ -84,6 +92,9 @@ export async function shellMutants(file, max = 100) {
         break;
       }
       let replacement;
+      if (node.childCount === 0 && node.parent?.type === 'binary_expression') {
+        replacement = arithmeticOperators.get(node.text);
+      }
       if (node.childCount === 0 && ['&&', '||'].includes(node.text)) {
         replacement = node.text === '&&' ? '||' : '&&';
       }
@@ -217,7 +228,7 @@ async function measureCoverage(
   sources,
   tests,
   workspace,
-  { timeoutMs, totalTests, run, onCoverage }
+  { timeoutMs, totalTests, run, onCoverage, rounding }
 ) {
   const coverageDir = join(workspace, 'coverage');
   const coverageRun = await run(
@@ -246,7 +257,9 @@ async function measureCoverage(
   if ((await lstat(coveragePath)).size > 16_777_216) {
     throw new Error('kcov coverage report exceeds byte budget');
   }
-  const coverage = parseKcov(await readFile(coveragePath, 'utf8'));
+  const coverage = parseKcov(await readFile(coveragePath, 'utf8'), {
+    rounding,
+  });
   const expected = new Set(sources.map((file) => join(absolute, file.path)));
   if (coverage.files.some((path) => !expected.delete(path)) || expected.size) {
     throw new Error(
@@ -437,6 +450,7 @@ function shellReport(
     mutants,
     controlTests,
     lint,
+    rounding,
   }
 ) {
   return {
@@ -449,8 +463,9 @@ function shellReport(
         stage,
         tests,
         mutantRunner: abort ? 'bats-abort-prefix-v1' : 'bats-full-tap-v1',
-        coverage: 'kcov-codecov-json-no-binary-dir-v1',
-        operators: 'bash-boolean-comparison-binary-v1',
+        coverage: 'kcov-codecov-json-no-binary-dir-v2',
+        operators: 'bash-boolean-comparison-binary-arithmetic-v2',
+        rounding,
         grammar: 'tree-sitter-wasms@0.1.13',
       })
     ),
@@ -458,8 +473,7 @@ function shellReport(
       ...(coverage ? { linePercent: coverage.linePercent } : {}),
       ...(mutants
         ? {
-            mutationScore:
-              Math.floor((mutants.killed / mutants.total) * 10_000) / 100,
+            mutationScore: percentage(mutants.killed, mutants.total, rounding),
           }
         : {}),
     },
@@ -469,6 +483,7 @@ function shellReport(
       controlTests: controlTests?.total,
       coverage,
       mutants: mutants?.results,
+      rounding,
     },
     incomplete: false,
   };
@@ -486,10 +501,12 @@ export async function shellQuality(
     jobs = 1,
     excludedPaths = [],
     onCoverage,
+    rounding,
     run = runProcess,
   } = {}
 ) {
   const config = validateConfig(inputConfig);
+  rounding = validateRounding(rounding);
   positiveInteger(maxMutants, 'maxMutants', 1000);
   positiveInteger(timeoutMs, 'timeoutMs', 300_000);
   const workers = workerCount(jobs);
@@ -543,6 +560,7 @@ export async function shellQuality(
           totalTests: controlTests.total,
           run,
           onCoverage,
+          rounding,
         })
       : undefined;
     await assertUnchanged(absolute, measuredFiles);
@@ -570,6 +588,7 @@ export async function shellQuality(
       mutants,
       controlTests,
       lint,
+      rounding,
     });
   } finally {
     await rm(workspace, { recursive: true, force: true });

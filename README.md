@@ -110,7 +110,7 @@ a consumer GitHub Action with automatic PR-base baseline enforcement.
 See [tool installation and Action usage](docs/shell-toolchain.md).
 
 Shell QA measures syntax, lint, a complete passing control suite, kcov Codecov JSON and every
-eligible original boolean/comparison/binary-literal mutant. It refuses partial
+eligible original Boolean/comparison/binary-literal/arithmetic mutant. It refuses partial
 budgets, missing coverage files, skipped tests, changed source and tool timeouts.
 Tests and tools execute as the current user. Baselines preserve file inventory,
 methodology and nondecreasing coverage/mutation floors. Use identical options on
@@ -139,6 +139,11 @@ For a reviewed incompatible method or file inventory, use
 with the explanation and previous baseline digest. Comparable working and
 committed floors cannot decrease, even with `--migrate`. Selected test paths,
 tool versions/digests and execution settings are part of the fingerprint.
+Percentages default to exact-count floor rounding; `--rounding half-up` explicitly
+selects the released quality-bash rounding policy. The new arithmetic/rounding
+method requires reviewed migration for earlier shell baselines. See the
+[original real-tool measurements](docs/shell-measurements.md) for raw counts,
+observed operator differences and a released-baseline import.
 
 Shell QA and baseline updates save fresh evidence under `<root>/quality-reports/`,
 including failures before measurement completes. `--reports <directory>` chooses

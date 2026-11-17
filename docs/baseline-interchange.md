@@ -38,9 +38,13 @@ the parsed source, not a hash of its original whitespace or a claim of equivalen
 methodology. Keep the original baseline with the migration review.
 
 The released quality-bash changelog describes rounding half up to two decimal
-places. Native percentages round down to two decimal places. A result just below
-an imported rounded floor therefore refuses migration until the fresh native
-measurement meets that floor. Import never lowers a floor to accommodate rounding.
+places. Native percentages default to rounding down, with explicit
+`--rounding half-up` available for coverage and mutation. A result just below an
+imported rounded floor refuses migration until the fresh native measurement
+meets that floor. Import never lowers a floor to accommodate rounding. The
+[original real-tool comparison](shell-measurements.md) records a released 66.67
+floor imported through fresh native half-up QA; operator equivalence still needs
+an independent review.
 A failed import produces a fresh incomplete report bundle when reporting has
 started; it does not overwrite previous evidence. Ordinary compatible native
 baseline updates retain their monotonic floor checks.

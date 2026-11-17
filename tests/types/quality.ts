@@ -10,6 +10,8 @@ import {
   installShellTools,
   validateQualityBashBaseline,
   importQualityBashBaseline,
+  parseKcov,
+  shellQuality,
   type Config,
   type Plugin,
 } from '@link-foundation/code-quality/quality';
@@ -60,6 +62,13 @@ const imported = importQualityBashBaseline(report, foreign, {
 });
 const importAudit: string | undefined = imported.migrations?.[0].previous;
 void importAudit;
+const rounding: NonNullable<Parameters<typeof shellQuality>[1]> = {
+  rounding: 'half-up',
+};
+const roundedCoverage = parseKcov({}, { rounding: 'half-up' });
+// @ts-expect-error Rounding policies are explicit finite choices.
+parseKcov({}, { rounding: 'nearest' });
+void [rounding, roundedCoverage];
 
 // @ts-expect-error Unsupported languages must be rejected by consumers' compiler.
 const unsupported: Language = 'brainfuck';

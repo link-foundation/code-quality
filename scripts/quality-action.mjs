@@ -14,6 +14,7 @@ import { installShellTools } from '../src/quality/toolchain.js';
 import { safePath } from '../src/quality/config.js';
 import { readJsonFile } from '../src/quality/persistence.js';
 import { saveReport } from '../src/quality/report.js';
+import { validateRounding } from '../src/quality/percentage.js';
 
 function boolean(value, name) {
   if (!['true', 'false'].includes(value)) {
@@ -23,6 +24,7 @@ function boolean(value, name) {
 }
 
 function settings(env) {
+  validateRounding(env.QUALITY_ROUNDING || 'floor');
   const command = env.QUALITY_COMMAND || 'check';
   if (!['check', 'qa'].includes(command)) {
     throw new Error('Action command must be check or qa');
@@ -65,6 +67,9 @@ async function commandArguments(env, root, { command, enforceBase }) {
   const reports = safePath(env.QUALITY_REPORTS || 'quality-reports');
   const args = [command, root, '--reports', reports];
   if (command === 'qa') {
+    if (env.QUALITY_ROUNDING) {
+      args.push('--rounding', env.QUALITY_ROUNDING);
+    }
     args.push(
       '--baseline-path',
       safePath(env.QUALITY_BASELINE || 'quality-baseline.json')
