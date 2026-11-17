@@ -99,7 +99,7 @@
         "@changesets/should-skip-package",
         "@changesets/types",
         "@manypkg/get-packages",
-        "picomatch"
+        "picomatch@npm:@ryotsu/picomatch@4.0.7-a"
       ]
     },
     "@changesets/errors@1.0.0": {
@@ -125,7 +125,7 @@
         "@changesets/errors",
         "@changesets/types",
         "@manypkg/get-packages",
-        "picomatch",
+        "picomatch@npm:@ryotsu/picomatch@4.0.7-a",
         "tinyexec"
       ]
     },
@@ -371,6 +371,9 @@
         "@resvg/resvg-js-win32-ia32-msvc",
         "@resvg/resvg-js-win32-x64-msvc"
       ]
+    },
+    "@ryotsu/picomatch@4.0.7-a": {
+      "integrity": "sha512-JroBFEmaejC7szGSfqOhF1QZHLKvX2wTA1+fWyfkpy3BjzdQKNPLKa2FtgeKVUDy5/UPUNkXEeCHJ5ZRBMLTVA=="
     },
     "@sec-ant/readable-stream@0.4.1": {
       "integrity": "sha512-831qok9r2t8AlxLko40y2ebgSDhenenCatLVeW/uBtnHPyhHOvG0C7TvfgecV+wHzIm5KUICgzmVpWS+IMEAeg=="
@@ -663,13 +666,13 @@
         "fast-string-width"
       ]
     },
-    "fdir@6.5.0_picomatch@4.0.7": {
+    "fdir@6.5.0_@ryotsu+picomatch@4.0.7-a": {
       "integrity": "sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg==",
       "dependencies": [
-        "picomatch"
+        "picomatch@npm:@ryotsu/picomatch@4.0.7-a"
       ],
       "optionalPeers": [
-        "picomatch"
+        "picomatch@npm:@ryotsu/picomatch@4.0.7-a"
       ]
     },
     "figures@6.1.0": {
@@ -898,7 +901,7 @@
       "dependencies": [
         "commander",
         "listr2",
-        "picomatch",
+        "picomatch@npm:@ryotsu/picomatch@4.0.7-a",
         "string-argv",
         "tinyexec",
         "yaml"
@@ -1010,9 +1013,6 @@
     },
     "picocolors@1.1.1": {
       "integrity": "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA=="
-    },
-    "picomatch@4.0.7": {
-      "integrity": "sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA=="
     },
     "prelude-ls@1.2.1": {
       "integrity": "sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g=="
@@ -1131,7 +1131,7 @@
       "integrity": "sha512-wXR/dYpcqKmfWpEdZjiKJOwCNFndD0DMnrW/cYjVGttEkBfVgcLFHoNrlj47mjOVic9yyNu65alsgF4NQyTa2g==",
       "dependencies": [
         "fdir",
-        "picomatch"
+        "picomatch@npm:@ryotsu/picomatch@4.0.7-a"
       ]
     },
     "tree-sitter-wasms@0.1.13": {
@@ -1234,6 +1234,7 @@
         "npm:yaml@2.9.1"
       ],
       "overrides": {
+        "picomatch": "npm:@ryotsu/picomatch@4.0.7-a",
         "minimatch@>=7 <11": "^11.0.4",
         "glob@>=9 <=14.0.1": "^14.0.2"
       }
