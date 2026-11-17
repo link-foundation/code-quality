@@ -1,12 +1,12 @@
+import { add } from '@link-foundation/code-quality';
 import {
-  add,
   analyzeFiles,
   createBaseline,
   createQualityServer,
   extractEvolution,
   type Config,
   type Plugin,
-} from '@link-foundation/code-quality';
+} from '@link-foundation/code-quality/quality';
 import {
   checkBaseline,
   formatReport,

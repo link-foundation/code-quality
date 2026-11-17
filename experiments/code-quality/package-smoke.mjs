@@ -40,7 +40,8 @@ try {
   assert.equal(result.code, 0, result.stderr);
   await writeFile(
     join(root, 'smoke.mjs'),
-    `import { analyzeFiles, add } from '@link-foundation/code-quality';
+    `import { add } from '@link-foundation/code-quality';
+     import { analyzeFiles } from '@link-foundation/code-quality/quality';
 import assert from 'node:assert/strict';
 assert.equal(add(2, 3), 5);
 const report = await analyzeFiles([{ path: 'a.js', content: 'export const value = 1;\\n' }]);

@@ -11,6 +11,7 @@ import {
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { once } from 'node:events';
+import { fileURLToPath, URL } from 'node:url';
 import {
   analyzeProject,
   createQualityServer,
@@ -34,6 +35,25 @@ async function fixture(fn) {
 }
 
 describe('project, command and report integration', () => {
+  itUnless(sandboxed)(
+    'keeps the existing browser entry point free of Node-only module dependencies',
+    async () => {
+      const result = await runProcess('node', [
+        '--experimental-vm-modules',
+        '--input-type=module',
+        '-e',
+        `import { SourceTextModule } from 'node:vm';
+         import { readFile } from 'node:fs/promises';
+         const source = await readFile(process.argv[1], 'utf8');
+         const entry = new SourceTextModule(source);
+         await entry.link(specifier => { throw new Error('Unexpected browser dependency: ' + specifier); });
+         await entry.evaluate();
+         if (entry.namespace.add(2, 3) !== 5 || entry.namespace.multiply(2, 3) !== 6) process.exit(1);`,
+        fileURLToPath(new URL('../src/index.js', import.meta.url)),
+      ]);
+      assert.equal(result.code, 0, result.stderr);
+    }
+  );
   it('scans a bounded workspace, honors exclusions and returns CLI JSON and exit codes', async () =>
     fixture(async (root) => {
       await mkdir(join(root, 'src'));
