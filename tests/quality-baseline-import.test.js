@@ -71,6 +71,15 @@ describe('quality-bash published baseline schema', () => {
       (v) => {
         v.mutation.score = '66.66';
       },
+      (v) => {
+        v.method.mutation.parser = { 'name,version': 'combined' };
+      },
+      (v) => {
+        v.method.tools = { 'bash,bats,kcov,shellcheck': 'combined' };
+      },
+      (v) => {
+        v.method.mutation.operators = Array(1);
+      },
     ];
     for (const change of changes) {
       const value = foreign();

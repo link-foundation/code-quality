@@ -7,7 +7,10 @@ const schema =
 
 function fields(value, names, name) {
   requireObject(value, name);
-  if (Object.keys(value).sort().join(',') !== [...names].sort().join(',')) {
+  if (
+    Object.keys(value).length !== names.length ||
+    names.some((key) => !Object.hasOwn(value, key))
+  ) {
     throw new Error(`Invalid quality-bash ${name} fields`);
   }
 }
@@ -22,7 +25,9 @@ function strings(value, name, maximum) {
   if (!Array.isArray(value) || !value.length || value.length > maximum) {
     throw new Error(`Invalid quality-bash ${name} inventory`);
   }
-  value.forEach((entry) => text(entry, name));
+  for (const entry of value) {
+    text(entry, name);
+  }
   if (new Set(value).size !== value.length) {
     throw new Error(`Duplicate quality-bash ${name}`);
   }
