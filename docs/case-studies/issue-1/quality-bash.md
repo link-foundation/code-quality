@@ -1,0 +1,26 @@
+# quality-bash documented-contract comparison
+
+Source: public README, baseline schema and development contract at
+[`8dc30669aa4255dfc6f84fb0f935b8036081fab4`](https://github.com/ever-guild/quality-bash/tree/8dc30669aa4255dfc6f84fb0f935b8036081fab4),
+retrieved 2026-11-17. Its implementation and tests were not inspected. Original
+fixtures use public behavior descriptions. External Bash/ShellCheck/Bats/kcov are
+executed as separate tools and retain their licenses.
+
+| Documented contract                                                                    | Implemented behavior / evidence                                                           | Remaining gap                                                                                    |
+| -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Syntax, lint, Bats control, coverage and mutation all required                         | `shellQuality`, original injected complete-pipeline tests and real-tool experiment        | Real platforms/tool versions need independent verification                                       |
+| Coverage 3/5, mutation 2/3 public measurement example                                  | Independent synthetic LCOV/TAP pipeline asserts 60 and 66.66                              | Synthetic evidence is not the upstream real fixture                                              |
+| Baseline created only after measurement, explicit creation, updates never lower floors | CLI baseline-update --create; monotonic library/CLI gates                                 | Different versioned baseline schema; no upstream import/migration                                |
+| Every measured source represented; empty/malformed data fail                           | Exact coverage/source inventory; positive DA counts, LF/LH consistency; missing TAP fails | Full upstream diagnostic case inventory not replicated                                           |
+| Timeouts/tool errors are not killed mutants                                            | Bounded subprocess refuses timeout/output budget; completed TAP required                  | All setup/teardown/early-stop Bats semantics not replicated; this engine requires complete tests |
+| Include semantic execution settings in baseline, exclude scheduling jobs               | Parser/operator/tool versions, native rules and timeout hashed                            | No configurable parallel jobs; no performance equivalence demonstrated                           |
+| Read committed target-branch baseline in CI                                            | A caller can provide --baseline                                                           | Automatic target-ref baseline resolution/action absent                                           |
+| Reports under quality-reports                                                          | CLI --output selects report file; library returns measurement evidence                    | Automatic persistent report bundle/default directory absent                                      |
+| Pinned checked toolchain downloads, doctor                                             | Doctor inspects installed versions, no hidden downloads                                   | Pinned downloadable amd64/arm64 distribution absent                                              |
+| Linux amd64/arm64 acceptance                                                           | Portable JS unit matrix; real Linux CI                                                    | Real native arm64 full acceptance not established                                                |
+| Symlinks/special/comma coverage paths unsupported                                      | Explicit refusals, isolated owned mutant copies                                           | Complete upstream path edge-case audit unfinished                                                |
+| Shell coverage excludes embedded awk/jq/etc                                            | kcov Bash only, explicitly documented                                                     | No claim to measure embedded-language coverage                                                   |
+| Trusted project execution, no sandbox                                                  | Explicit qa/--tools; HTTP never executes config adapters                                  | Project tests remain trusted code running as current user                                        |
+
+Full superiority is unfinished. Missing rows are carried in strict readiness and
+cannot be certified by the passing structural or mocked integration suites.

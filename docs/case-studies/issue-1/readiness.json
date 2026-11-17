@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "source": "https://github.com/link-foundation/code-quality/issues/1",
+  "translation": {
+    "productionRust": false,
+    "carriedBehavior": [],
+    "unsupported": [
+      "Compiler/type semantics",
+      "CMake semantic metrics",
+      "Exhaustive competitor documented cases"
+    ]
+  },
+  "nativeAdapters": [
+    {
+      "id": "cmake-native-v1",
+      "status": "partial",
+      "evidence": "tests/quality-core.test.js",
+      "limits": "Command/bracket/block syntax only; complexity/parameter metrics unsupported"
+    },
+    {
+      "id": "external-command-v1",
+      "status": "native",
+      "evidence": "tests/quality-integration.test.js",
+      "limits": "Explicit executable argv; external tool licenses and semantics retained"
+    },
+    {
+      "id": "shell-toolchain-v1",
+      "status": "native",
+      "evidence": "tests/quality-shell.test.js",
+      "limits": "Trusted installed Bash/ShellCheck/Bats/kcov, not native reimplementations"
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "language-structure",
+      "required": true,
+      "status": "native",
+      "evidence": ["tests/quality-core.test.js"],
+      "description": "Common syntax/abstractions for target language inventory"
+    },
+    {
+      "id": "cli-library",
+      "required": true,
+      "status": "native",
+      "evidence": ["tests/quality-integration.test.js"],
+      "description": "CLI, typed APIs and report contracts"
+    },
+    {
+      "id": "http-container",
+      "required": true,
+      "status": "native",
+      "evidence": ["tests/quality-integration.test.js"],
+      "description": "Bounded HTTP; container smoke in CI"
+    },
+    {
+      "id": "extensions",
+      "required": true,
+      "status": "native",
+      "evidence": ["tests/quality-core.test.js"],
+      "description": "Custom rules, versioned plugins, trusted external adapters"
+    },
+    {
+      "id": "evolution",
+      "required": true,
+      "status": "native",
+      "evidence": ["tests/quality-evolution.test.js"],
+      "description": "Bounded first-parent structural identities and repeated edits"
+    },
+    {
+      "id": "shell-pipeline",
+      "required": true,
+      "status": "native",
+      "evidence": ["tests/quality-shell.test.js"],
+      "description": "Original orchestration; tools are external native adapters"
+    },
+    {
+      "id": "language-semantics",
+      "required": true,
+      "status": "partial",
+      "evidence": ["tests/quality-core.test.js"],
+      "description": "No full compiler/type/preprocessor semantics; CMake metrics are unsupported"
+    },
+    {
+      "id": "competitor-parity",
+      "required": true,
+      "status": "missing",
+      "evidence": ["docs/case-studies/issue-1/competitors.md"],
+      "description": "Complete product/rule/case inventory and native parity unverified"
+    },
+    {
+      "id": "closed-source-cases",
+      "required": true,
+      "status": "missing",
+      "evidence": ["docs/case-studies/issue-1/competitors.md"],
+      "description": "Public proprietary cases not exhaustively implemented/tested"
+    },
+    {
+      "id": "quality-bash-parity",
+      "required": true,
+      "status": "partial",
+      "evidence": ["docs/case-studies/issue-1/quality-bash.md"],
+      "description": "Distribution, action/report/schema/platform and test-runner semantics remain incomplete"
+    }
+  ]
+}

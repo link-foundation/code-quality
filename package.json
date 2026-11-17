@@ -1,24 +1,30 @@
 {
-  "name": "@link-foundation/example-package-name",
+  "name": "@link-foundation/code-quality",
   "version": "0.11.31",
-  "description": "A JavaScript/TypeScript package template for AI-driven development",
+  "description": "Public-domain multi-language quality analysis and Git code evolution for CLI, library and HTTP",
   "type": "module",
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "bin": {
-    "example-package-name": "./bin/example-package-name.js"
+    "example-package-name": "./bin/example-package-name.js",
+    "code-quality": "./bin/code-quality.js"
   },
   "files": [
     "bin/",
     "src/",
     "CHANGELOG.md",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "THIRD-PARTY-NOTICES.md"
   ],
   "exports": {
     ".": {
       "types": "./src/index.d.ts",
       "import": "./src/index.js"
+    },
+    "./quality": {
+      "types": "./src/quality/index.d.ts",
+      "import": "./src/quality/index.js"
     }
   },
   "scripts": {
@@ -41,13 +47,17 @@
     "changeset": "changeset",
     "changeset:version": "node scripts/changeset-version.mjs",
     "changeset:publish": "changeset publish",
-    "changeset:status": "changeset status --since=origin/main"
+    "changeset:status": "changeset status --since=origin/main",
+    "test:quality": "node --test --test-timeout=30000 tests/quality-*.test.js",
+    "quality:readiness": "node scripts/check-quality-readiness.mjs --strict"
   },
   "keywords": [
-    "template",
+    "code-quality",
+    "static-analysis",
+    "code-evolution",
     "javascript",
     "typescript",
-    "ai-driven"
+    "public-domain"
   ],
   "author": "",
   "license": "Unlicense",
@@ -61,7 +71,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/link-foundation/js-ai-driven-development-pipeline-template.git"
+    "url": "git+https://github.com/link-foundation/code-quality.git"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -104,5 +114,9 @@
   "overrides": {
     "minimatch@>=7 <11": "^11.0.4",
     "glob@>=9 <=14.0.1": "^14.0.2"
+  },
+  "dependencies": {
+    "tree-sitter-wasms": "0.1.13",
+    "web-tree-sitter": "0.20.8"
   }
 }

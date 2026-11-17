@@ -1,0 +1,50 @@
+{
+  "builderRevision": "3e88dc9e36b4e8bf752ce53bea61e4b67282a2bb",
+  "lockSha256": "8c99adcd54f4ee9bfe14e59f93ff55948dbae72b8c35b6c912caf6c0ed93db07",
+  "grammars": {
+    "tree-sitter-bash": {
+      "specifier": "^0.20.5",
+      "version": "0.20.5"
+    },
+    "tree-sitter-c": {
+      "specifier": "^0.20.7",
+      "version": "0.20.8"
+    },
+    "tree-sitter-c-sharp": {
+      "specifier": "^0.20.0",
+      "version": "0.20.0"
+    },
+    "tree-sitter-cpp": {
+      "specifier": "^0.20.4",
+      "version": "0.20.5"
+    },
+    "tree-sitter-go": {
+      "specifier": "^0.20.0",
+      "version": "0.20.0"
+    },
+    "tree-sitter-java": {
+      "specifier": "^0.20.2",
+      "version": "0.20.2"
+    },
+    "tree-sitter-javascript": {
+      "specifier": "^0.20.3",
+      "version": "0.20.4"
+    },
+    "tree-sitter-php": {
+      "specifier": "^0.22.0",
+      "version": "0.22.8"
+    },
+    "tree-sitter-python": {
+      "specifier": "^0.21.0",
+      "version": "0.21.0"
+    },
+    "tree-sitter-rust": {
+      "specifier": "^0.20.4",
+      "version": "0.20.4"
+    },
+    "tree-sitter-typescript": {
+      "specifier": "^0.20.5",
+      "version": "0.20.5"
+    }
+  }
+}

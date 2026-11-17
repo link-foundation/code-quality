@@ -1,4 +1,136 @@
-# js-ai-driven-development-pipeline-template
+# Code Quality
+
+Public-domain multi-language structural analysis and Git code evolution, available
+as a CLI, typed JavaScript library, and HTTP server with a Docker image.
+
+Native JavaScript orchestrates pinned WASM parsers for JavaScript/TypeScript/TSX,
+Rust, Python, Go, C#, Java, C/C++, PHP and Bash. An original CMake adapter covers
+command/bracket/block syntax. Checks cover syntax, size, complexity, parameters,
+structural duplicates, whitespace, risky dynamic execution and literal credentials.
+These are structural heuristics, not full compiler or security analysis.
+
+## Quick Start
+
+From a checkout, use Node 24 and install the locked dependencies:
+
+```sh
+npm ci
+node bin/code-quality.js check ./src --format json
+node bin/code-quality.js languages
+node bin/code-quality.js evolution . --max-commits 100 --output evolution.json
+node bin/code-quality.js serve . --port 3000
+```
+
+The package is prepared as `@link-foundation/code-quality` with the `code-quality`
+bin. Publishing is a separate repository release action. A quality finding exits 1;
+invalid input, a tool failure or incomplete measurement exits 2. Passing exits 0.
+
+```js
+import {
+  analyzeFiles,
+  formatReport,
+} from '@link-foundation/code-quality/quality';
+
+const report = await analyzeFiles([
+  {
+    path: 'greet.py',
+    content: 'def greet(name):\n    return "Hello " + name\n',
+  },
+]);
+console.log(formatReport(report, 'sarif'));
+```
+
+Run the API locally, or build its non-root container:
+
+```sh
+docker build -t code-quality .
+docker run --rm --memory=512m --cpus=1 -p 127.0.0.1:3000:3000 code-quality
+curl -H 'content-type: application/json' \
+  --data '{"files":[{"path":"a.js","content":"const answer = 42;\n"}]}' \
+  http://127.0.0.1:3000/v1/analyze
+```
+
+API routes: `GET /health`, `GET /v1/languages`, `GET /openapi.json`,
+`POST /v1/analyze` and `POST /v1/evolution`. Evolution uses only the repository
+configured at startup; mount it read-only at `/workspace` for the container. Set
+`CODE_QUALITY_TOKEN` to require bearer auth except on health. CLI defaults to
+loopback; container port examples bind the host to loopback too. HTTP analysis
+never executes configured command adapters.
+
+## Configuration
+
+Pass a strict JSON config with `--config quality.json`:
+
+```json
+{
+  "rules": { "complexity": 12, "function-lines": 80 },
+  "failOn": "warning",
+  "exclude": ["generated/"],
+  "customRules": [
+    {
+      "id": "no-console",
+      "message": "Use the project logger",
+      "languages": ["javascript", "typescript"],
+      "pattern": { "kind": "call_expression", "text": "console.log" }
+    }
+  ]
+}
+```
+
+Unknown keys and rules are errors. Limits can only lower the defaults of 1000
+files, 1 MiB per file and 16 MiB total. Exclusions are relative path prefixes.
+Generated/build/dependency directories are excluded by default. Project scanning
+uses known extensions; direct source analysis also accepts an explicit language
+or a Bash shebang. Empty inventories fail. Symlink and special source files fail.
+
+Library plugins supply an `id`, immutable `version`, and `analyze(context)` that
+returns findings; syntax nodes are valid only during that callback. Declarative
+rules match node kinds/literal text, not arbitrary executable configuration.
+External tools are separately installed, explicitly trusted commands. Inspect
+`toolRecipes`, provide adapter argv in config, then opt in with `check --tools`.
+JSON, SARIF, ESLint, Ruff, Cargo, golangci-lint, PHPStan and ShellCheck output
+adapters refuse malformed reports and failed execution. Executables retain their
+own analysis semantics and licenses.
+
+For trusted shell projects with Bash, ShellCheck, Bats and kcov installed:
+
+```sh
+node bin/code-quality.js doctor --tools
+node bin/code-quality.js baseline-update ./examples/code-quality/shell --create
+node bin/code-quality.js qa ./examples/code-quality/shell --format json
+```
+
+Shell QA measures syntax, lint, a complete passing control suite, LCOV and every
+eligible original boolean/comparison/binary-literal mutant. It refuses partial
+budgets, missing coverage files, skipped tests, changed source and tool timeouts.
+Tests and tools execute as the current user. Baselines preserve file inventory,
+methodology and nondecreasing coverage/mutation floors. Use identical options on
+measurement and update. Plain `check --baseline <file>` also accepts a native
+report baseline created through the library. Reports go to stdout or `--output`.
+
+Evolution reads a bounded first-parent Git history without checking out source.
+It tracks syntax identities across unique content/name/structure matches, counts
+repeated normalized edits and attaches commit/path evidence to suggestions.
+Ambiguous matches become additions/deletions. Frequency and complexity changes
+are observational evidence; suggestions require review.
+
+See the [case study](docs/case-studies/issue-1/README.md),
+[competitor matrix](docs/case-studies/issue-1/competitors.md), and
+[quality-bash comparison](docs/case-studies/issue-1/quality-bash.md) for measured
+scope and explicit unfinished parity. `npm run quality:readiness` intentionally
+fails while required competitor/semantic capabilities remain missing. Current
+unit tests do not certify the issue's “beat every competitor” acceptance criterion.
+
+## Development and compatibility
+
+Run `npm run test:quality`, `npm test`, `npm run lint`, and `npm run format:check`.
+The native suite also runs under Bun and Deno. Separate CI exercises real shell
+tools, the installed package and Docker API. The original arithmetic library,
+`example-package-name` CLI, universal-app examples and CI template features remain
+available; their reference follows below. Repository source is Unlicense;
+[third-party notices](THIRD-PARTY-NOTICES.md) cover separately licensed dependencies.
+
+# Pipeline template reference
 
 A comprehensive template for AI-driven JavaScript/TypeScript development with full CI/CD pipeline support.
 
@@ -17,7 +149,7 @@ validated end to end with npm trusted publishing.
 - **Package manager agnostic**: Works with bun, npm, yarn, pnpm, and deno
 - **Broken link checks**: Automated link validation with [lychee](https://github.com/lycheeverse/lychee-action) and Web Archive fallback suggestions
 
-## Quick Start
+## Template Quick Start
 
 ### Using This Template
 
@@ -288,7 +420,7 @@ The link checker workflow (`.github/workflows/links.yml`) validates all links in
 
 Add regex patterns to `.lycheeignore` to exclude URLs from checks (e.g., local dev URLs, example.com, known rate-limited sites).
 
-## Configuration
+## Template Configuration
 
 ### Updating Package Name
 

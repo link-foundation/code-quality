@@ -1,0 +1,84 @@
+{
+  "retrievedAt": "2026-11-17",
+  "snapshots": [
+    {
+      "path": "docs/case-studies/issue-1/data/ci-cd-best-practices.md",
+      "sha256": "1f0a7fd5c85ef52b916a624e84b16ca2c172fe517c22c579c9f764025918a371"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/issue.json",
+      "sha256": "33baa71d6b8d695540149efc4fdaa9c9e953d2593aa550946184d481130ce1e0"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/quality-bash-baseline.schema.json",
+      "sha256": "f702bac7ef814e1dc3cdadddfd8c1948d138c6744ab300277222f56260d08f75"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/quality-bash-readme.md",
+      "sha256": "065834589a4e95f5e802b33d86bbdfda0e396465d4e7f75058b13e28f8800ca0"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/grammar-provenance.json",
+      "sha256": "983a228fc5e8092dadec427dfc1999126790bc6784f39bce8aef1be5909456e7"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/quality-bash-readme.md",
+      "upstreamRevision": "8dc30669aa4255dfc6f84fb0f935b8036081fab4"
+    }
+  ],
+  "primarySources": [
+    {
+      "title": "SonarQube Cloud/Server",
+      "url": "https://www.sonarsource.com/products/sonarqube/"
+    },
+    {
+      "title": "JetBrains Qodana",
+      "url": "https://www.jetbrains.com/help/qodana/features.html"
+    },
+    {
+      "title": "Semgrep",
+      "url": "https://docs.semgrep.dev/writing-rules/rule-syntax"
+    },
+    {
+      "title": "GitHub CodeQL/code scanning",
+      "url": "https://docs.github.com/en/code-security/concepts/code-scanning/code-scanning"
+    },
+    {
+      "title": "Snyk Code",
+      "url": "https://docs.snyk.io/scan-fix-and-prevent/scan-with-snyk/snyk-code"
+    },
+    {
+      "title": "CodeScene",
+      "url": "https://helpcenter.codescene.com/en/help/articles/1844075-how-to-assess-coupling-health-in-codescene"
+    },
+    {
+      "title": "Codacy",
+      "url": "https://docs.codacy.com/"
+    },
+    {
+      "title": "Qlty / Code Climate Quality",
+      "url": "https://docs.qlty.sh/what-is-qlty"
+    },
+    {
+      "title": "DeepSource",
+      "url": "https://docs.deepsource.com/docs/platform/getting-started"
+    },
+    {
+      "title": "Ruff",
+      "url": "https://docs.astral.sh/ruff/rules/"
+    },
+    {
+      "title": "PMD/CPD",
+      "url": "https://pmd.github.io/pmd/pmd_userdocs_cpd.html"
+    },
+    {
+      "title": "Stryker",
+      "url": "https://stryker-mutator.io/docs/stryker-js/configuration/"
+    },
+    {
+      "title": "quality-bash",
+      "url": "https://github.com/ever-guild/quality-bash"
+    }
+  ],
+  "cleanRoom": "Only public README/development/schema contracts of quality-bash were inspected; no implementation or test source was read. Tests and engine source are original. External dependencies retain upstream licenses."
+}

@@ -1,0 +1,71 @@
+name: Quality engine
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  GIT_CONFIG_COUNT: '1'
+  GIT_CONFIG_KEY_0: init.defaultBranch
+  GIT_CONFIG_VALUE_0: main
+
+jobs:
+  shell-tools:
+    name: Real shell QA
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    concurrency:
+      group: check-${{ github.workflow }}-${{ github.ref }}-shell
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - name: Install independent toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y bats shellcheck kcov
+      - run: npm ci
+      - run: node experiments/code-quality/real-shell.mjs
+
+  distribution:
+    name: Installed package and Docker API
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    concurrency:
+      group: check-${{ github.workflow }}-${{ github.ref }}-distribution
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - run: npm ci
+      - run: node experiments/code-quality/package-smoke.mjs
+      - name: Build and exercise the non-root API container
+        run: |
+          docker build -t code-quality-candidate .
+          docker run -d --name quality-api --memory=512m --cpus=1 -p 127.0.0.1:3000:3000 code-quality-candidate
+          trap 'docker logs quality-api; docker rm -f quality-api' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:3000/health; then break; fi
+            printf 'Waiting for API (%s/30)\n' "$attempt"
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:3000/health
+          test "$(docker exec quality-api id -u)" != 0
+          curl --fail --silent -H 'content-type: application/json' \
+            --data '{"files":[{"path":"a.py","content":"def answer():\n    return 42\n"}]}' \
+            http://127.0.0.1:3000/v1/analyze > /tmp/quality-api.json
+          node -e "const r=require('/tmp/quality-api.json'); if(!r.passed || r.files.length!==1) process.exit(1)"
