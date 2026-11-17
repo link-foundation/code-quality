@@ -9,6 +9,42 @@ import { itUnless, sandboxed } from './helpers/skip.js';
 
 describe('inline read-only code evolution extraction', () => {
   itUnless(sandboxed)(
+    'does not carry one identity into ambiguous duplicate declarations',
+    async () => {
+      const root = await mkdtemp(join(tmpdir(), 'quality-ambiguous-history-'));
+      const git = async (...args) => {
+        const result = await runProcess('git', ['-C', root, ...args]);
+        assert.equal(result.code, 0, result.stderr);
+        return result.stdout.trim();
+      };
+      try {
+        await git('init', '-b', 'main');
+        await git('config', 'user.name', 'Quality Fixture');
+        await git('config', 'user.email', 'quality@example.invalid');
+        await writeFile(join(root, 'a.js'), 'function same() { return 1; }\n');
+        await git('add', '.');
+        await git('commit', '-m', 'One declaration');
+        await writeFile(
+          join(root, 'a.js'),
+          'function same() { return 2; }\nfunction same() { return 3; }\n'
+        );
+        await git('add', '.');
+        await git('commit', '-m', 'Ambiguous declarations');
+        const report = await extractEvolution(root);
+        const events = report.events.filter(
+          (event) => event.commit === report.to && event.kind === 'function'
+        );
+        assert.deepEqual(events.map((event) => event.action).sort(), [
+          'added',
+          'added',
+          'deleted',
+        ]);
+      } finally {
+        await rm(root, { recursive: true, force: true });
+      }
+    }
+  );
+  itUnless(sandboxed)(
     'tracks file/function/class additions, changes, renames, deletions and repeated improvements',
     async () => {
       const root = await mkdtemp(join(tmpdir(), 'quality-history-'));

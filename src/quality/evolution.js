@@ -117,9 +117,40 @@ async function snapshot(root, revision, cache, budgets) {
   return files;
 }
 
-function uniqueCandidate(items, predicate) {
-  const matches = items.filter(predicate);
-  return matches.length === 1 ? matches[0] : null;
+function identityKeys(entry) {
+  const family = [entry.kind, entry.language];
+  return {
+    name: JSON.stringify([...family, entry.path, entry.qualifiedName]),
+    content: JSON.stringify([...family, entry.hash]),
+    structure: JSON.stringify([...family, entry.shape]),
+  };
+}
+
+function identityIndex(entries) {
+  const index = { name: new Map(), content: new Map(), structure: new Map() };
+  for (const entry of entries) {
+    for (const [criterion, key] of Object.entries(identityKeys(entry))) {
+      const group = index[criterion].get(key) || new Set();
+      group.add(entry);
+      index[criterion].set(key, group);
+    }
+  }
+  return index;
+}
+
+function indexedMatch(previous, current, keys, criterion) {
+  const key = keys[criterion];
+  const group = previous[criterion].get(key);
+  if (group?.size !== 1 || current[criterion].get(key)?.size !== 1) {
+    return null;
+  }
+  return group.values().next().value;
+}
+
+function removeIdentity(index, entry) {
+  for (const [criterion, key] of Object.entries(identityKeys(entry))) {
+    index[criterion].get(key).delete(entry);
+  }
 }
 
 function identities(files) {
@@ -153,35 +184,25 @@ function identities(files) {
 
 function matchIdentities(previous, current, commit) {
   const unused = new Set(previous);
+  const previousIndex = identityIndex(previous);
+  const currentIndex = identityIndex(current);
   const events = [];
   const mapping = new Map();
   for (const next of current) {
-    const same = (entry) =>
-      entry.kind === next.kind && entry.language === next.language;
-    let before = uniqueCandidate(
-      [...unused],
-      (entry) =>
-        same(entry) &&
-        entry.path === next.path &&
-        entry.qualifiedName === next.qualifiedName
-    );
+    const keys = identityKeys(next);
+    let before = indexedMatch(previousIndex, currentIndex, keys, 'name');
     let matchedBy = 'qualified-name';
     if (!before) {
-      before = uniqueCandidate(
-        [...unused],
-        (entry) => same(entry) && entry.hash === next.hash
-      );
+      before = indexedMatch(previousIndex, currentIndex, keys, 'content');
       matchedBy = 'exact-content';
     }
     if (!before && next.kind !== 'file') {
-      before = uniqueCandidate(
-        [...unused],
-        (entry) => same(entry) && entry.shape === next.shape
-      );
+      before = indexedMatch(previousIndex, currentIndex, keys, 'structure');
       matchedBy = 'unique-structure';
     }
     if (before) {
       unused.delete(before);
+      removeIdentity(previousIndex, before);
       next.id = before.id;
       mapping.set(next.id, before);
       const renamed =
