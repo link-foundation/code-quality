@@ -52,6 +52,7 @@ jobs:
         with:
           node-version: '24'
       - run: npm ci
+      - run: npm run test:types
       - run: node experiments/code-quality/package-smoke.mjs
       - name: Build and exercise the non-root API container
         run: |

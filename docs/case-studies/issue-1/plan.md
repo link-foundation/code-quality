@@ -31,8 +31,8 @@ belongs inline in this PR, and the subsequent repository move is explicitly late
 - [x] Read repository guidance, original issue and all comment channels.
 - [x] Read language mapping and public quality-bash documentation; pin snapshots.
 - [x] Create extraction issue without moving inline implementation.
-- [ ] Implement native JavaScript behavior and original acceptance cases in bulk.
-- [ ] Record supported behavior, native adapters and incomplete competitor parity.
+- [x] Implement the initial native JavaScript behavior and original acceptance cases in bulk.
+- [x] Record supported behavior, native adapters and incomplete competitor parity.
 - [ ] Run focused tests and required static checks on the candidate revision.
 - [ ] Review whole diff, commit atomic steps and push the complete batch once.
 - [ ] Collect all same-revision CI failures, fix in one batch, repeat verification.

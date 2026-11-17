@@ -232,6 +232,8 @@ describe('measurement formats', () => {
       'SF:a\nDA:1,0\n',
       'SF:a\nDA:0,1\nend_of_record\n',
       'SF:a\nDA:1,1\nDA:1,0\nend_of_record\n',
+      'SF:a\nDA:1,1\nLF:2\nLF:1\nend_of_record\n',
+      'SF:a\nDA:1,1\nLH:0\nLH:1\nend_of_record\n',
     ]) {
       assert.throws(() => parseLcov(invalid));
     }
@@ -253,6 +255,12 @@ describe('measurement formats', () => {
     });
     assert.equal(mutants.length, 3);
     assert.ok(mutants.every((entry) => entry.line === 2));
+    for (const max of [0, -1, Infinity, 0.5, 1002]) {
+      await assert.rejects(
+        () => shellMutants({ path: 'a.sh', content: 'return 0' }, max),
+        /integer/
+      );
+    }
   });
 });
 

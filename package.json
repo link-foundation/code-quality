@@ -49,7 +49,8 @@
     "changeset:publish": "changeset publish",
     "changeset:status": "changeset status --since=origin/main",
     "test:quality": "node --test --test-timeout=30000 tests/quality-*.test.js",
-    "quality:readiness": "node scripts/check-quality-readiness.mjs --strict"
+    "quality:readiness": "node scripts/check-quality-readiness.mjs --strict",
+    "test:types": "tsc --project tests/types/tsconfig.json"
   },
   "keywords": [
     "code-quality",
@@ -79,6 +80,7 @@
   "devDependencies": {
     "@changesets/cli": "^3.0.3",
     "@eslint/js": "^10.0.1",
+    "@types/node": "24.10.1",
     "command-stream": "2.4.0",
     "eslint": "^10.13.0",
     "eslint-config-prettier": "^10.1.8",
@@ -89,6 +91,7 @@
     "lint-staged": "^16.4.0",
     "prettier": "^3.6.2",
     "test-anywhere": "^0.8.48",
+    "typescript": "5.9.3",
     "yaml": "2.9.1"
   },
   "lint-staged": {

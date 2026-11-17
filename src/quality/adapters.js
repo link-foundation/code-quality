@@ -312,10 +312,17 @@ function finishLcov(current, files) {
 
 function lcovField(raw, current) {
   if (/^(?:LF|LH):/.test(raw)) {
-    if (!current || !/^(?:LF|LH):\d+$/.test(raw)) {
+    const key = raw.slice(0, 2);
+    const count = Number(raw.slice(3));
+    if (
+      !current ||
+      !/^(?:LF|LH):\d+$/.test(raw) ||
+      !Number.isSafeInteger(count) ||
+      current[key] !== undefined
+    ) {
       throw new Error('Invalid LCOV count');
     }
-    current[raw.slice(0, 2)] = Number(raw.slice(3));
+    current[key] = count;
   } else if (!/^(?:TN|FN|FNDA|FNF|FNH|BRDA|BRF|BRH|VER):/.test(raw)) {
     throw new Error(`Unknown LCOV field: ${raw.split(':')[0]}`);
   }

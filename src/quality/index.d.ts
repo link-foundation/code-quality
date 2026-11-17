@@ -122,7 +122,7 @@ export interface ToolStatus {
   version?: string;
   reason?: string;
 }
-export interface EvolutionIdentity extends Partial<Abstraction> {
+export interface EvolutionIdentity extends Partial<Omit<Abstraction, 'kind'>> {
   id: string;
   path: string;
   kind: string;
@@ -210,7 +210,7 @@ export function measurementFingerprint(
 ): string;
 export function importFindings(
   data: unknown,
-  options?: { id?: string; format?: Adapter['format'] }
+  options?: { id?: string; format?: Adapter['format']; root?: string }
 ): Omit<Finding, 'fingerprint'>[];
 export function runAdapter(
   adapter: Adapter,

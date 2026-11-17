@@ -237,6 +237,8 @@ describe('strict monotonic quality baselines', () => {
       '()\n',
       'message("unterminated)\n',
       'message([=[unterminated)\n',
+      '"orphan argument"\n',
+      '[=[orphan bracket argument]=]\n',
     ]) {
       const report = await analyzeFiles([{ path: 'CMakeLists.txt', content }]);
       assert.equal(report.passed, false);

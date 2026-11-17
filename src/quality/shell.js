@@ -43,6 +43,7 @@ export function parseTap(source) {
 }
 
 export async function shellMutants(file, max = 100) {
+  positiveInteger(max, 'max', 1001);
   return await withSyntax('bash', file.content, ({ root }) => {
     const mutants = [];
     for (const node of walk(root)) {

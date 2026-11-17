@@ -30,6 +30,15 @@ function consumeArgument(source, match, tokens, errors) {
   );
 }
 
+function checkArgumentContext(match, depth, errors) {
+  if (depth === 0 && !match[0].startsWith('#')) {
+    errors.push({
+      index: match.index,
+      message: 'Argument outside a command invocation',
+    });
+  }
+}
+
 function readCommands(source, errors) {
   const commands = [];
   const tokens =
@@ -40,6 +49,7 @@ function readCommands(source, errors) {
   while ((match = tokens.exec(source))) {
     const value = match[0];
     if (consumeArgument(source, match, tokens, errors)) {
+      checkArgumentContext(match, depth, errors);
       continue;
     }
     if (value === '(') {
