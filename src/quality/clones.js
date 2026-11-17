@@ -12,6 +12,12 @@ const literalKinds = new Set([
   'character_literal',
   'integer',
   'integer_literal',
+  'decimal_integer_literal',
+  'hex_integer_literal',
+  'octal_integer_literal',
+  'binary_integer_literal',
+  'decimal_floating_point_literal',
+  'hex_floating_point_literal',
   'float',
   'float_literal',
   'number',
@@ -34,6 +40,19 @@ export function cloneContext() {
     suppressionMarkers: 0,
     suppressions: [],
   };
+}
+
+function ignoredSyntax(node, language, config) {
+  return (
+    (config.ignoreAnnotations &&
+      ((language === 'java' &&
+        ['annotation', 'marker_annotation'].includes(node.type)) ||
+        (language === 'csharp' &&
+          ['attribute_list', 'global_attribute_list'].includes(node.type)))) ||
+    (config.ignoreUsings &&
+      language === 'csharp' &&
+      node.type === 'using_directive')
+  );
 }
 
 function literal(node, budget) {
@@ -80,9 +99,13 @@ export function collectCloneTokens(root, file, config, context) {
   const output = cloneFile(file, config, context);
   const budget = { remaining: 500_000 };
   let coveredUntil = -1;
+  let ignoredUntil = -1;
   for (const node of walk(root, budget)) {
     if (node.startIndex < coveredUntil) {
       continue;
+    }
+    if (ignoredSyntax(node, file.language, config)) {
+      ignoredUntil = Math.max(ignoredUntil, node.endIndex);
     }
     if (/comment/.test(node.type)) {
       output.comment(node.text, node.startIndex);
@@ -93,7 +116,7 @@ export function collectCloneTokens(root, file, config, context) {
     if ((!atom && node.childCount) || !node.text) {
       continue;
     }
-    output.add({
+    const token = {
       value: tokenValue(node, atom, config, context),
       start: node.startIndex,
       end: node.endIndex,
@@ -101,7 +124,12 @@ export function collectCloneTokens(root, file, config, context) {
       column: node.startPosition.column + 1,
       endLine: node.endPosition.row + 1,
       endColumn: node.endPosition.column + 1,
-    });
+    };
+    // Omitted syntax still consumes token/key budgets, and its comments above
+    // still reach the opt-in region policy. Only the comparison input changes.
+    if (node.endIndex > ignoredUntil) {
+      output.add(token);
+    }
     coveredUntil = node.endIndex;
   }
   output.finish();

@@ -51,6 +51,13 @@ describe('token clone examples through CLI and HTTP', () => {
       passed: true,
       files: ['generated.js', 'copied.js'],
     },
+    {
+      name: 'filtered Java annotations',
+      root: new URL('../examples/code-quality/clone-filters/', import.meta.url),
+      passed: false,
+      files: ['first.java', 'second.java'],
+      tokens: 17,
+    },
   ]) {
     it(`keeps ${example.name} evidence identical through the CLI and HTTP API`, async () => {
       let output = '';
@@ -118,6 +125,9 @@ describe('token clone examples through CLI and HTTP', () => {
       }
     });
   }
+});
+
+describe('token-block consumer gates', () => {
   it('returns duplicate locations and a failing gate through the CLI', async () => {
     let output = '';
     const errors = [];

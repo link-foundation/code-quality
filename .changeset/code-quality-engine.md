@@ -55,3 +55,9 @@ methods while retaining unchanged defaults and other rules.
 Collect verified token-pair locations into deterministic occurrence groups in
 JSON, text and SARIF. Preserve pair findings, gates, signatures and methods;
 deduplicate locations within each language/token-count/signature group.
+
+Add optional Java/C# annotation and C# using-directive clone filters with retained
+source ranges, shared work budgets and unchanged default methods. Preserve comment
+markers, syntax validation and other rules. Correct Java numeric literal
+normalization across six grammar families. Version enabled syntax filters and
+literal normalization, requiring reviewed baseline migrations.

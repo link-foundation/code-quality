@@ -445,6 +445,29 @@ normalization, exact ranges, comment regions and deterministic ordering. The
 limits. Exact-candidate checks and new CI remain pending; this view does not
 establish CPD grouping or full competitor equivalence.
 
+## Optional annotation and directive comparison
+
+The stable CPD option table describes ignoring Java/C# annotations and C# using
+directives. Original native filters now omit the corresponding grammar ranges
+from comparison while retaining complete syntax validation, custom/structural
+rules and comment-region processing. Omitted tokens still consume shared work
+budgets. Remaining tokens can join across these constructs; this differs from
+explicit comment-region boundaries. Default methods are preserved, while enabled
+filters are versioned and require reviewed baseline migration.
+
+Initial original tests fail because these options are unsupported. Finite grammar
+observations distinguish annotation uses from declarations, C# attribute-list
+delimiters from ordinary brackets, and using directives from statements/local
+declarations. The first draft also exposes an independent literal-normalization
+gap: Java's six numeric grammar kinds are absent from the old atom inventory.
+The numeric regression fails against an isolated `556f80c` source archive, then
+passes with the corrected kind inventory. Literal normalization gains its own
+method version; exact comparison remains unchanged. Seventeen filter/numeric
+cases and seven consumer integration cases pass on Node. The
+[contract notes](data/pmd-syntax-filter-contract.json) distinguish native choices
+from unverified CPD equivalence. Exact-candidate and cross-runtime checks remain
+pending.
+
 ## Evolution method and limits
 
 Use a bounded first-parent range (default last 100 commits, hard limit 1000), inspect

@@ -113,9 +113,12 @@
         "docs/case-studies/issue-1/data/pmd-suppression-contract.json",
         "experiments/code-quality/clone-suppression-budget.mjs",
         "tests/quality-clone-groups.test.js",
-        "docs/case-studies/issue-1/data/pmd-group-contract.json"
+        "docs/case-studies/issue-1/data/pmd-group-contract.json",
+        "tests/quality-clone-filters.test.js",
+        "docs/case-studies/issue-1/data/pmd-syntax-filter-contract.json",
+        "experiments/code-quality/clone-filter-syntax.mjs"
       ],
-      "description": "Original token-block minimums, normalization, pair locations, derived occurrence groups and opt-in audited comment regions verified in thirteen modes, including native CMake argument tokens; complete product/rule/case inventory, legacy annotations, lexer/options/equivalent grouping and native parity remain unverified"
+      "description": "Original token-block minimums, normalization, pair locations, derived occurrence groups and opt-in audited comment regions verified in thirteen modes, including native CMake argument tokens; optional Java/C# annotations, C# using directives and Java numeric families covered by original cases; complete product/rule/case inventory, legacy annotations, lexer/options/equivalent grouping and native parity remain unverified"
     },
     {
       "id": "closed-source-cases",

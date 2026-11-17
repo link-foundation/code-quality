@@ -115,6 +115,15 @@ language and token count, retaining all pair findings and gates. Original cases
 cover three-copy blocks in thirteen modes, normalization, overlapping group
 ranges, comment regions, CLI/HTTP/package consumers and JSON/text/SARIF evidence.
 
+Optional native Java/C# annotation and C# using-directive filters now cover the
+corresponding documented option families. The
+[original syntax-filter contract](data/pmd-syntax-filter-contract.json) records
+scopes, retained ranges, method migrations and refusal budgets. Annotation type
+declarations, ordinary brackets, using statements, local using declarations and
+other languages remain visible. Syntax/custom rules and comment markers still
+inspect omitted constructs. A regression also reproduces and corrects Java's
+previously unrecognized numeric literal kinds; exact comparisons remain unchanged.
+
 This does not establish equivalent lexers, language-specific normalization,
 legacy annotation suppression, equivalent grouping, or complete PMD/CPD rule and case parity.
 The strict readiness inventory continues to reject universal competitor parity.

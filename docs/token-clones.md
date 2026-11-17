@@ -27,6 +27,10 @@ Interpolated expressions remain visible. Identifier normalization covers grammar
 identifier nodes; it does not resolve bindings or prove semantic equivalence.
 Literal normalization preserves the grammar literal kind. This token policy is
 versioned independently from competitor lexers and may produce different counts.
+Java decimal/hex/octal/binary integers and decimal/hex floating-point literals
+normalize within their respective grammar kinds. Enabled literal normalization
+now records `grammar-literals-v2`; earlier token baselines using `ignoreLiterals`
+require reviewed migration. Exact comparisons keep their existing method.
 
 A rolling seed indexes candidates; every reported match is verified token by
 token, so hash collisions cannot create a finding. The report includes maximal
@@ -134,3 +138,27 @@ migration. This is an original comment-based contract informed by the stable
 The default opt-in policy, strict malformed-marker refusals and explicit region
 boundaries are native choices. Legacy Java annotation suppression and all
 language-specific CPD lexical details remain unverified.
+
+## Optional syntax filters
+
+Set `clones.ignoreAnnotations` to `true` to omit Java annotation uses and C#
+attribute lists, including their delimiters and arguments. Java annotation type
+declarations remain visible. Set `clones.ignoreUsings` to `true` to omit C#
+namespace, alias and static using directives. Using statements and local using
+declarations remain visible. These flags do not affect constructs in other
+languages, such as Python decorators or C++ using declarations. Both flags default
+to false; explicit false preserves the prior report and method.
+
+Filters compare the remaining tokens as a continuous sequence. Unlike comment
+regions, they may join tokens on either side of an omitted construct; reported
+ranges may include that omitted source between retained tokens. Parsing, custom
+rules, structural rules and comment-region markers still inspect the complete
+source. All omitted tokens consume shared token/key/traversal budgets. Invalid
+syntax remains incomplete evidence and cannot be baselined. This is syntax-only
+comparison; it does not resolve annotation types or imports.
+
+Enabled methods record `annotations-usings-v1` and require reviewed baseline
+migration. See the [original Java example](../examples/code-quality/clone-filters/README.md)
+and [public-contract notes](case-studies/issue-1/data/pmd-syntax-filter-contract.json).
+The stable CPD documentation names these options; the native grammar policy,
+budgets and refusals are original and do not establish full lexer/options parity.

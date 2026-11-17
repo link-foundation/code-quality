@@ -131,6 +131,8 @@ export interface Config {
         ignoreIdentifiers?: boolean;
         ignoreLiterals?: boolean;
         suppressionComments?: boolean;
+        ignoreAnnotations?: boolean;
+        ignoreUsings?: boolean;
       };
 }
 export interface Plugin {

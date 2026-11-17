@@ -73,6 +73,10 @@ const suppressed = await analyzeFiles(['a.js','b.js'].map(path => ({path,content
 assert.equal(suppressed.passed, true);
 assert.deepEqual(suppressed.clones, []);
 assert.equal(suppressed.cloneSuppressions.length, 2);
+const filtered = await analyzeFiles(['First','Second'].map((name,index) => ({path:index+'.cs',content:'using '+name+';\\n['+name+'] class Sample { int Read(int value) { return value + 2; } }\\n'})), {config:{clones:{minTokens:17,ignoreAnnotations:true,ignoreUsings:true},rules:{'duplicate-function':false}}});
+assert.equal(filtered.incomplete, false);
+assert.equal(filtered.clones[0].tokens, 17);
+assert.equal(filtered.cloneGroups[0].occurrences.length, 2);
 console.log('Installed library and CLI passed');\n`
   );
   const smoke = await runProcess('node', ['smoke.mjs'], { cwd: root });

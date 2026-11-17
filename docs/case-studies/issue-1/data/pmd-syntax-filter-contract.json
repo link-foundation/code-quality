@@ -1,0 +1,28 @@
+{
+  "source": "https://docs.pmd-code.org/pmd-doc-7.29.0/pmd_userdocs_cpd.html",
+  "documentationVersion": "7.29.0",
+  "retrievedAt": "2026-11-17",
+  "provenance": "Original concise public option-table notes; no upstream implementation or test-suite files opened or copied; grammar observations and fixtures are original; no execution parity claim",
+  "publicBehavior": [
+    "Optional annotation filtering applies to Java and C#",
+    "Optional using-directive filtering applies to C#",
+    "These options are disabled by default"
+  ],
+  "nativePolicy": {
+    "syntaxFilters": "annotations-usings-v1; ignoreAnnotations and ignoreUsings must be boolean; false/absence preserve previous methods",
+    "annotations": "Java annotation and marker_annotation uses; C# attribute_list and global_attribute_list, including delimiters/arguments; annotation type declarations and ordinary brackets remain",
+    "directives": "C# using_directive, including namespace, alias and static forms; using statements/local declarations and other languages remain",
+    "matching": "Remaining tokens join across omitted constructs; location ranges may contain omitted syntax between retained tokens; explicit comment regions still split segments",
+    "budgets": "Omitted tokens still consume existing token/key/traversal budgets; comments still reach the opt-in marker policy",
+    "validation": "Complete parsing and other/custom rules remain active; syntax errors refuse complete evidence and baselines",
+    "numericCorrection": "Java decimal/hex/octal/binary integer and decimal/hex floating-point kinds normalize separately; enabled ignoreLiterals now records grammar-literals-v2 and requires reviewed baseline migration; exact comparison is unchanged",
+    "limits": "Original syntax policy; no name/import resolution, full grammar currency or CPD lexer/options parity claim"
+  },
+  "evidence": [
+    "tests/quality-clone-filters.test.js",
+    "tests/quality-clones-integration.test.js",
+    "experiments/code-quality/clone-filter-syntax.mjs",
+    "experiments/code-quality/package-smoke.mjs",
+    "examples/code-quality/clone-filters/README.md"
+  ]
+}

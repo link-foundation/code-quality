@@ -75,9 +75,12 @@ belongs inline in this PR, and the subsequent repository move is explicitly late
 - [x] Verify/review CMake token candidate 4ac4c97 and push once; 165 Node checks, 149 Bun/frozen-Deno cases, static/types/package/release and twelve source hashes pass.
 - [x] Collect every same-revision CI result for 4ac4c97; all six workflows pass, including nine runtime legs and desktop packaging; checks attempt one has no failures.
 - [x] Draft original opt-in comment clone regions across thirteen modes, strict marker refusals, segment boundaries and audited JSON/SARIF ranges; preserve syntax and other rules.
-- [ ] Verify/review the suppression candidate, including CLI/HTTP/package consumers, bounded marker probe and new public-contract provenance; push once after every CMake CI result.
+- [x] Verify/review the suppression candidate, including CLI/HTTP/package consumers, bounded marker probe and new public-contract provenance; publish together with occurrence groups after every CMake CI result.
 - [x] Verify suppression candidate efad61a locally: 189 Node and 173 Bun/frozen-Deno checks, static/types/package/release, 408-file guard and thirteen source hashes; strict readiness still refuses unfinished capabilities.
-- [ ] Add original occurrence groups derived from verified maximal pairs; preserve pair findings/gates and test all language modes, normalization, ranges, suppression and consumer reports in the same push batch.
+- [x] Add original occurrence groups derived from verified maximal pairs; preserve pair findings/gates and test all language modes, normalization, ranges, suppression and consumer reports in the same push batch.
+- [x] Verify/review combined candidate 556f80c: 209 Node checks, 193 Bun/frozen-Deno cases, static/types/package/release, 410-file guard and fourteen source hashes; push once.
+- [ ] Collect every same-revision CI result for 556f80c before the next push.
+- [ ] Draft optional Java/C# annotation and C# using-directive token filters from the stable public CPD contract; preserve default methods, syntax/other rules, comment markers and work budgets; verify original boundaries and consumer cases.
 - [ ] Complete remaining language semantics and competitor/proprietary documented cases.
 - [ ] Update PR title/body, preserve Fixes #1, mark ready after verification.
 

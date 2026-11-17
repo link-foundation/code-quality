@@ -156,6 +156,8 @@ Reports retain pair findings and collect their distinct locations into occurrenc
 groups for reviewing a block repeated across several files.
 Opt-in comment regions can exclude generated duplication while retaining audited
 ranges in JSON/SARIF. Syntax validation and other rules still inspect those regions.
+Optional Java/C# annotation and C# using-directive filters compare retained tokens
+while preserving syntax validation and other rules.
 
 Shell QA and baseline updates save fresh evidence under `<root>/quality-reports/`,
 including failures before measurement completes. `--reports <directory>` chooses

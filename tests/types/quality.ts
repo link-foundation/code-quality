@@ -25,7 +25,12 @@ import {
 const config: Config = {
   rules: { complexity: 5 },
   failOn: 'error',
-  clones: { minTokens: 30, suppressionComments: true },
+  clones: {
+    minTokens: 30,
+    suppressionComments: true,
+    ignoreAnnotations: true,
+    ignoreUsings: true,
+  },
 };
 const plugin: Plugin = {
   id: 'example',

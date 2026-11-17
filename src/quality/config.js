@@ -121,6 +121,8 @@ function clonesConfig(input) {
     ignoreIdentifiers: false,
     ignoreLiterals: false,
     suppressionComments: false,
+    ignoreAnnotations: false,
+    ignoreUsings: false,
     ...input,
   };
   for (const key of Object.keys(config)) {
@@ -130,6 +132,8 @@ function clonesConfig(input) {
         'ignoreIdentifiers',
         'ignoreLiterals',
         'suppressionComments',
+        'ignoreAnnotations',
+        'ignoreUsings',
       ].includes(key)
     ) {
       throw new Error(`Unknown clone option: ${key}`);
@@ -140,14 +144,22 @@ function clonesConfig(input) {
     'ignoreIdentifiers',
     'ignoreLiterals',
     'suppressionComments',
+    'ignoreAnnotations',
+    'ignoreUsings',
   ]) {
     if (typeof config[key] !== 'boolean') {
       throw new Error(`clones.${key} must be boolean`);
     }
   }
-  // Explicit false and absence retain the pre-suppression method fingerprint.
-  if (!config.suppressionComments) {
-    delete config.suppressionComments;
+  // Explicit false and absence preserve existing method fingerprints.
+  for (const key of [
+    'suppressionComments',
+    'ignoreAnnotations',
+    'ignoreUsings',
+  ]) {
+    if (!config[key]) {
+      delete config[key];
+    }
   }
   return config;
 }

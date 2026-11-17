@@ -349,8 +349,15 @@ export function finalizeReport(files, findings, config, metadata = {}) {
           clones: {
             method: 'bounded-token-pairs-v1',
             cmakeTokens: 'cmake-arguments-v1',
+            ...(config.clones.ignoreLiterals && {
+              literalNormalization: 'grammar-literals-v2',
+            }),
             ...(config.clones.suppressionComments && {
               suppression: 'cpd-comment-regions-v1',
+            }),
+            ...((config.clones.ignoreAnnotations ||
+              config.clones.ignoreUsings) && {
+              syntaxFilters: 'annotations-usings-v1',
             }),
             ...config.clones,
           },
