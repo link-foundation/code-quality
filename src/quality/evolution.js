@@ -65,6 +65,11 @@ async function snapshot(root, revision, cache, budgets) {
           `${revision}:${path}: syntax errors prevent trustworthy abstraction tracking`
         );
       }
+      if (parsed.limitations?.length) {
+        throw new Error(
+          `${revision}:${path}: unsupported CMake expansion prevents trustworthy abstraction tracking`
+        );
+      }
       parsed = {
         ...parsed,
         bytes: size,

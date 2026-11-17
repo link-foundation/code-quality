@@ -142,7 +142,7 @@ export async function installShellTools(
 ) {
   const manifest = shellToolManifest(platform, arch);
   const root = resolve(directory);
-  if (/[:;$\r\n]/.test(root)) {
+  if (loaderDirectoryHasTokens(root)) {
     throw new Error(
       'Tool directory contains unsupported dynamic-loader path tokens'
     );
@@ -214,4 +214,12 @@ export async function installShellTools(
     await rm(root, { recursive: true, force: true });
     throw error;
   }
+}
+
+// Only the host Windows drive prefix is exempt. Colons within a directory and
+// drive-like strings on Linux still denote unsafe loader search path separators.
+export function loaderDirectoryHasTokens(root, platform = process.platform) {
+  const path =
+    platform === 'win32' ? root.replace(/^[A-Za-z]:[\\/]/, '') : root;
+  return /[:;$\r\n]/.test(path);
 }

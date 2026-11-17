@@ -1,0 +1,486 @@
+{
+  "version": "cmake version 3.28.3",
+  "observations": [
+    {
+      "name": "formal-parameters",
+      "expected": true,
+      "cmakeCode": 0,
+      "cmakeDiagnostics": "",
+      "findings": [],
+      "abstractions": [
+        {
+          "name": "example",
+          "parameters": 2,
+          "complexity": 1
+        }
+      ]
+    },
+    {
+      "name": "bracket-parameter",
+      "expected": true,
+      "cmakeCode": 0,
+      "cmakeDiagnostics": "",
+      "findings": [],
+      "abstractions": [
+        {
+          "name": "example",
+          "parameters": 1,
+          "complexity": 1
+        }
+      ]
+    },
+    {
+      "name": "list-parameters",
+      "expected": true,
+      "cmakeCode": 0,
+      "cmakeDiagnostics": "",
+      "findings": [],
+      "abstractions": [
+        {
+          "name": "example",
+          "parameters": 2,
+          "complexity": 1
+        }
+      ]
+    },
+    {
+      "name": "quoted-parameters",
+      "expected": true,
+      "cmakeCode": 0,
+      "cmakeDiagnostics": "",
+      "findings": [],
+      "abstractions": [
+        {
+          "name": "example",
+          "parameters": 1,
+          "complexity": 1
+        }
+      ]
+    },
+    {
+      "name": "legacy-arguments",
+      "expected": true,
+      "cmakeCode": 0,
+      "cmakeDiagnostics": "-Dname=\"one two\"$(BUILD)",
+      "findings": [],
+      "abstractions": []
+    },
+    {
+      "name": "bom-crlf",
+      "expected": true,
+      "cmakeCode": 0,
+      "cmakeDiagnostics": "",
+      "findings": [],
+      "abstractions": [
+        {
+          "name": "example",
+          "parameters": 1,
+          "complexity": 1
+        }
+      ]
+    },
+    {
+      "name": "same-line",
+      "expected": false,
+      "cmakeCode": 1,
+      "cmakeDiagnostics": "CMake Error at $FIXTURE/same-line.cmake:2:\n  Parse error.  Expected a newline, got identifier with text \"message\".\n\n\nCMake Error: Error processing file: $FIXTURE/same-line.cmake",
+      "findings": [
+        {
+          "path": "same-line.cmake",
+          "ruleId": "syntax",
+          "severity": "error",
+          "message": "Expected a newline between command invocations",
+          "line": 1,
+          "column": 14
+        }
+      ],
+      "abstractions": []
+    },
+    {
+      "name": "name-newline",
+      "expected": false,
+      "cmakeCode": 1,
+      "cmakeDiagnostics": "CMake Error at $FIXTURE/name-newline.cmake:3:\n  Parse error.  Expected \"(\", got newline with text \"\n\n  \".\n\n\nCMake Error: Error processing file: $FIXTURE/name-newline.cmake",
+      "findings": [
+        {
+          "path": "name-newline.cmake",
+          "ruleId": "syntax",
+          "severity": "error",
+          "message": "Expected an opening parenthesis on the command name line",
+          "line": 1,
+          "column": 1
+        },
+        {
+          "path": "name-newline.cmake",
+          "ruleId": "syntax",
+          "severity": "error",
+          "message": "Expected a command invocation",
+          "line": 2,
+          "column": 1
+        },
+        {
+          "path": "name-newline.cmake",
+          "ruleId": "syntax",
+          "severity": "error",
+          "message": "Expected an opening parenthesis on the command name line",
+          "line": 2,
+          "column": 2
+        },
+        {
+          "path": "name-newline.cmake",
+          "ruleId": "syntax",
+          "severity": "error",
+          "message": "Expected a command invocation",
+          "line": 2,
+          "column": 5
+        }
+      ],
+      "abstractions": []
+    },
+    {
+      "name": "invalid-escape",
+      "expected": false,
+      "cmakeCode": 1,
+      "cmakeDiagnostics": "CMake Error at $FIXTURE/invalid-escape.cmake:2 (message):\n  Syntax error in cmake code at\n\n    $FIXTURE/invalid-escape.cmake:2\n\n  when parsing string\n\n    bad\\q\n\n  Invalid character escape '\\q'.",
+      "findings": [
+        {
+          "path": "invalid-escape.cmake",
+          "ruleId": "syntax",
+          "severity": "error",
+          "message": "Invalid escape sequence",
+          "line": 1,
+          "column": 13
+        }
+      ],
+      "abstractions": []
+    },
+    {
+      "name": "empty-definition",
+      "expected": false,
+      "cmakeCode": 1,
+      "cmakeDiagnostics": "CMake Error at $FIXTURE/empty-definition.cmake:2 (function):\n  function called with incorrect number of arguments",
+      "findings": [
+        {
+          "path": "empty-definition.cmake",
+          "ruleId": "syntax",
+          "severity": "error",
+          "message": "function requires a name",
+          "line": 1,
+          "column": 1
+        }
+      ],
+      "abstractions": [
+        {
+          "name": "<anonymous>",
+          "parameters": 0,
+          "complexity": 1
+        }
+      ]
+    },
+    {
+      "name": "mismatched-name",
+      "expected": true,
+      "cmakeCode": 0,
+      "cmakeDiagnostics": "CMake Warning (dev) in $FIXTURE/mismatched-name.cmake:\n  A logical block opening on the line\n\n    $FIXTURE/mismatched-name.cmake:2 (function)\n\n  closes on the line\n\n    $FIXTURE/mismatched-name.cmake:3 (endfunction)\n\n  with mis-matching arguments.\nThis warning is for project developers.  Use -Wno-dev to suppress it.",
+      "findings": [],
+      "abstractions": [
+        {
+          "name": "example",
+          "parameters": 0,
+          "complexity": 1
+        }
+      ]
+    },
+    {
+      "name": "quoted-adjacent",
+      "expected": true,
+      "cmakeCode": 0,
+      "cmakeDiagnostics": "CMake Warning (dev) at $FIXTURE/quoted-adjacent.cmake:2:\n  Syntax Warning in cmake code at column 14\n\n  Argument not separated from preceding token by whitespace.\nThis warning is for project developers.  Use -Wno-dev to suppress it.\n\nonetwo",
+      "findings": [],
+      "abstractions": []
+    },
+    {
+      "name": "bracket-adjacent",
+      "expected": false,
+      "cmakeCode": 1,
+      "cmakeDiagnostics": "CMake Error at $FIXTURE/bracket-adjacent.cmake:2:\n  Syntax Error in cmake code at column 18\n\n  Argument not separated from preceding token by whitespace.\n\n\nCMake Error: Error processing file: $FIXTURE/bracket-adjacent.cmake",
+      "findings": [
+        {
+          "path": "bracket-adjacent.cmake",
+          "ruleId": "syntax",
+          "severity": "error",
+          "message": "Expected separation after a bracket argument",
+          "line": 1,
+          "column": 18
+        }
+      ],
+      "abstractions": []
+    },
+    {
+      "name": "bracket-in-unquoted",
+      "expected": true,
+      "cmakeCode": 0,
+      "cmakeDiagnostics": "prefix[=[value]=]",
+      "findings": [],
+      "abstractions": []
+    },
+    {
+      "name": "inline-bracket-comment",
+      "expected": false,
+      "cmakeCode": 1,
+      "cmakeDiagnostics": "CMake Error at $FIXTURE/inline-bracket-comment.cmake:2:\n  Parse error.  Expected a newline, got identifier with text \"message\".\n\n\nCMake Error: Error processing file: $FIXTURE/inline-bracket-comment.cmake",
+      "findings": [
+        {
+          "path": "inline-bracket-comment.cmake",
+          "ruleId": "syntax",
+          "severity": "error",
+          "message": "Expected a newline between command invocations",
+          "line": 1,
+          "column": 27
+        }
+      ],
+      "abstractions": []
+    },
+    {
+      "name": "multiline-bracket-comment",
+      "expected": false,
+      "cmakeCode": 1,
+      "cmakeDiagnostics": "CMake Error at $FIXTURE/multiline-bracket-comment.cmake:3:\n  Parse error.  Expected a newline, got identifier with text \"message\".\n\n\nCMake Error: Error processing file: $FIXTURE/multiline-bracket-comment.cmake",
+      "findings": [
+        {
+          "path": "multiline-bracket-comment.cmake",
+          "ruleId": "syntax",
+          "severity": "error",
+          "message": "Expected a newline between command invocations",
+          "line": 2,
+          "column": 4
+        }
+      ],
+      "abstractions": []
+    },
+    {
+      "name": "bracket-comment-prefix",
+      "expected": false,
+      "cmakeCode": 1,
+      "cmakeDiagnostics": "CMake Error at $FIXTURE/bracket-comment-prefix.cmake:2:\n  Parse error.  Expected a newline, got identifier with text \"message\".\n\n\nCMake Error: Error processing file: $FIXTURE/bracket-comment-prefix.cmake",
+      "findings": [
+        {
+          "path": "bracket-comment-prefix.cmake",
+          "ruleId": "syntax",
+          "severity": "error",
+          "message": "Expected a newline between command invocations",
+          "line": 1,
+          "column": 14
+        }
+      ],
+      "abstractions": []
+    },
+    {
+      "name": "bracket-comment-newline",
+      "expected": true,
+      "cmakeCode": 0,
+      "cmakeDiagnostics": "one",
+      "findings": [],
+      "abstractions": []
+    },
+    {
+      "name": "bracket-before-parenthesis",
+      "expected": true,
+      "cmakeCode": 0,
+      "cmakeDiagnostics": "one(two)",
+      "findings": [],
+      "abstractions": []
+    },
+    {
+      "name": "comment-after-name",
+      "expected": false,
+      "cmakeCode": 1,
+      "cmakeDiagnostics": "CMake Error at $FIXTURE/comment-after-name.cmake:2:\n  Parse error.  Expected \"(\", got bracket comment with text \"comment\".\n\n\nCMake Error: Error processing file: $FIXTURE/comment-after-name.cmake",
+      "findings": [
+        {
+          "path": "comment-after-name.cmake",
+          "ruleId": "syntax",
+          "severity": "error",
+          "message": "Expected an opening parenthesis on the command name line",
+          "line": 1,
+          "column": 1
+        },
+        {
+          "path": "comment-after-name.cmake",
+          "ruleId": "syntax",
+          "severity": "error",
+          "message": "Expected a newline between command invocations",
+          "line": 1,
+          "column": 20
+        },
+        {
+          "path": "comment-after-name.cmake",
+          "ruleId": "syntax",
+          "severity": "error",
+          "message": "Expected a command invocation",
+          "line": 1,
+          "column": 20
+        },
+        {
+          "path": "comment-after-name.cmake",
+          "ruleId": "syntax",
+          "severity": "error",
+          "message": "Expected an opening parenthesis on the command name line",
+          "line": 1,
+          "column": 21
+        },
+        {
+          "path": "comment-after-name.cmake",
+          "ruleId": "syntax",
+          "severity": "error",
+          "message": "Expected a command invocation",
+          "line": 1,
+          "column": 24
+        }
+      ],
+      "abstractions": []
+    }
+  ],
+  "formalParameters": [
+    {
+      "header": "example first second",
+      "parameters": 2,
+      "calls": [
+        {
+          "arguments": 2,
+          "accepted": true
+        },
+        {
+          "arguments": 1,
+          "accepted": false
+        }
+      ]
+    },
+    {
+      "header": "[=[example]=] [=[first second]=]",
+      "parameters": 1,
+      "calls": [
+        {
+          "arguments": 1,
+          "accepted": true
+        },
+        {
+          "arguments": 0,
+          "accepted": false
+        }
+      ]
+    },
+    {
+      "header": "\"example\" \"first;second\"",
+      "parameters": 1,
+      "calls": [
+        {
+          "arguments": 1,
+          "accepted": true
+        },
+        {
+          "arguments": 0,
+          "accepted": false
+        }
+      ]
+    },
+    {
+      "header": "example first;second",
+      "parameters": 2,
+      "calls": [
+        {
+          "arguments": 2,
+          "accepted": true
+        },
+        {
+          "arguments": 1,
+          "accepted": false
+        }
+      ]
+    },
+    {
+      "header": "example ;first;;second;",
+      "parameters": 2,
+      "calls": [
+        {
+          "arguments": 2,
+          "accepted": true
+        },
+        {
+          "arguments": 1,
+          "accepted": false
+        }
+      ]
+    },
+    {
+      "header": "example first\\;second",
+      "parameters": 1,
+      "calls": [
+        {
+          "arguments": 1,
+          "accepted": true
+        },
+        {
+          "arguments": 0,
+          "accepted": false
+        }
+      ]
+    },
+    {
+      "header": "example [first;second]",
+      "parameters": 1,
+      "calls": [
+        {
+          "arguments": 1,
+          "accepted": true
+        },
+        {
+          "arguments": 0,
+          "accepted": false
+        }
+      ]
+    },
+    {
+      "header": "example \"\"",
+      "parameters": 1,
+      "calls": [
+        {
+          "arguments": 1,
+          "accepted": true
+        },
+        {
+          "arguments": 0,
+          "accepted": false
+        }
+      ]
+    },
+    {
+      "header": "example [=[\nfirst;second]=]",
+      "parameters": 1,
+      "calls": [
+        {
+          "arguments": 1,
+          "accepted": true
+        },
+        {
+          "arguments": 0,
+          "accepted": false
+        }
+      ]
+    },
+    {
+      "header": "example $<IF:condition,first,second>",
+      "parameters": 1,
+      "calls": [
+        {
+          "arguments": 1,
+          "accepted": true
+        },
+        {
+          "arguments": 0,
+          "accepted": false
+        }
+      ]
+    }
+  ]
+}

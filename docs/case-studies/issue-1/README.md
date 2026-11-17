@@ -30,7 +30,7 @@ omitting a required entry. No production Rust jobs are introduced.
 | Component        | Alternatives considered                                                | Choice and consequence                                                                                                                                                                                       |
 | ---------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Language parsing | Compiler subprocesses, native ast-grep/NAPI, Tree-sitter WASM, regex   | Pinned web-tree-sitter 0.20.8 + tree-sitter-wasms 0.1.13 run without native compilation on all three JS runtimes. Syntax trees do not supply type resolution. Old grammar snapshots can reject newer syntax. |
-| CMake            | Execute CMake, cmake-lint, general regex                               | Original native command/bracket/block adapter, with explicit semantic and metric gaps. CMake execution can run project code; it is not automatic.                                                            |
+| CMake            | Execute CMake, cmake-lint, general regex                               | Original native command/bracket/block adapter with literal arity and structural decisions; expanded headers refuse incomplete metrics. CMake execution can run project code; it is not automatic.            |
 | Rules            | Semgrep DSL, ESLint plugin, custom code evaluation                     | Small declarative AST-kind/literal rules plus versioned library plugins. Arbitrary regex and config code are not executed. No Semgrep DSL compatibility claim.                                               |
 | Reports          | Proprietary database, SARIF, JSON only                                 | Deterministic JSON/text and SARIF 2.1.0 with stable occurrence fingerprints. No hosted dashboard or SARIF consumer certification.                                                                            |
 | Git mining       | PyDriller, GitPython, git log only, custom diff parser                 | Git plumbing plus syntax snapshots; no checkout/worktree writes. Unique identity matches across revisions, repeated normalized before/after edits, file hotspots and temporal coupling.                      |
@@ -69,6 +69,8 @@ Recipes depend on the separately installed tool version and project configuratio
 | Real Git history, file/function/class edits, renames/deletes, repeated patterns, suggestions | `tests/quality-evolution.test.js`, temporary repository, four actual commits                                                |
 | Package and container contracts                                                              | existing package tests; `experiments/code-quality/package-smoke.mjs`; Quality engine CI container health/analyze smoke      |
 | Strict inventory refusal                                                                     | `tests/quality-readiness.test.js`; missing/partial/carried records are rejected                                             |
+| CMake syntax, literal arity, decisions and unsupported-header/custom-rule refusal            | `tests/quality-cmake.test.js`, evolution regressions and original CMake CLI observations                                    |
+| Help/version without project configuration or tools                                          | `tests/quality-cli-help.test.js`                                                                                            |
 
 ## First candidate CI investigation
 
@@ -242,8 +244,47 @@ TAP records. Each fails before its fix and passes afterward. Managed-tree hashes
 cover helpers/libraries as well as executable bytes and survive relocation.
 Actual amd64 QA passes nine measurements using the downloaded private libraries.
 The stricter final diagnostic code and both new native-architecture installations
-still require exact-candidate verification. The [refusal audit](../../shell-diagnostics.md)
+required exact-candidate verification. The [refusal audit](../../shell-diagnostics.md)
 records finite evidence and remaining limits without certifying universal parity.
+
+## Seventh candidate investigation and CMake draft
+
+At `a764ae634625ad3fafc58e6b0548d19a26aa0de7`, [Quality engine](https://github.com/link-foundation/code-quality/actions/runs/44162751383)
+passes actual private-library installation and QA on native amd64 and arm64,
+including consumer-Action QA, independent baseline import, installed package,
+public declarations and Docker API. Security, workflow policy, links and the
+example app pass too. [Checks and release](https://github.com/link-foundation/code-quality/actions/runs/44162751518)
+exposes two portable test-path defects. All six workflows completed before the
+next push. Results remain tied to that exact revision.
+
+- Windows Node, Bun and Deno each fail the same three original assertions.
+  `ci-logs/checks-44162751518-windows-node.readable.log` lines 2202–2252 show a
+  drive-letter colon being rejected as a loader-path separator before the
+  expected Bash prerequisite, existing-destination and checksum refusals.
+  Strip only a Windows host's anchored absolute drive prefix when checking
+  loader tokens; retain rejection of every separator within the remaining path.
+- macOS Node and Deno each fail the internal-library-alias case.
+  `ci-logs/checks-44162751518-macos-node.readable.log` lines 2190–2201 show the
+  resolved `/private/var` file compared with its unresolved `/var` staging root.
+  Canonicalize the owned root once before containment checks. An original local
+  symlink-root regression reproduces the failure and retains escape refusal.
+- macOS Bun executes no steps and is cancelled at 20:24:09 UTC after repeated
+  runner acquisition attempts. Its check annotations report hosted macOS arm64
+  capacity constraints. The full workflow log archive and annotations are
+  preserved; this unexecuted leg is not passing evidence. The next candidate
+  still requires all nine runtime jobs.
+
+The eighth draft replaces CMake's placeholder arity/complexity with original
+literal argument and decision metrics. Initial regressions fail on invalid
+command separation, escapes and unnamed definitions; evolution also initially
+accepts unresolved headers and custom tree rules initially pass without a tree.
+Their corrected paths refuse incomplete analysis. The methodology changes to
+`cmake-native-v2`, requiring reviewed migration of older baselines.
+[The CMake contract](../../cmake-analysis.md) defines the finite semantics and
+budgets. [Recorded CMake 3.28.3 observations](data/cmake-contract-observations.json)
+compare 20 original syntax scripts and ten formal-parameter fixtures, with both
+sufficient and insufficient invocation arities. No project is built and no
+upstream implementation or test suite is copied.
 
 ## Evolution method and limits
 
@@ -258,9 +299,10 @@ Normalize identifiers for edit signatures while preserving literal changes. Coun
 identical before/after signatures and retain commit/path/abstraction evidence. Rank
 repeated transformations by frequency. Suggestions explicitly say observational;
 a lower structural complexity score does not prove better behavior. Metrics include
-nested syntax, so class and nested-function complexities are inclusive and must not
-be added as independent totals. CMake reports complexity 1 and parameters 0 as
-unsupported metrics, not accurate language metrics. File hotspots count observed
+nested Tree-sitter syntax, so class and nested-function complexities are inclusive
+and must not be added as independent totals. CMake v2 counts decisions only in the
+innermost function/macro and literal formal arity; expansion-derived arity is null
+and refuses evolution. It does not evaluate project semantics. File hotspots count observed
 changes; coupling omits commits with over 100 source files and refuses over 100,000
 unique pairs. Snapshot, parser-node, byte, command-output and event budgets fail
 explicitly. This is not semantic refactoring inference, all-history rename proof,

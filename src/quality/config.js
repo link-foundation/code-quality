@@ -83,7 +83,11 @@ function customConfig(customRules = []) {
   if (!Array.isArray(customRules) || customRules.length > 100) {
     throw new Error('customRules must be an array of at most 100 rules');
   }
-  const names = new Set(['syntax', ...Object.keys(defaultRules)]);
+  const names = new Set([
+    'syntax',
+    'unsupported-analysis',
+    ...Object.keys(defaultRules),
+  ]);
   for (const rule of customRules) {
     requireObject(rule, 'Custom rule');
     if (

@@ -240,30 +240,60 @@ export async function withSyntax(language, source, callback) {
 
 export function extractSyntax(syntax, source) {
   if (syntax.cmake) {
+    // A shared line index maps CMake source offsets to report positions without
+    // rescanning each declaration's prefix.
+    const starts = [0];
+    for (let index = 0; index < source.length; index++) {
+      if (source[index] === '\n') {
+        starts.push(index + 1);
+      }
+    }
+    const location = (index) => {
+      let low = 0;
+      let high = starts.length;
+      while (low + 1 < high) {
+        const middle = Math.floor((low + high) / 2);
+        if (starts[middle] <= index) {
+          low = middle;
+        } else {
+          high = middle;
+        }
+      }
+      return { line: low + 1, column: index - starts[low] + 1 };
+    };
+    let descriptorBytes = 0;
     return {
       errors: syntax.cmake.errors.map((error) => ({
-        ...position(source, error.index),
+        ...location(error.index),
         message: error.message,
       })),
-      abstractions: syntax.cmake.abstractions.map((entry) => ({
-        ...entry,
-        kind: 'function',
-        syntaxKind: entry.kind,
-        editHash: hash(
-          source
-            .slice(entry.start, entry.end)
-            .replace(/\b[A-Za-z_]\w*\b/g, '$id')
-        ),
-        qualifiedName: entry.name,
-        startLine: position(source, entry.start).line,
-        endLine: position(source, entry.end).line,
-        complexity: 1,
-        parameters: 0,
-        hash: hash(source.slice(entry.start, entry.end)),
-        shape: hash(
-          source.slice(entry.start, entry.end).replace(/\b\w+\b/g, '$id')
-        ),
+      limitations: syntax.cmake.limitations.map((entry) => ({
+        ...location(entry.index),
+        message: entry.message,
       })),
+      abstractions: syntax.cmake.abstractions.map((entry) => {
+        const abstraction = {
+          ...entry,
+          kind: 'function',
+          syntaxKind: entry.kind,
+          editHash: hash(
+            source
+              .slice(entry.start, entry.end)
+              .replace(/\b[A-Za-z_]\w*\b/g, '$id')
+          ),
+          startLine: location(entry.start).line,
+          endLine: location(entry.end).line,
+          hash: hash(source.slice(entry.start, entry.end)),
+          shape: hash(
+            source.slice(entry.start, entry.end).replace(/\b\w+\b/g, '$id')
+          ),
+        };
+        descriptorBytes += Buffer.byteLength(JSON.stringify(abstraction));
+        if (descriptorBytes > 4_194_304) {
+          throw new Error('Abstraction metadata budget exceeded');
+        }
+        return abstraction;
+      }),
     };
   }
   const errors = [];

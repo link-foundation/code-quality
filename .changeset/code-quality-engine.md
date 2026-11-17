@@ -24,3 +24,8 @@ Download and verify kcov's private Debian runtime libraries without sudo, retain
 their notices, check loader resolution and fingerprint managed helpers/libraries.
 Enforce GNU Bash 5.2 before installation or project execution. Refuse changed
 toolchains, duplicate coverage/diagnostic JSON and malformed Bats TAP records.
+
+Measure CMake literal formal parameters and structural decisions, retain nested
+definition identities and refuse unresolved expansions in baselines and evolution.
+Validate command separation and modern escapes. Keep CLI help/version independent
+of project tools, and correct Windows drive and macOS ancestor-alias validation.

@@ -38,6 +38,7 @@ Commands:
   languages | rules      List native language parsers or quality rules
   doctor                 Inspect configured external tool versions
   tools install <directory>  Download pinned Linux shell tools into a new directory
+  help | version         Show usage or package version without project/tool lookup
 Options:
   --config <file>         JSON rules, exclusions, limits and trusted adapter argv
   --format <text|json|sarif>  Check/QA report format
@@ -60,8 +61,11 @@ Exit status: 0 passed, 1 findings/gate failed, 2 invalid input or incomplete che
 Shell commands and adapters execute trusted code as your user.`;
 
 function normalizeCommand(argv) {
+  if (['help', 'version'].includes(argv[0])) {
+    return [`--${argv[0]}`, ...argv.slice(1)];
+  }
   if (argv[0] === 'tools' && argv[1] === 'install') {
-    if (!argv[2] || argv[2].startsWith('--')) {
+    if (!argv.includes('--help') && (!argv[2] || argv[2].startsWith('--'))) {
       throw new Error('tools install requires a new destination directory');
     }
     argv = ['tools-install', ...argv.slice(2)];
@@ -457,6 +461,9 @@ export async function runQualityCli(
   try {
     const parsed = parseArgs(argv);
     const context = { ...parsed, stdout, stderr };
+    if (parsed.command && !Object.hasOwn(handlers, parsed.command)) {
+      throw new Error(`Unknown command: ${parsed.command}`);
+    }
     if (parsed.options.version) {
       const pkg = JSON.parse(
         await readFile(new URL('../../package.json', import.meta.url), 'utf8')
@@ -469,9 +476,6 @@ export async function runQualityCli(
       return 0;
     }
     const handler = handlers[parsed.command];
-    if (!Object.hasOwn(handlers, parsed.command)) {
-      throw new Error(`Unknown command: ${parsed.command}`);
-    }
     context.config = await loadConfig(parsed.options.config);
     validateConfig(context.config);
     if (context.options['baseline-path']) {

@@ -56,6 +56,9 @@ async function internalFile(root, path) {
 // Keep the SONAME aliases as regular files. Versioned targets referenced by an
 // alias need no duplicate copy: the dynamic loader requests the SONAME.
 export async function collectRuntime(staging, destination, packages, arch) {
+  // Compare resolved package links with the same canonical ownership root.
+  // Ancestor aliases such as macOS /var -> /private/var are not package escapes.
+  staging = await realpath(staging);
   const libraryRoot = join(destination, 'lib');
   await mkdir(libraryRoot, { recursive: true });
   const all = await entries(staging);

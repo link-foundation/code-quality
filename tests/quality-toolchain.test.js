@@ -13,7 +13,10 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { shellToolManifest, installShellTools } from '../src/quality/index.js';
 import { runQualityCli } from '../src/quality/cli.js';
-import { inspectShellInstallation } from '../src/quality/toolchain.js';
+import {
+  inspectShellInstallation,
+  loaderDirectoryHasTokens,
+} from '../src/quality/toolchain.js';
 
 async function fixture(fn) {
   const root = await mkdtemp(join(tmpdir(), 'quality-toolchain-'));
@@ -25,6 +28,21 @@ async function fixture(fn) {
 }
 
 describe('pinned shell tool distribution', () => {
+  it('distinguishes Windows drive roots from loader search-path separators', () => {
+    assert.equal(loaderDirectoryHasTokens('D:\\tools\\new', 'win32'), false);
+    assert.equal(loaderDirectoryHasTokens('C:/tools/new', 'win32'), false);
+    for (const path of [
+      'D:\\unsafe:directory',
+      'D:\\unsafe;directory',
+      'D:\\unsafe$directory',
+      'D:relative',
+      '/unsafe:directory',
+    ]) {
+      assert.equal(loaderDirectoryHasTokens(path, 'win32'), true, path);
+    }
+    assert.equal(loaderDirectoryHasTokens('D:\\tools\\new', 'linux'), true);
+    assert.equal(loaderDirectoryHasTokens('/safe/tools', 'linux'), false);
+  });
   it('fingerprints the actual arm64 executable size with bounded streaming and refuses oversized files', async () =>
     fixture(async (root) => {
       const file = await open(join(root, 'arm64-size-fixture'), 'wx');

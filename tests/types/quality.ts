@@ -31,6 +31,10 @@ const report = await analyzeFiles(
   { config, plugins: [plugin] }
 );
 const baseline = createBaseline(report);
+const arity: number | null = report.files[0].abstractions[0].parameters;
+// @ts-expect-error Unevaluated CMake arity must be checked before numeric use.
+const assumedArity: number = report.files[0].abstractions[0].parameters;
+void [arity, assumedArity];
 const committed = await readGitBaseline('.', { ref: 'HEAD' });
 const manifest = await saveReport(report, '/tmp/quality-reports');
 const complete: boolean = manifest.complete;

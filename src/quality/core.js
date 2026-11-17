@@ -74,6 +74,19 @@ function checkCustomRules(node, rules, language, add) {
 
 function checkTree(syntax, config, language, add) {
   if (!syntax.root) {
+    if (
+      config.customRules.some(
+        (rule) => !rule.languages || rule.languages.includes(language)
+      )
+    ) {
+      add(
+        'unsupported-analysis',
+        `${language}: custom tree rules require a syntax tree that this adapter does not provide`,
+        1,
+        1,
+        'error'
+      );
+    }
     return;
   }
   for (const node of walk(syntax.root)) {
@@ -197,9 +210,22 @@ export async function analyzeSource(file, options = {}) {
   };
   const lineCount = checkLines(file, config.rules, add);
   return await withSyntax(language, file.content, async (syntax) => {
-    const { errors, abstractions } = extractSyntax(syntax, file.content);
+    const {
+      errors,
+      abstractions,
+      limitations = [],
+    } = extractSyntax(syntax, file.content);
     for (const error of errors) {
       add('syntax', error.message, error.line, error.column, 'error');
+    }
+    for (const entry of limitations) {
+      add(
+        'unsupported-analysis',
+        entry.message,
+        entry.line,
+        entry.column,
+        'error'
+      );
     }
     checkAbstractions(abstractions, config.rules, add);
     checkTree(syntax, config, language, add);
@@ -271,14 +297,16 @@ export function finalizeReport(files, findings, config, metadata = {}) {
       JSON.stringify({
         engine: 'native-quality-v1',
         parser:
-          'web-tree-sitter@0.20.8/tree-sitter-wasms@0.1.13/cmake-native-v1',
+          'web-tree-sitter@0.20.8/tree-sitter-wasms@0.1.13/cmake-native-v2',
         rules: config.rules,
         customRules: config.customRules,
         failOn: config.failOn,
       })
     ),
     files,
-    incomplete: sorted.some((entry) => entry.ruleId === 'syntax'),
+    incomplete: sorted.some((entry) =>
+      ['syntax', 'unsupported-analysis'].includes(entry.ruleId)
+    ),
     findings: sorted,
     summary: {
       files: files.length,

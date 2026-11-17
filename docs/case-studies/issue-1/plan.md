@@ -54,8 +54,14 @@ belongs inline in this PR, and the subsequent repository move is explicitly late
 - [x] Verify the sixth exact candidate, both native architectures and all six workflows.
 - [x] Draft pinned private shared-library downloads, retained notices, loader resolution and managed-tree verification.
 - [x] Reproduce and fix missing Bash prerequisite, changing toolchains, duplicate coverage/diagnostic JSON and malformed TAP records.
-- [ ] Verify the seventh exact candidate and both native architectures; collect all same-revision results.
-- [ ] Complete downloadable shared-library dependencies and the remaining shell diagnostic inventory.
+- [x] Verify the seventh exact candidate and both native architectures; collect all same-revision results, five runtime failures and the macOS Bun capacity cancellation.
+- [x] Verify downloadable private shared-library dependencies on native amd64 and arm64 at a764ae6.
+- [x] Preserve Windows drive-prefix and macOS staging-root failure logs; reproduce and draft portable path fixes without weakening assertions.
+- [x] Implement original CMake literal arity, structural complexity, syntax refusals and unsupported-expansion reporting; compare finite scripts against CMake 3.28.3.
+- [x] Add CMake evolution and custom-rule refusal, version the methodology and preserve existing-baseline migration requirements.
+- [x] Implement tool-free command help/version discovery with original public-contract regressions.
+- [ ] Verify and review the eighth exact candidate, push once after every seventh-candidate CI result and collect all new CI results.
+- [ ] Complete the remaining shell diagnostic inventory.
 - [ ] Complete remaining language semantics and competitor/proprietary documented cases.
 - [ ] Update PR title/body, preserve Fixes #1, mark ready after verification.
 

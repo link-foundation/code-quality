@@ -130,11 +130,29 @@ describe('private native runtime', () => {
           await readFile(join(destination, 'licenses/common/GPL-3'), 'utf8'),
           'License fixture'
         );
+        // macOS exposes /var through /private/var. Reproduce that ancestor
+        // alias on every Unix runner without weakening the escape assertions.
+        const alias = join(root, 'staging-alias');
+        await symlink(staging, alias, 'dir');
+        const throughAlias = join(root, 'through-alias');
+        assert.deepEqual(
+          await collectRuntime(
+            alias,
+            throughAlias,
+            [{ name: 'example' }],
+            'x64'
+          ),
+          ['libexample.so.1']
+        );
+        assert.equal(
+          await readFile(join(throughAlias, 'lib/libexample.so.1'), 'utf8'),
+          'original native bytes'
+        );
         await writeFile(join(root, 'outside'), 'outside');
         await symlink(join(root, 'outside'), join(libraries, 'libescape.so.1'));
         await assert.rejects(
           collectRuntime(
-            staging,
+            alias,
             join(root, 'refused'),
             [{ name: 'example' }],
             'x64'

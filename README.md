@@ -5,8 +5,9 @@ as a CLI, typed JavaScript library, and HTTP server with a Docker image.
 
 Native JavaScript orchestrates pinned WASM parsers for JavaScript/TypeScript/TSX,
 Rust, Python, Go, C#, Java, C/C++, PHP and Bash. An original CMake adapter covers
-command/bracket/block syntax. Checks cover syntax, size, complexity, parameters,
-structural duplicates, whitespace, risky dynamic execution and literal credentials.
+command/bracket/block syntax and literal function metrics. Checks cover syntax,
+size, complexity, parameters, structural duplicates, whitespace, risky dynamic
+execution and literal credentials.
 These are structural heuristics, not full compiler or security analysis.
 
 ## Quick Start
@@ -102,9 +103,11 @@ node bin/code-quality.js qa ./examples/code-quality/shell --format json
 ```
 
 `tools install <new-directory>` downloads the pinned Linux x64/arm64 shell
-executables without sudo. The host supplies their documented shared libraries.
-The repository also provides a consumer GitHub Action with automatic PR-base
-baseline enforcement. See [tool installation and Action usage](docs/shell-toolchain.md).
+executables and private kcov libraries without sudo. The host supplies GNU Bash
+5.2 or newer, glibc 2.36 or newer and Python 3. `help`, `version` and each command's
+`--help` work without a project or external tools. The repository also provides
+a consumer GitHub Action with automatic PR-base baseline enforcement.
+See [tool installation and Action usage](docs/shell-toolchain.md).
 
 Shell QA measures syntax, lint, a complete passing control suite, kcov Codecov JSON and every
 eligible original boolean/comparison/binary-literal mutant. It refuses partial
@@ -161,6 +164,13 @@ It tracks syntax identities across unique content/name/structure matches, counts
 repeated normalized edits and attaches commit/path evidence to suggestions.
 Ambiguous matches become additions/deletions. Frequency and complexity changes
 are observational evidence; suggestions require review.
+
+CMake metrics count literal formal parameters and one decision for each `if`,
+`elseif`, `foreach` and `while` in that definition, excluding nested definitions.
+Unquoted variable expansion can change arity: those parameters are `null` and the
+report is incomplete, so baseline creation and evolution refuse them. Dynamic
+definition names also require unsupported evaluation. See [the CMake contract](docs/cmake-analysis.md)
+for source grammar, methodology changes and semantic limits.
 
 See the [case study](docs/case-studies/issue-1/README.md),
 [competitor matrix](docs/case-studies/issue-1/competitors.md), and

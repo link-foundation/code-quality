@@ -38,6 +38,11 @@
       "path": "docs/case-studies/issue-1/data/shell-runtime-pins.json",
       "sha256": "8131edcba8023c982ba7bcef5c1f2dd44fb8f75f38efc2ed92f60abc23899912",
       "provenance": "Independent Debian HTTPS package indexes; unsigned local metadata research, not competitor code"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/cmake-contract-observations.json",
+      "sha256": "e525cdf286b86d848160ccd12458195c8ebf39c46bc8348c0cffa6d1b846705c",
+      "provenance": "Original finite scripts executed with CMake 3.28.3 using 3.20 policies; twenty syntax cases and ten paired minimum-arity cases; no project build or upstream source inspection"
     }
   ],
   "primarySources": [
@@ -104,7 +109,19 @@
     {
       "title": "Linux dynamic loader library-path contract",
       "url": "https://manpages.debian.org/bookworm/manpages/ld.so.8.en.html"
+    },
+    {
+      "title": "CMake public language grammar",
+      "url": "https://cmake.org/cmake/help/latest/manual/cmake-language.7.html"
+    },
+    {
+      "title": "CMake function formal arguments",
+      "url": "https://cmake.org/cmake/help/latest/command/function.html"
+    },
+    {
+      "title": "CMake condition evaluation",
+      "url": "https://cmake.org/cmake/help/latest/command/if.html"
     }
   ],
-  "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. Tests and engine source are original. External dependencies retain upstream licenses."
+  "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. CMake probes use public official language/function/condition documentation and original finite scripts. Tests and engine source are original. External dependencies retain upstream licenses."
 }

@@ -6,16 +6,16 @@
     "carriedBehavior": [],
     "unsupported": [
       "Compiler/type semantics",
-      "CMake semantic metrics",
+      "CMake project evaluation, expansion-derived metrics and tree-rule compatibility",
       "Exhaustive competitor documented cases"
     ]
   },
   "nativeAdapters": [
     {
-      "id": "cmake-native-v1",
+      "id": "cmake-native-v2",
       "status": "partial",
-      "evidence": "tests/quality-core.test.js",
-      "limits": "Command/bracket/block syntax only; complexity/parameter metrics unsupported"
+      "evidence": "tests/quality-cmake.test.js",
+      "limits": "Literal arity and structural decisions only; expanded headers and applicable custom tree rules refuse incomplete analysis; no project evaluation or Tree-sitter node API"
     },
     {
       "id": "external-command-v1",
@@ -89,8 +89,12 @@
       "id": "language-semantics",
       "required": true,
       "status": "partial",
-      "evidence": ["tests/quality-core.test.js"],
-      "description": "No full compiler/type/preprocessor semantics; CMake metrics are unsupported"
+      "evidence": [
+        "tests/quality-core.test.js",
+        "tests/quality-cmake.test.js",
+        "docs/cmake-analysis.md"
+      ],
+      "description": "No full compiler/type/preprocessor or CMake project semantics; literal CMake metrics verified, expansion-derived metrics refuse incomplete analysis"
     },
     {
       "id": "competitor-parity",
@@ -125,9 +129,10 @@
         "tests/quality-runtime.test.js",
         "tests/quality-shell-version.test.js",
         "tests/quality-shell-diagnostics.test.js",
-        "docs/shell-diagnostics.md"
+        "docs/shell-diagnostics.md",
+        "tests/quality-cli-help.test.js"
       ],
-      "description": "Native amd64/arm64 QA, consumer Action and independent baseline import verified at dbbcce7; private-library downloads, Bash prerequisite and stricter diagnostics drafted; new arm64 library validation and exhaustive documented cases remain unfinished"
+      "description": "Native amd64/arm64 private-library QA, consumer Action and independent baseline import pass at a764ae6; Bash prerequisite and stricter diagnostics verified; tool-free CLI discovery drafted, exhaustive documented cases and detailed per-command help remain unfinished"
     }
   ]
 }

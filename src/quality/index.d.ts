@@ -38,7 +38,8 @@ export interface Abstraction {
   end: number;
   startLine: number;
   endLine: number;
-  parameters: number;
+  /** Null when CMake formal arity needs unevaluated variable expansion. */
+  parameters: number | null;
   complexity: number;
   hash: string;
   shape: string;
