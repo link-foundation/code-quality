@@ -44,8 +44,11 @@ belongs inline in this PR, and the subsequent repository move is explicitly late
 - [x] Preserve eight runtime failure logs and the queued macOS Bun capacity cancellation.
 - [x] Fix the five reproduced template test assumptions without removing assertions.
 - [x] Implement and verify strict atomic baseline persistence, target-revision gates and persistent fresh report bundles.
-- [ ] Verify and review the third exact candidate, push once and collect all CI results.
-- [ ] Complete explicit shell migration, file selection, independent check commands, parallel scheduling, downloadable amd64/arm64 tools, Action integration, raw coverage artifacts and early-stop Bats contracts.
+- [x] Verify and review the third exact candidate, push once and collect all CI results.
+- [x] Implement shell migration, file selection, independent check commands, bounded scheduling, raw coverage artifacts and early-stop Bats contracts.
+- [x] Verify the reviewed glob dependency patch, registry signatures, bounded regression and frozen npm/Deno graph resolutions.
+- [ ] Verify and review the fourth exact candidate, push once and collect every CI result.
+- [ ] Complete downloadable amd64/arm64 tools, consumer Action, native arm64/kcov 43 acceptance and the remaining shell diagnostic inventory.
 - [ ] Complete remaining language semantics and competitor/proprietary documented cases.
 - [ ] Update PR title/body, preserve Fixes #1, mark ready after verification.
 

@@ -114,6 +114,23 @@ This prevents a PR from accepting a new finding or lowering a floor locally and
 bypassing the target baseline. With this option, the baseline path must be inside
 the project root; the default is `quality-baseline.json` there. An explicit
 `--baseline <file>` keeps its existing working-directory-relative meaning.
+`--baseline-path <file>` explicitly selects a root-relative path.
+
+`lint`, `test`, `coverage` and `mutation` run independent shell stages with only
+their required tools; these partial measurements cannot establish a QA baseline.
+`baseline check` performs fresh complete QA and checks both baseline gates.
+Repeat `--script <path>` and `--test <path>` to select known project files.
+`--jobs 1` is the resource-conscious default; `--jobs auto` uses at most two
+workers and explicit counts are bounded to four. Results retain source order,
+and scheduling does not change the methodology fingerprint. Bats 1.14 or newer
+stops mutants at the first assertion/setup/teardown failure; older Bats runs the
+complete suite. Controls and coverage always require every planned test.
+
+For a reviewed incompatible method or file inventory, use
+`baseline-update --migrate "explanation"`. The baseline retains an audit record
+with the explanation and previous baseline digest. Comparable working and
+committed floors cannot decrease, even with `--migrate`. Selected test paths,
+tool versions/digests and execution settings are part of the fingerprint.
 
 Shell QA and baseline updates save fresh evidence under `<root>/quality-reports/`,
 including failures before measurement completes. `--reports <directory>` chooses
@@ -122,8 +139,9 @@ its own directory with JSON, text, SARIF when analysis completed, diagnostic JSO
 and a manifest. `latest.json` points to the last saved run and states `complete`
 and `passed`. Incomplete checks publish a failed manifest; report-write errors
 return status 2. Check the command status as well as the manifest. Runs
-are retained for review; consumers can archive them. Raw kcov HTML/Cobertura is
-not yet preserved. Baseline writes use atomic replacement, and `--create` never
+are retained for review; consumers can archive them. Raw kcov HTML, Cobertura,
+JSON and supporting resources are preserved under each run's `coverage/`
+directory (128 files, 16 MiB per file, 32 MiB total). Baseline writes use atomic replacement, and `--create` never
 overwrites a concurrently created baseline. Baseline JSON is bounded to 1 MiB.
 Console reports still go to stdout or `--output`.
 Set `CODE_QUALITY_DEBUG=1` to trace subprocess argv, duration and bounded output

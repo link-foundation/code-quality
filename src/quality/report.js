@@ -1,6 +1,7 @@
 import { mkdir, mkdtemp, lstat } from 'node:fs/promises';
-import { join, basename } from 'node:path';
+import { join, basename, dirname } from 'node:path';
 import { atomicWriteFile } from './persistence.js';
+import { validateArtifacts } from './artifacts.js';
 
 function sarifLocation(entry) {
   return {
@@ -55,6 +56,9 @@ export function formatReport(report, format = 'text') {
   for (const failure of report.baseline?.failures || []) {
     lines.push(`baseline: ${failure}`);
   }
+  for (const [name, value] of Object.entries(report.metrics || {})) {
+    lines.push(`${name}: ${value}`);
+  }
   lines.push(
     `${report.summary.files} files, ${report.summary.errors} errors, ${report.summary.warnings} warnings; ${report.passed ? 'passed' : 'failed'}`
   );
@@ -85,7 +89,12 @@ function reportFiles(current, error) {
   return files;
 }
 
-export async function saveReport(report, directory, { error } = {}) {
+export async function saveReport(
+  report,
+  directory,
+  { error, artifacts = {} } = {}
+) {
+  const raw = validateArtifacts(artifacts);
   await mkdir(directory, { recursive: true });
   if (!(await lstat(directory)).isDirectory()) {
     throw new Error('Reports path must be a directory, not a symlink');
@@ -102,12 +111,17 @@ export async function saveReport(report, directory, { error } = {}) {
     }
     await atomicWriteFile(join(run, name), content, { create: true });
   }
+  for (const [name, content] of raw) {
+    const destination = join(run, name);
+    await mkdir(dirname(destination), { recursive: true });
+    await atomicWriteFile(destination, content, { create: true });
+  }
   const manifest = {
     schemaVersion: 1,
     run: basename(run),
     complete: Boolean(current && !current.incomplete && !error),
     passed: Boolean(current?.passed && !current.incomplete && !error),
-    files: Object.keys(files),
+    files: [...Object.keys(files), ...raw.map(([name]) => name)],
   };
   const content = `${JSON.stringify(manifest, null, 2)}\n`;
   await atomicWriteFile(join(run, 'manifest.json'), content, { create: true });

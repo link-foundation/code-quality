@@ -116,6 +116,7 @@ export interface Baseline {
   files: string[];
   findings: string[];
   metrics: Record<string, number>;
+  migrations?: { reason: string; previous: string }[];
 }
 export interface ToolStatus {
   id: string;
@@ -205,7 +206,11 @@ export function checkBaseline(
   report: Report,
   baseline: Baseline
 ): { passed: boolean; failures: string[] };
-export function updateBaseline(report: Report, previous: Baseline): Baseline;
+export function updateBaseline(
+  report: Report,
+  previous: Baseline,
+  options?: { migrate?: string; committed?: Baseline }
+): Baseline;
 export function readGitBaseline(
   root: string,
   options: { ref: string; path?: string }
@@ -220,7 +225,7 @@ export interface ReportManifest {
 export function saveReport(
   report: Report | null | undefined,
   directory: string,
-  options?: { error?: Error }
+  options?: { error?: Error; artifacts?: Record<string, string | Uint8Array> }
 ): Promise<ReportManifest>;
 export function measurementFingerprint(
   files: FileAnalysis[],
@@ -247,7 +252,10 @@ export function parseLcov(source: string): {
   linePercent: number;
   files: string[];
 };
-export function parseTap(source: string): { total: number; failed: number };
+export function parseTap(
+  source: string,
+  options?: { allowAbort?: boolean; expectedTotal?: number }
+): { total: number; failed: number; aborted?: true; executed?: number };
 export function parseKcov(source: unknown): {
   total: number;
   covered: number;
@@ -268,7 +276,16 @@ export function shellMutants(
 ): Promise<ShellMutant[]>;
 export function shellQuality(
   root: string,
-  options?: { config?: Config; timeoutMs?: number; maxMutants?: number }
+  options?: {
+    config?: Config;
+    timeoutMs?: number;
+    maxMutants?: number;
+    stage?: 'qa' | 'lint' | 'test' | 'coverage' | 'mutation';
+    scripts?: string[];
+    tests?: string[];
+    jobs?: 'auto' | number;
+    onCoverage?: (directory: string) => Promise<void> | void;
+  }
 ): Promise<Report & { measurement: unknown; metrics: Record<string, number> }>;
 export function extractEvolution(
   root: string,

@@ -67,7 +67,29 @@ function validateReport(report) {
   if (report.incomplete || report.errors?.length) {
     throw new Error('Incomplete or failed reports cannot establish a baseline');
   }
+  if (report.measurement?.stage && report.measurement.stage !== 'qa') {
+    throw new Error('Independent shell stages cannot establish a QA baseline');
+  }
   validateMetrics(report.metrics ?? {});
+}
+
+function validateMigrations(migrations) {
+  if (!Array.isArray(migrations) || migrations.length > 100) {
+    throw new Error('Baseline migrations must be a bounded audit history');
+  }
+  for (const entry of migrations) {
+    requireObject(entry, 'Baseline migration');
+    if (
+      Object.keys(entry).sort().join(',') !== 'previous,reason' ||
+      typeof entry.reason !== 'string' ||
+      !entry.reason.trim() ||
+      entry.reason.length > 1024 ||
+      typeof entry.previous !== 'string' ||
+      !/^[a-f0-9]{64}$/.test(entry.previous)
+    ) {
+      throw new Error('Invalid baseline migration audit record');
+    }
+  }
 }
 
 export function validateBaseline(baseline) {
@@ -79,9 +101,14 @@ export function validateBaseline(baseline) {
     !baseline.files.length ||
     Object.keys(baseline).some(
       (key) =>
-        !['schemaVersion', 'method', 'files', 'findings', 'metrics'].includes(
-          key
-        )
+        ![
+          'schemaVersion',
+          'method',
+          'files',
+          'findings',
+          'metrics',
+          'migrations',
+        ].includes(key)
     )
   ) {
     throw new Error('Invalid baseline');
@@ -89,6 +116,9 @@ export function validateBaseline(baseline) {
   validateStrings(baseline.files, 'Baseline files', 1000, true);
   validateStrings(baseline.findings, 'Baseline findings', 10_000);
   validateMetrics(baseline.metrics);
+  if (baseline.migrations !== undefined) {
+    validateMigrations(baseline.migrations);
+  }
   return baseline;
 }
 
@@ -190,12 +220,66 @@ export function checkBaseline(report, baseline) {
   return { passed: failures.length === 0, failures };
 }
 
-export function updateBaseline(report, previous) {
+function advanceBaseline(report, previous, migrate) {
+  validateReport(report);
+  validateBaseline(previous);
+  if (
+    migrate !== undefined &&
+    (typeof migrate !== 'string' || !migrate.trim() || migrate.length > 1024)
+  ) {
+    throw new Error(
+      'Migration requires a nonblank explanation of at most 1024 characters'
+    );
+  }
+  const incompatible =
+    report.method !== previous.method ||
+    JSON.stringify(report.files.map((entry) => entry.path).sort()) !==
+      JSON.stringify([...previous.files].sort());
+  if (incompatible && migrate !== undefined) {
+    const migrations = [
+      ...(previous.migrations || []),
+      {
+        reason: migrate.trim(),
+        previous: hash(JSON.stringify(previous)),
+      },
+    ];
+    validateMigrations(migrations);
+    return { ...createBaseline(report), migrations };
+  }
   const gate = checkBaseline(report, previous);
   if (!gate.passed) {
     throw new Error(`Baseline cannot be weakened: ${gate.failures.join('; ')}`);
   }
-  return createBaseline(report);
+  return {
+    ...createBaseline(report),
+    ...(previous.migrations ? { migrations: previous.migrations } : {}),
+  };
+}
+
+export function updateBaseline(report, previous, { migrate, committed } = {}) {
+  let target;
+  if (committed) {
+    try {
+      target = advanceBaseline(report, committed, migrate);
+    } catch (error) {
+      throw new Error(`Committed baseline: ${error.message}`, { cause: error });
+    }
+  }
+  const updated = advanceBaseline(report, previous, migrate);
+  const migrations = [
+    ...(target?.migrations || []),
+    ...(updated.migrations || []),
+  ];
+  if (!migrations.length) {
+    return updated;
+  }
+  const distinct = [
+    ...new Map(
+      migrations.map((entry) => [JSON.stringify(entry), entry])
+    ).values(),
+  ];
+  validateMigrations(distinct);
+  return { ...updated, migrations: distinct };
 }
 
 export function measurementFingerprint(files, methodology) {

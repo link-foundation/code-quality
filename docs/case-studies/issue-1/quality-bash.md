@@ -8,30 +8,45 @@ Its implementation and tests were not inspected. Original
 fixtures use public behavior descriptions. External Bash/ShellCheck/Bats/kcov are
 executed as separate tools and retain their licenses.
 
-| Documented contract                                                                    | Implemented behavior / evidence                                                                                                      | Remaining gap                                                                                    |
-| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
-| Syntax, lint, Bats control, coverage and mutation all required                         | `shellQuality`, injected tests and real Linux Bash 5.2.21 / ShellCheck 0.11.0 / Bats 1.2.1 / kcov 42 acceptance                      | Other tool/platform combinations remain unverified                                               |
-| Coverage 3/5, mutation 2/3 public measurement example                                  | Injected Codecov JSON/TAP pipeline asserts 60 and 66.66; independent real fixtures measure 75% coverage and 100 / 66.66 mutation     | Original fixtures, not the upstream real fixture                                                 |
-| Baseline created only after measurement, explicit creation, updates never lower floors | CLI baseline-update --create after passing lint/control; atomic locked writes; monotonic gates                                       | Different versioned baseline schema; no upstream import/migration                                |
-| Every measured source represented; empty/malformed data fail                           | Exact Codecov/source inventory and integer hit counts; LCOV API validates DA/LF/LH; missing TAP fails                                | Full upstream diagnostic case inventory not replicated                                           |
-| Timeouts/tool errors are not killed mutants                                            | Bounded subprocess refuses timeout/output budget; completed TAP required                                                             | All setup/teardown/early-stop Bats semantics not replicated; this engine requires complete tests |
-| Include semantic execution settings in baseline, exclude scheduling jobs               | Parser/operator/tool versions, executable SHA-256, native rules and timeout hashed                                                   | No configurable parallel jobs; no performance equivalence demonstrated                           |
-| Read committed target-branch baseline in CI                                            | --baseline-ref additionally checks a bounded regular Git blob without checkout; nested and literal paths tested                      | Automatic PR-base selection/Action absent                                                        |
-| Reports under quality-reports                                                          | Default persistent fresh run bundles, JSON/text/SARIF/diagnostics, atomic latest manifest, incomplete runs never reuse green results | Raw kcov HTML/Cobertura preservation absent                                                      |
-| Pinned checked toolchain downloads, doctor                                             | Doctor inspects installed versions and hashes executable bytes; CI checksums upstream kcov 42 amd64                                  | Full downloadable amd64/arm64 distribution absent                                                |
-| Linux amd64/arm64 acceptance                                                           | Portable JS unit matrix; real Linux CI                                                                                               | Real native arm64 full acceptance not established                                                |
-| Symlinks/special/comma coverage paths unsupported                                      | Explicit refusals, isolated owned mutant copies                                                                                      | Complete upstream path edge-case audit unfinished                                                |
-| Shell coverage excludes embedded awk/jq/etc                                            | kcov Bash only, explicitly documented                                                                                                | No claim to measure embedded-language coverage                                                   |
-| Trusted project execution, no sandbox                                                  | Explicit qa/--tools; HTTP never executes config adapters                                                                             | Project tests remain trusted code running as current user                                        |
+| Documented contract                                                                    | Implemented behavior / evidence                                                                                                                       | Remaining gap                                                                                                     |
+| -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Syntax, lint, Bats control, coverage and mutation all required                         | `shellQuality`, injected tests and real Linux Bash 5.2.21 / ShellCheck 0.11.0 / Bats 1.14.0 / kcov 42 acceptance                                      | Other tool/platform combinations remain unverified                                                                |
+| Coverage 3/5, mutation 2/3 public measurement example                                  | Injected Codecov JSON/TAP pipeline asserts 60 and 66.66; independent real fixtures measure 75% coverage and 100 / 66.66 mutation                      | Original fixtures, not the upstream real fixture                                                                  |
+| Baseline created only after measurement, explicit creation, updates never lower floors | CLI baseline-update --create after passing lint/control; atomic locked writes; monotonic gates                                                        | Different versioned baseline schema; audited incompatible migration supported, upstream schema import absent      |
+| Every measured source represented; empty/malformed data fail                           | Exact Codecov/source inventory and integer hit counts; LCOV API validates DA/LF/LH; missing TAP fails                                                 | Full upstream diagnostic case inventory not replicated                                                            |
+| Timeouts/tool errors are not killed mutants                                            | Bounded subprocess refuses timeout/output budget; complete controls plus strict planned mutant assertion prefixes; exit 1 required for killed mutants | Actual Bats 1.14 assertion/setup/teardown/setup_file abort cases pass; broader diagnostic inventory unfinished    |
+| Include semantic execution settings in baseline, exclude scheduling jobs               | Parser/operator/tool versions, executable SHA-256, selected test inventory, stage, native rules and timeout hashed                                    | Bounded jobs auto or 1–4 supported; no performance equivalence demonstrated                                       |
+| Read committed target-branch baseline in CI                                            | --baseline-ref additionally checks a bounded regular Git blob without checkout; nested and literal paths tested                                       | Automatic PR-base selection/Action absent                                                                         |
+| Reports under quality-reports                                                          | Default persistent fresh run bundles, JSON/text/SARIF/diagnostics, atomic latest manifest, incomplete runs never reuse green results                  | Raw HTML/Cobertura/Codecov artifacts retained within explicit budgets; validated internal kcov alias materialized |
+| Pinned checked toolchain downloads, doctor                                             | Doctor inspects installed versions and hashes executable bytes; CI checksums Bats 1.14, ShellCheck 0.11 and upstream kcov 42 amd64                    | Full downloadable amd64/arm64 distribution absent                                                                 |
+| Linux amd64/arm64 acceptance                                                           | Portable JS unit matrix; real Linux CI                                                                                                                | Real native arm64 full acceptance not established                                                                 |
+| Symlinks/special/comma coverage paths unsupported                                      | Explicit refusals, isolated owned mutant copies                                                                                                       | Complete upstream path edge-case audit unfinished                                                                 |
+| Shell coverage excludes embedded awk/jq/etc                                            | kcov Bash only, explicitly documented                                                                                                                 | No claim to measure embedded-language coverage                                                                    |
+| Trusted project execution, no sandbox                                                  | Explicit qa/--tools; HTTP never executes config adapters                                                                                              | Project tests remain trusted code running as current user                                                         |
 
 Full superiority is unfinished. Missing rows are carried in strict readiness and
 cannot be certified by the passing structural or mocked integration suites.
 
-The released help additionally exposes repeatable script/test selection,
-independent lint/test/coverage/mutation/baseline-check commands, automatic or
-explicit worker counts and a baseline migration explanation. These remain
-unimplemented contracts; a different CLI spelling alone would not be a behavior
-gap. The pinned public tool manifest uses Bats 1.14.0, ShellCheck 0.11.0 and kcov 43
-for Linux amd64 and arm64; this engine's real acceptance currently uses Bats 1.2.1
-and kcov 42 on amd64. Merely hashing installed entry executables does not verify
-all transitive shell helpers or shared libraries.
+The released help also exposes repeatable script/test selection, independent
+lint/test/coverage/mutation/baseline-check commands, automatic or explicit worker
+counts and an explained baseline migration. These now have original behavioral
+regressions in `tests/quality-shell-options.test.js` and
+`tests/quality-baseline-io.test.js`. Compatible methods and file inventories never
+accept lower floors, even with a migration explanation. Selected source and test
+bytes must stay unchanged throughout the measurement. Concurrent mutation workers
+are isolated, preserve result order and all finish before an error is returned.
+
+`experiments/code-quality/bats-abort.mjs` executes actual Bats 1.14 assertion,
+setup, teardown and setup_file failures with an original two-test plan. The QA
+acceptance also exercises two workers, a failing first test, report persistence
+and both original 100%/66.66% mutation fixtures. Raw kcov preservation initially
+failed on its generated `bats` symlink: the corrected reader validates its direct
+internal hash-directory target, materializes the alias and refuses all other
+symlinks. Original regression tests cover the valid alias and escape refusals.
+
+The pinned public tool manifest uses Bats 1.14.0, ShellCheck 0.11.0 and kcov 43
+for Linux amd64 and arm64. This engine's real acceptance uses kcov 42 on amd64;
+complete downloadable toolchains, a consumer Action and real native arm64 QA
+remain unfinished. Merely hashing installed entry executables does not verify
+all transitive shell helpers or shared libraries. Upstream-schema import and the
+complete upstream documented diagnostic inventory also remain unverified.

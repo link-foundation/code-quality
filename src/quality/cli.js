@@ -17,15 +17,18 @@ import {
   readGitBaseline,
   saveReport,
 } from './index.js';
-import { defaultRules, validateConfig } from './config.js';
+import { defaultRules, validateConfig, safePath } from './config.js';
 import { finalizeReport } from './core.js';
 import { hash } from './syntax.js';
 import { atomicWriteFile, readJsonFile, withFileLock } from './persistence.js';
+import { readCoverageArtifacts } from './artifacts.js';
 
 const help = `Usage: code-quality <command> [root] [options]
 Commands:
   check                  Analyze project source (never executes project code)
   qa                     Run trusted Bash syntax, ShellCheck, Bats, coverage and mutation
+  lint | test | coverage | mutation  Run an independent trusted shell stage
+  baseline check         Measure fresh shell QA and enforce the baseline
   baseline-update        Measure fresh shell QA and create/raise a baseline
   evolution              Extract bounded Git file/function/class evolution as JSON
   serve                  Start the JSON API (default 127.0.0.1:3000)
@@ -36,9 +39,13 @@ Options:
   --format <text|json|sarif>  Check/QA report format
   --output <file>         Save output (default stdout)
   --baseline <file>       Require baseline; defaults to quality-baseline.json for qa
+  --baseline-path <file> Root-relative alternative to --baseline
   --baseline-ref <ref>    Also enforce the committed baseline at this Git revision
   --reports <directory>  Save run evidence (default <root>/quality-reports for shell QA)
   --create               Explicitly create a missing baseline
+  --migrate <reason>     Explicit incompatible baseline migration (baseline-update only)
+  --script <path> --test <path>  Select project files (repeatable)
+  --jobs <auto|1..4>     Mutation workers, default 1; scheduling does not change floors
   --tools                Execute adapters in the chosen trusted config
   --from <ref> --to <ref> --max-commits <N>  Evolution history bounds
   --max-mutants <N> --timeout-ms <N>        Shell execution bounds
@@ -48,6 +55,9 @@ Exit status: 0 passed, 1 findings/gate failed, 2 invalid input or incomplete che
 Shell commands and adapters execute trusted code as your user.`;
 
 function parseArgs(argv) {
+  if (argv[0] === 'baseline' && argv[1] === 'check') {
+    argv = ['baseline-check', ...argv.slice(2)];
+  }
   const options = {};
   const positional = [];
   const boolean = new Set(['create', 'tools', 'help', 'version']);
@@ -56,8 +66,13 @@ function parseArgs(argv) {
     'format',
     'output',
     'baseline',
+    'baseline-path',
     'baseline-ref',
     'reports',
+    'migrate',
+    'script',
+    'test',
+    'jobs',
     'from',
     'to',
     'max-commits',
@@ -73,7 +88,8 @@ function parseArgs(argv) {
       continue;
     }
     const key = arg.slice(2);
-    if (Object.hasOwn(options, key)) {
+    const repeatable = ['script', 'test'].includes(key);
+    if (Object.hasOwn(options, key) && !repeatable) {
       throw new Error(`Repeated option: ${arg}`);
     }
     if (boolean.has(key)) {
@@ -83,7 +99,12 @@ function parseArgs(argv) {
       argv[index + 1] &&
       !argv[index + 1].startsWith('--')
     ) {
-      options[key] = argv[++index];
+      const value = argv[++index];
+      if (repeatable) {
+        (options[key] ||= []).push(value);
+      } else {
+        options[key] = value;
+      }
     } else {
       throw new Error(`Unknown option or missing value: ${arg}`);
     }
@@ -130,19 +151,21 @@ async function writeBaseline(report, context, path) {
       throw error;
     }
   }
-  if (context.options['baseline-ref']) {
-    const target = checkBaseline(
-      report,
-      await committedBaseline(context, path)
-    );
-    if (!target.passed) {
-      throw new Error(`Committed baseline: ${target.failures.join('; ')}`);
-    }
+  const committed = context.options['baseline-ref']
+    ? await committedBaseline(context, path)
+    : undefined;
+  if (previous === undefined && context.options.migrate !== undefined) {
+    throw new Error('Migration requires an existing baseline');
   }
   const baseline =
     previous !== undefined
-      ? updateBaseline(report, previous)
-      : createBaseline(report);
+      ? updateBaseline(report, previous, {
+          migrate: context.options.migrate,
+          committed,
+        })
+      : committed
+        ? updateBaseline(report, committed)
+        : createBaseline(report);
   const content = `${JSON.stringify(baseline, null, 2)}\n`;
   if (Buffer.byteLength(content) > 1_048_576) {
     throw new Error('Baseline exceeds byte budget');
@@ -194,7 +217,8 @@ async function baselineGate(report, context) {
     report.baseline.passed &&= target.passed;
   }
   report.passed =
-    report.baseline.passed && (context.command !== 'qa' || report.passed);
+    report.baseline.passed &&
+    (!['qa', 'baseline-check'].includes(context.command) || report.passed);
 }
 
 async function checkCommand(context) {
@@ -209,6 +233,17 @@ async function checkCommand(context) {
   }
   let report;
   let failure;
+  let artifacts = {};
+  context.onCoverage = async (directory) => {
+    artifacts = await readCoverageArtifacts(directory);
+  };
+  if (directory) {
+    const local = relative(resolve(root), resolve(directory))
+      .split(sep)
+      .join('/');
+    context.excludedPaths =
+      local && !local.startsWith('../') && local !== '..' ? [local] : [];
+  }
   try {
     return await measuredCommand(context, (value) => {
       report = value;
@@ -218,7 +253,7 @@ async function checkCommand(context) {
     throw error;
   } finally {
     if (directory) {
-      await saveReport(report, directory, { error: failure });
+      await saveReport(report, directory, { error: failure, artifacts });
     }
   }
 }
@@ -229,6 +264,14 @@ async function measuredCommand(context, measured) {
     config,
     maxMutants: Number(options['max-mutants'] || 100),
     timeoutMs: Number(options['timeout-ms'] || 30_000),
+    stage: ['qa', 'baseline-update', 'baseline-check'].includes(command)
+      ? 'qa'
+      : command,
+    scripts: options.script,
+    tests: options.test,
+    jobs: options.jobs === 'auto' ? 'auto' : Number(options.jobs || 1),
+    onCoverage: context.onCoverage,
+    excludedPaths: context.excludedPaths,
   };
   let report =
     command === 'check'
@@ -242,7 +285,11 @@ async function measuredCommand(context, measured) {
   if (command === 'baseline-update') {
     return baselineCommand(report, context);
   }
-  if (options.baseline || options['baseline-ref'] || command === 'qa') {
+  if (
+    options.baseline ||
+    options['baseline-ref'] ||
+    ['qa', 'baseline-check'].includes(command)
+  ) {
     await baselineGate(report, context);
   }
   await emitOutput(formatReport(report, options.format || 'text'), context);
@@ -309,6 +356,11 @@ async function serveCommand(context) {
 const handlers = {
   check: checkCommand,
   qa: checkCommand,
+  lint: checkCommand,
+  test: checkCommand,
+  coverage: checkCommand,
+  mutation: checkCommand,
+  'baseline-check': checkCommand,
   'baseline-update': checkCommand,
   serve: serveCommand,
   languages: async (context) => {
@@ -365,6 +417,21 @@ export async function runQualityCli(
     }
     context.config = await loadConfig(parsed.options.config);
     validateConfig(context.config);
+    if (context.options['baseline-path']) {
+      if (context.options.baseline) {
+        throw new Error('Choose --baseline or --baseline-path');
+      }
+      context.options.baseline = join(
+        context.root,
+        safePath(context.options['baseline-path'])
+      );
+    }
+    if (
+      context.options.migrate !== undefined &&
+      context.command !== 'baseline-update'
+    ) {
+      throw new Error('--migrate is supported only by baseline-update');
+    }
     return await handler(context);
   } catch (error) {
     stderr(`code-quality: ${error.message}\n`);

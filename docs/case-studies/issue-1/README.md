@@ -129,6 +129,30 @@ rebaselining its own new finding, immutable report bundles and fresh diagnostics
 when measurement fails. These cases address concrete shell contract gaps without
 claiming that full quality-bash parity is finished.
 
+## Third candidate CI investigation
+
+All six workflows at `346b0e6a44b8535b5a20eecff6e906c0a273ed2f` finished
+before the next fix batch. [Checks and release](https://github.com/link-foundation/code-quality/actions/runs/44140636696)
+passed all nine Linux/macOS/Windows Node/Bun/Deno jobs, including the previously
+unacquired macOS Bun leg. [Quality engine](https://github.com/link-foundation/code-quality/actions/runs/44140636617)
+passed real shell QA, package imports, declarations and the non-root API container.
+The workflow, link and example-app workflows passed too. Publication and deploy
+steps retained their existing authorization conditions.
+
+[Security](https://github.com/link-foundation/code-quality/actions/runs/44140636655)
+passed CodeQL but both npm audits found a newly disclosed high-severity picomatch
+advisory. The complete 5,849-line log was preserved before further edits. The
+[dependency review](glob-dependency.md) records immutable source/package provenance,
+a bounded failing-before/passing-after experiment and the compatibility tradeoff
+of the exact reviewed patch. No security gate was weakened.
+
+The fourth draft also adds the finite shell contracts identified by release-help
+research: independent measurements, repeated file selection, isolated bounded
+workers, audited incompatible migration, raw coverage export and Bats 1.14 abort
+semantics. Its real-tool acceptance retains both original fixtures and their
+assertions. The [shell comparison](quality-bash.md) continues to list unimplemented
+distribution, Action and platform cases explicitly.
+
 ## Evolution method and limits
 
 Use a bounded first-parent range (default last 100 commits, hard limit 1000), inspect

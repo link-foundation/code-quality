@@ -14,6 +14,7 @@ import { tmpdir } from 'node:os';
 import {
   analyzeFiles,
   createBaseline,
+  updateBaseline,
   checkBaseline,
   readGitBaseline,
   saveReport,
@@ -27,6 +28,7 @@ import {
 import { runQualityCli } from '../bin/code-quality.js';
 import { runProcess } from '../src/quality/process.js';
 import { itUnless, sandboxed } from './helpers/skip.js';
+import { readCoverageArtifacts } from '../src/quality/artifacts.js';
 
 const clean = [{ path: 'a.js', content: 'export const answer = 42;\n' }];
 async function fixture(fn) {
@@ -59,7 +61,99 @@ async function bundle(directory) {
   return { manifest, path: join(directory, manifest.run) };
 }
 
+describe('kcov report alias', () => {
+  itUnless(
+    process.platform === 'win32' ? 'requires POSIX symlink creation' : null
+  )('materializes only the validated kcov report alias', async () => {
+    await fixture(async (root) => {
+      const target = 'bats.0123456789abcdef';
+      await mkdir(join(root, target));
+      await writeFile(join(root, target, 'index.html'), '<html>report</html>');
+      await symlink(join(root, target), join(root, 'bats'));
+      const artifacts = await readCoverageArtifacts(root);
+      assert.equal(
+        artifacts['coverage/bats/index.html'].toString(),
+        '<html>report</html>'
+      );
+      assert.deepEqual(
+        artifacts['coverage/bats/index.html'],
+        artifacts[`coverage/${target}/index.html`]
+      );
+      await symlink(join(root, target), join(root, 'unrecognized'));
+      await assert.rejects(readCoverageArtifacts(root), /Unsupported/);
+      await rm(join(root, 'unrecognized'));
+      await rm(join(root, 'bats'));
+      await symlink(join(root, '..'), join(root, 'bats'));
+      await assert.rejects(readCoverageArtifacts(root), /report alias/);
+    });
+  });
+});
+
 describe('baseline persistence and committed floors', () => {
+  it('requires an audited incompatible migration and never lowers compatible floors', async () => {
+    const report = {
+      ...(await analyzeFiles(clean)),
+      metrics: { linePercent: 80 },
+    };
+    const previous = createBaseline(report);
+    const lower = { ...report, metrics: { linePercent: 79 } };
+    assert.throws(
+      () =>
+        updateBaseline(lower, previous, {
+          migrate: 'Trying to lower the same metric',
+        }),
+      /cannot be weakened/
+    );
+    const different = { ...lower, method: `${report.method}-new-tool` };
+    assert.throws(() => updateBaseline(different, previous), /migration/);
+    for (const migrate of ['', ' ', 'a'.repeat(1025), true]) {
+      assert.throws(
+        () => updateBaseline(different, previous, { migrate }),
+        /explanation/
+      );
+    }
+    const migrated = updateBaseline(different, previous, {
+      migrate: 'Reviewed new measurement tool',
+    });
+    const audited = updateBaseline(different, createBaseline(different), {
+      migrate: 'Review committed method migration',
+      committed: previous,
+    });
+    assert.equal(
+      audited.migrations[0].reason,
+      'Review committed method migration'
+    );
+    assert.match(audited.migrations[0].previous, /^[a-f0-9]{64}$/);
+    assert.equal(migrated.metrics.linePercent, 79);
+    assert.deepEqual(
+      migrated.migrations.map((entry) => entry.reason),
+      ['Reviewed new measurement tool']
+    );
+    assert.match(migrated.migrations[0].previous, /^[a-f0-9]{64}$/);
+    assert.equal(checkBaseline(different, migrated).passed, true);
+    assert.deepEqual(
+      updateBaseline(different, migrated).migrations,
+      migrated.migrations
+    );
+    assert.throws(
+      () =>
+        checkBaseline(different, {
+          ...migrated,
+          migrations: [{ reason: '', previous: 'bad' }],
+        }),
+      /migration/
+    );
+    // A working baseline can already use the new method while a committed
+    // baseline with that same method still enforces its stronger floor.
+    assert.throws(
+      () =>
+        updateBaseline(different, migrated, {
+          migrate: 'Cannot bypass a comparable committed floor',
+          committed: { ...migrated, metrics: { linePercent: 90 } },
+        }),
+      /cannot be weakened/
+    );
+  });
   it('rejects malformed methods, inventories, fingerprints and metric objects', async () => {
     const report = await analyzeFiles(clean);
     const baseline = createBaseline(report);
@@ -342,6 +436,52 @@ describe('bounded Git baseline reads', () => {
 });
 
 describe('fresh persistent report evidence', () => {
+  it('preserves bounded raw HTML, Cobertura and JSON beside the report', async () =>
+    fixture(async (root) => {
+      const directory = join(root, 'raw');
+      await mkdir(join(directory, 'bats'), { recursive: true });
+      for (const [name, content] of Object.entries({
+        'index.html': '<html>Original coverage</html>',
+        'cobertura.xml': '<coverage/>',
+        'codecov.json': '{"coverage":{}}',
+      })) {
+        await writeFile(join(directory, 'bats', name), content);
+      }
+      const artifacts = await readCoverageArtifacts(directory);
+      const reports = join(root, 'reports');
+      const manifest = await saveReport(await analyzeFiles(clean), reports, {
+        artifacts,
+      });
+      assert.ok(manifest.files.includes('coverage/bats/cobertura.xml'));
+      assert.equal(
+        await readFile(
+          join(reports, manifest.run, 'coverage/bats/index.html'),
+          'utf8'
+        ),
+        '<html>Original coverage</html>'
+      );
+      await assert.rejects(
+        () =>
+          saveReport(undefined, reports, { artifacts: { '../escape': 'bad' } }),
+        /relative portable/
+      );
+      await assert.rejects(
+        () =>
+          saveReport(undefined, reports, {
+            artifacts: { 'report.json': 'bad' },
+          }),
+        /under coverage/
+      );
+      await assert.rejects(
+        () =>
+          saveReport(undefined, reports, {
+            artifacts: { 'coverage/large': Buffer.alloc(16_777_217) },
+          }),
+        /byte budget/
+      );
+      assert.deepEqual((await bundle(reports)).manifest, manifest);
+    }));
+
   it('keeps fresh analysis and failure status when a baseline is malformed', async () =>
     fixture(async (root) => {
       await writeFile(join(root, 'a.js'), clean[0].content);

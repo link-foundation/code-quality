@@ -98,8 +98,14 @@
       "id": "quality-bash-parity",
       "required": true,
       "status": "partial",
-      "evidence": ["docs/case-studies/issue-1/quality-bash.md"],
-      "description": "Distribution, Action, migration/raw coverage, platform and test-runner semantics remain incomplete"
+      "evidence": [
+        "docs/case-studies/issue-1/quality-bash.md",
+        "tests/quality-shell-options.test.js",
+        "tests/quality-baseline-io.test.js",
+        "experiments/code-quality/bats-abort.mjs",
+        "experiments/code-quality/real-shell.mjs"
+      ],
+      "description": "Downloadable kcov 43 toolchain, consumer Action, native arm64 acceptance and exhaustive documented diagnostics remain incomplete"
     }
   ]
 }

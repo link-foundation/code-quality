@@ -1,15 +1,15 @@
 import { mkdtemp, rm, cp, readFile, lstat, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join, relative, resolve } from 'node:path';
+import { tmpdir, availableParallelism } from 'node:os';
+import { join, relative, resolve, sep } from 'node:path';
 import { readProject } from './project.js';
 import { analyzeFiles, finalizeReport } from './core.js';
-import { validateConfig, positiveInteger } from './config.js';
+import { validateConfig, positiveInteger, safePath } from './config.js';
 import { runProcess } from './process.js';
 import { doctor, runAdapter } from './adapters.js';
 import { parseKcov } from './coverage.js';
 import { withSyntax, walk, hash } from './syntax.js';
 
-export function parseTap(source) {
+function tapPlan(source, expectedTotal) {
   const lines = source.split(/\r?\n/);
   const plans = lines.filter((line) => /^1\.\.\d+$/.test(line));
   const tests = lines.filter((line) => /^(?:not )?ok(?:\s|$)/.test(line));
@@ -18,20 +18,37 @@ export function parseTap(source) {
     plans.length !== 1 ||
     !Number.isSafeInteger(count) ||
     count < 1 ||
-    count !== tests.length ||
+    tests.length < 1 ||
+    tests.length > count ||
+    (expectedTotal !== undefined && count !== expectedTotal) ||
     /Bail out!|#\s*(?:skip|todo)\b/i.test(source)
   ) {
     throw new Error('Incomplete, skipped or malformed TAP test run');
   }
+  return { tests, count };
+}
+
+export function parseTap(source, { allowAbort = false, expectedTotal } = {}) {
+  const { tests, count } = tapPlan(source, expectedTotal);
   const numbers = tests.map((line) =>
     Number(line.match(/^(?:not )?ok\s+(\d+)\b/)?.[1])
   );
   if (numbers.some((number, index) => number !== index + 1)) {
     throw new Error('TAP test numbers must be sequential');
   }
+  const aborted = tests.length !== count;
+  if (
+    aborted &&
+    (!allowAbort ||
+      !tests.at(-1).startsWith('not ok') ||
+      tests.slice(0, -1).some((line) => line.startsWith('not ok')))
+  ) {
+    throw new Error('Incomplete or malformed TAP assertion prefix');
+  }
   return {
     total: count,
     failed: tests.filter((line) => line.startsWith('not ok')).length,
+    ...(aborted ? { aborted: true, executed: tests.length } : {}),
   };
 }
 
@@ -83,13 +100,20 @@ export async function shellMutants(file, max = 100) {
   });
 }
 
-async function copyWorkspace(source, destination) {
+async function copyWorkspace(source, destination, excludedPaths = []) {
   let bytes = 0;
   let count = 0;
   await cp(source, destination, {
     recursive: true,
     filter: async (path) => {
-      const local = relative(source, path);
+      const local = relative(source, path).split(sep).join('/');
+      if (
+        excludedPaths.some(
+          (excluded) => local === excluded || local.startsWith(`${excluded}/`)
+        )
+      ) {
+        return false;
+      }
       if (
         local
           .split(/[\\/]/)
@@ -122,7 +146,7 @@ async function copyWorkspace(source, destination) {
   });
 }
 
-async function controlRun(absolute, sources, tests, timeoutMs, run) {
+async function controlRun(absolute, sources, tests, timeoutMs, run, stage) {
   for (const file of sources) {
     const syntax = await run('bash', ['-n', '--', file.path], {
       cwd: absolute,
@@ -134,21 +158,26 @@ async function controlRun(absolute, sources, tests, timeoutMs, run) {
       );
     }
   }
-  const lint = await runAdapter(
-    {
-      id: 'shellcheck',
-      command: 'shellcheck',
-      args: [
-        '--format=json',
-        '--external-sources',
-        '--',
-        ...sources.map((file) => file.path),
-      ],
-      format: 'shellcheck',
-      timeoutMs,
-    },
-    { cwd: absolute, run }
-  );
+  const lint = ['qa', 'lint'].includes(stage)
+    ? await runAdapter(
+        {
+          id: 'shellcheck',
+          command: 'shellcheck',
+          args: [
+            '--format=json',
+            '--external-sources',
+            '--',
+            ...sources.map((file) => file.path),
+          ],
+          format: 'shellcheck',
+          timeoutMs,
+        },
+        { cwd: absolute, run }
+      )
+    : [];
+  if (stage === 'lint') {
+    return { lint };
+  }
   const control = await run('bats', ['--tap', ...tests], {
     cwd: absolute,
     timeoutMs,
@@ -165,7 +194,7 @@ async function measureCoverage(
   sources,
   tests,
   workspace,
-  { timeoutMs, totalTests, run }
+  { timeoutMs, totalTests, run, onCoverage }
 ) {
   const coverageDir = join(workspace, 'coverage');
   const coverageRun = await run(
@@ -185,6 +214,7 @@ async function measureCoverage(
   if (coverageRun.code) {
     throw new Error(`kcov failed: ${coverageRun.stderr}`);
   }
+  await onCoverage?.(coverageDir);
   const tap = parseTap(coverageRun.stdout);
   if (tap.failed || tap.total !== totalTests) {
     throw new Error('Incomplete or failed coverage test run');
@@ -208,52 +238,124 @@ async function measureMutants(
   sources,
   tests,
   workspace,
-  { timeoutMs, totalTests, maxMutants, run }
+  { timeoutMs, totalTests, maxMutants, run, jobs, abort, excludedPaths }
 ) {
   const mutants = [];
   for (const file of sources) {
     mutants.push(...(await shellMutants(file, maxMutants + 1)));
+    if (mutants.length > maxMutants) {
+      throw new Error(
+        `Mutation budget exceeded (${mutants.length} > ${maxMutants}); no partial score is accepted`
+      );
+    }
   }
   if (!mutants.length) {
     throw new Error('No eligible shell mutants; mutation score is undefined');
   }
-  if (mutants.length > maxMutants) {
-    throw new Error(
-      `Mutation budget exceeded (${mutants.length} > ${maxMutants}); no partial score is accepted`
-    );
-  }
-  const worktree = join(workspace, 'project');
   let killed = 0;
-  const results = [];
-  for (const mutant of mutants) {
-    await copyWorkspace(absolute, worktree);
-    const source = sources.find((file) => file.path === mutant.path).content;
-    await writeFile(
-      join(worktree, mutant.path),
-      source.slice(0, mutant.start) +
-        mutant.replacement +
-        source.slice(mutant.end)
-    );
-    const result = await run('bats', ['--tap', ...tests], {
-      cwd: worktree,
-      timeoutMs,
-    });
-    const tap = parseTap(result.stdout);
-    if (tap.total !== totalTests || (result.code !== 0 && tap.failed === 0)) {
-      throw new Error(
-        'Mutant test runner failed without a complete assertion result'
-      );
-    }
-    if (tap.failed > 0) {
-      killed++;
-    }
-    results.push({
-      ...mutant,
-      status: tap.failed > 0 ? 'killed' : 'survived',
-    });
-    await rm(worktree, { recursive: true, force: true });
+  const results = new Array(mutants.length);
+  let next = 0;
+  let failure;
+  await Promise.all(
+    Array.from(
+      { length: Math.min(jobs, mutants.length) },
+      async (_, worker) => {
+        const worktree = join(workspace, `project-${worker}`);
+        while (!failure && next < mutants.length) {
+          const index = next++;
+          const mutant = mutants[index];
+          try {
+            await copyWorkspace(absolute, worktree, excludedPaths);
+            const source = sources.find(
+              (file) => file.path === mutant.path
+            ).content;
+            await writeFile(
+              join(worktree, mutant.path),
+              source.slice(0, mutant.start) +
+                mutant.replacement +
+                source.slice(mutant.end)
+            );
+            const result = await run(
+              'bats',
+              ['--tap', ...(abort ? ['--abort'] : []), ...tests],
+              {
+                cwd: worktree,
+                timeoutMs,
+              }
+            );
+            const tap = parseTap(result.stdout, {
+              allowAbort: abort,
+              expectedTotal: totalTests,
+            });
+            if (result.code !== (tap.failed ? 1 : 0)) {
+              throw new Error(
+                'Mutant test runner failed without a complete assertion result'
+              );
+            }
+            if (tap.failed > 0) {
+              killed++;
+            }
+            results[index] = {
+              ...mutant,
+              status: tap.failed > 0 ? 'killed' : 'survived',
+            };
+          } catch (error) {
+            failure ||= error;
+          } finally {
+            try {
+              await rm(worktree, { recursive: true, force: true });
+            } catch (error) {
+              failure ||= error;
+            }
+          }
+        }
+      }
+    )
+  );
+  if (failure) {
+    throw failure;
   }
   return { results, killed, total: mutants.length };
+}
+
+function selectedFiles(files, selection, label) {
+  if (selection === undefined) {
+    return files;
+  }
+  if (
+    !Array.isArray(selection) ||
+    !selection.length ||
+    selection.length > 1000 ||
+    new Set(selection).size !== selection.length
+  ) {
+    throw new Error(`${label} must contain bounded unique project paths`);
+  }
+  const known = new Map(files.map((file) => [file.path, file]));
+  return selection
+    .map((path) => {
+      safePath(path);
+      if (!known.has(path)) {
+        throw new Error(`Unknown selected ${label}: ${path}`);
+      }
+      return known.get(path);
+    })
+    .sort((a, b) => (a.path < b.path ? -1 : a.path > b.path ? 1 : 0));
+}
+
+function workerCount(jobs) {
+  if (jobs === 'auto') {
+    return Math.min(2, availableParallelism());
+  }
+  return positiveInteger(jobs, 'jobs', 4);
+}
+
+function supportsAbort(tools) {
+  const version = tools.find((tool) => tool.id === 'bats')?.version;
+  const match = version?.match(/\bBats (\d+)\.(\d+)\./i);
+  return Boolean(
+    match &&
+    (Number(match[1]) > 1 || (Number(match[1]) === 1 && Number(match[2]) >= 14))
+  );
 }
 
 async function assertUnchanged(root, sources) {
@@ -264,37 +366,20 @@ async function assertUnchanged(root, sources) {
   }
 }
 
-export async function shellQuality(
-  root,
-  {
-    config: inputConfig,
-    timeoutMs = 30_000,
-    maxMutants = 100,
-    run = runProcess,
-  } = {}
-) {
-  const config = validateConfig(inputConfig);
-  positiveInteger(maxMutants, 'maxMutants', 1000);
-  positiveInteger(timeoutMs, 'timeoutMs', 300_000);
-  const absolute = resolve(root);
-  const files = (await readProject(absolute, { config: inputConfig })).filter(
-    (file) =>
-      file.path.endsWith('.sh') ||
-      file.path.endsWith('.bash') ||
-      file.path.endsWith('.bats')
-  );
-  const sources = files.filter((file) => !file.path.endsWith('.bats'));
-  const tests = files
-    .filter((file) => file.path.endsWith('.bats'))
-    .map((file) => file.path);
-  if (!sources.length || !tests.length) {
-    throw new Error('Shell QA requires shell sources and Bats tests');
-  }
-  if (sources.some((file) => join(absolute, file.path).includes(','))) {
+async function shellPrerequisites(absolute, sources, stage, run) {
+  if (
+    ['qa', 'coverage'].includes(stage) &&
+    sources.some((file) => join(absolute, file.path).includes(','))
+  ) {
     throw new Error('kcov cannot represent comma-containing source paths');
   }
   const tools = await doctor(
-    ['bash', 'shellcheck', 'bats', 'kcov'].map((command) => ({
+    [
+      'bash',
+      ...(['qa', 'lint'].includes(stage) ? ['shellcheck'] : []),
+      ...(stage !== 'lint' ? ['bats'] : []),
+      ...(['qa', 'coverage'].includes(stage) ? ['kcov'] : []),
+    ].map((command) => ({
       id: command,
       command,
     })),
@@ -305,6 +390,103 @@ export async function shellQuality(
       `Missing shell QA prerequisites: ${JSON.stringify(tools.tools.filter((tool) => !tool.available))}`
     );
   }
+  return tools;
+}
+
+function shellReport(
+  native,
+  config,
+  {
+    tools,
+    timeoutMs,
+    stage,
+    tests,
+    abort,
+    coverage,
+    mutants,
+    controlTests,
+    lint,
+  }
+) {
+  return {
+    ...finalizeReport(native.files, [...native.findings, ...lint], config),
+    method: hash(
+      JSON.stringify({
+        native: native.method,
+        tools,
+        timeoutMs,
+        stage,
+        tests,
+        mutantRunner: abort ? 'bats-abort-prefix-v1' : 'bats-full-tap-v1',
+        coverage: 'kcov-codecov-json-no-binary-dir-v1',
+        operators: 'bash-boolean-comparison-binary-v1',
+        grammar: 'tree-sitter-wasms@0.1.13',
+      })
+    ),
+    metrics: {
+      ...(coverage ? { linePercent: coverage.linePercent } : {}),
+      ...(mutants
+        ? {
+            mutationScore:
+              Math.floor((mutants.killed / mutants.total) * 10_000) / 100,
+          }
+        : {}),
+    },
+    measurement: {
+      tools,
+      stage,
+      controlTests: controlTests?.total,
+      coverage,
+      mutants: mutants?.results,
+    },
+    incomplete: false,
+  };
+}
+
+export async function shellQuality(
+  root,
+  {
+    config: inputConfig,
+    timeoutMs = 30_000,
+    maxMutants = 100,
+    stage = 'qa',
+    scripts,
+    tests: testSelection,
+    jobs = 1,
+    excludedPaths = [],
+    onCoverage,
+    run = runProcess,
+  } = {}
+) {
+  const config = validateConfig(inputConfig);
+  positiveInteger(maxMutants, 'maxMutants', 1000);
+  positiveInteger(timeoutMs, 'timeoutMs', 300_000);
+  const workers = workerCount(jobs);
+  if (!['qa', 'lint', 'test', 'coverage', 'mutation'].includes(stage)) {
+    throw new Error(`Unknown shell measurement stage: ${stage}`);
+  }
+  const absolute = resolve(root);
+  const files = (await readProject(absolute, { config: inputConfig })).filter(
+    (file) =>
+      file.path.endsWith('.sh') ||
+      file.path.endsWith('.bash') ||
+      file.path.endsWith('.bats')
+  );
+  const sources = selectedFiles(
+    files.filter((file) => !file.path.endsWith('.bats')),
+    scripts,
+    'script'
+  );
+  const testFiles = selectedFiles(
+    files.filter((file) => file.path.endsWith('.bats')),
+    testSelection,
+    'test'
+  );
+  const tests = testFiles.map((file) => file.path);
+  if (!sources.length || (stage !== 'lint' && !tests.length)) {
+    throw new Error('Shell QA requires shell sources and Bats tests');
+  }
+  const tools = await shellPrerequisites(absolute, sources, stage, run);
   const native = await analyzeFiles(sources, { config: inputConfig });
   if (native.incomplete) {
     throw new Error(
@@ -316,51 +498,46 @@ export async function shellQuality(
     sources,
     tests,
     timeoutMs,
-    run
+    run,
+    stage
   );
-  await assertUnchanged(absolute, sources);
+  const measuredFiles = [...sources, ...testFiles];
+  await assertUnchanged(absolute, measuredFiles);
+  const abort = supportsAbort(tools.tools);
   const workspace = await mkdtemp(join(tmpdir(), 'code-quality-shell-'));
   try {
-    const coverage = await measureCoverage(
-      absolute,
-      sources,
-      tests,
-      workspace,
-      { timeoutMs, totalTests: controlTests.total, run }
-    );
-    await assertUnchanged(absolute, sources);
-    const mutants = await measureMutants(absolute, sources, tests, workspace, {
-      timeoutMs,
-      totalTests: controlTests.total,
-      maxMutants,
-      run,
-    });
-    await assertUnchanged(absolute, sources);
-    return {
-      ...finalizeReport(native.files, [...native.findings, ...lint], config),
-      method: hash(
-        JSON.stringify({
-          native: native.method,
-          tools: tools.tools,
+    const coverage = ['qa', 'coverage'].includes(stage)
+      ? await measureCoverage(absolute, sources, tests, workspace, {
           timeoutMs,
-          coverage: 'kcov-codecov-json-no-binary-dir-v1',
-          operators: 'bash-boolean-comparison-binary-v1',
-          grammar: 'tree-sitter-wasms@0.1.13',
+          totalTests: controlTests.total,
+          run,
+          onCoverage,
         })
-      ),
-      metrics: {
-        linePercent: coverage.linePercent,
-        mutationScore:
-          Math.floor((mutants.killed / mutants.total) * 10_000) / 100,
-      },
-      measurement: {
-        tools: tools.tools,
-        controlTests: controlTests.total,
-        coverage,
-        mutants: mutants.results,
-      },
-      incomplete: false,
-    };
+      : undefined;
+    await assertUnchanged(absolute, measuredFiles);
+    const mutants = ['qa', 'mutation'].includes(stage)
+      ? await measureMutants(absolute, sources, tests, workspace, {
+          timeoutMs,
+          totalTests: controlTests.total,
+          maxMutants,
+          run,
+          jobs: workers,
+          abort,
+          excludedPaths,
+        })
+      : undefined;
+    await assertUnchanged(absolute, measuredFiles);
+    return shellReport(native, config, {
+      tools: tools.tools,
+      timeoutMs,
+      stage,
+      tests,
+      abort,
+      coverage,
+      mutants,
+      controlTests,
+      lint,
+    });
   } finally {
     await rm(workspace, { recursive: true, force: true });
   }
