@@ -25,6 +25,35 @@ import {
 const config: Config = {
   rules: { complexity: 5 },
   failOn: 'error',
+  customRules: [
+    {
+      id: 'local/tree',
+      message: 'Review call',
+      pattern: {
+        tree: {
+          kind: 'call_expression',
+          children: [
+            { capture: 'CALLEE' },
+            { kind: 'arguments', children: [{ rest: true }] },
+          ],
+        },
+      },
+    },
+    {
+      id: 'local/operator',
+      message: 'Review same operand addition',
+      pattern: {
+        tree: {
+          kind: 'binary_expression',
+          fields: {
+            operator: { text: '+' },
+            left: { capture: 'VALUE' },
+            right: { capture: 'VALUE' },
+          },
+        },
+      },
+    },
+  ],
   clones: {
     minTokens: 30,
     suppressionComments: true,
@@ -93,3 +122,15 @@ formatReport(report, 'yaml');
 // @ts-expect-error The existing arithmetic API retains numeric parameters.
 add('1', 2);
 void unsupported;
+
+const ambiguous: Config = {
+  customRules: [
+    {
+      id: 'bad',
+      message: 'bad',
+      // @ts-expect-error Tree rules cannot silently combine with legacy text matching.
+      pattern: { tree: { kind: 'identifier' }, text: 'x' },
+    },
+  ],
+};
+void ambiguous;

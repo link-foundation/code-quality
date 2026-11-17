@@ -1,3 +1,5 @@
+import { validateTreePattern } from './tree-patterns.js';
+
 export const defaultLimits = Object.freeze({
   maxFiles: 1000,
   maxFileBytes: 1_048_576,
@@ -60,9 +62,18 @@ function rulesConfig(input = {}) {
   return rules;
 }
 
-function validatePattern(rule) {
+function validatePattern(rule, inventory) {
   requireObject(rule.pattern, `Custom rule ${rule.id} pattern`);
-  if (!['kind', 'text'].some((key) => typeof rule.pattern[key] === 'string')) {
+  if (Object.hasOwn(rule.pattern, 'tree')) {
+    if (Object.keys(rule.pattern).length !== 1) {
+      throw new Error(
+        'Tree patterns cannot combine with legacy kind/text patterns'
+      );
+    }
+    validateTreePattern(rule.pattern.tree, inventory);
+  } else if (
+    !['kind', 'text'].some((key) => typeof rule.pattern[key] === 'string')
+  ) {
     throw new Error(
       `Custom rule ${rule.id} needs a kind or literal text pattern`
     );
@@ -89,6 +100,7 @@ function customConfig(customRules = []) {
     'duplicate-tokens',
     ...Object.keys(defaultRules),
   ]);
+  const inventory = { nodes: 0, bytes: 0 };
   for (const rule of customRules) {
     requireObject(rule, 'Custom rule');
     if (
@@ -106,7 +118,7 @@ function customConfig(customRules = []) {
       throw new Error('Custom rules need a message and valid severity');
     }
     names.add(rule.id);
-    validatePattern(rule);
+    validatePattern(rule, inventory);
   }
   return customRules;
 }

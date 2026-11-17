@@ -68,8 +68,11 @@
       "id": "extensions",
       "required": true,
       "status": "native",
-      "evidence": ["tests/quality-core.test.js"],
-      "description": "Custom rules, versioned plugins, trusted external adapters"
+      "evidence": [
+        "tests/quality-core.test.js",
+        "tests/quality-tree-patterns.test.js"
+      ],
+      "description": "Legacy literal/kind rules, bounded named-tree patterns/captures/one sequence wildcard, versioned plugins and trusted external adapters"
     },
     {
       "id": "evolution",
@@ -116,9 +119,13 @@
         "docs/case-studies/issue-1/data/pmd-group-contract.json",
         "tests/quality-clone-filters.test.js",
         "docs/case-studies/issue-1/data/pmd-syntax-filter-contract.json",
-        "experiments/code-quality/clone-filter-syntax.mjs"
+        "experiments/code-quality/clone-filter-syntax.mjs",
+        "tests/quality-tree-patterns.test.js",
+        "docs/case-studies/issue-1/data/structural-pattern-contract.json",
+        "docs/tree-patterns.md",
+        "experiments/code-quality/tree-pattern-budget.mjs"
       ],
-      "description": "Original token-block minimums, normalization, pair locations, derived occurrence groups and opt-in audited comment regions verified in thirteen modes, including native CMake argument tokens; optional Java/C# annotations, C# using directives and Java numeric families covered by original cases; complete product/rule/case inventory, legacy annotations, lexer/options/equivalent grouping and native parity remain unverified"
+      "description": "Original token-block minimums, normalization, pair locations, derived occurrence groups and opt-in audited comment regions verified in thirteen modes, including native CMake argument tokens; optional Java/C# annotations, C# using directives and Java numeric families covered by original cases; complete product/rule/case inventory, legacy annotations, lexer/options/equivalent grouping and native parity remain unverified; original bounded tree patterns/captures/sequence cases are native, while Semgrep syntax/equivalences/taint and exhaustive parity remain missing"
     },
     {
       "id": "closed-source-cases",

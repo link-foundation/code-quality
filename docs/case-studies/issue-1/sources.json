@@ -78,6 +78,11 @@
       "sha256": "195070cbea2e3381576bc110b7fc101fc47ebd9aef792e974ee88c457b7fc10e",
       "upstreamRelease": "7.29.0",
       "provenance": "Original concise public option-table notes; no upstream implementation or test-suite files opened or copied; grammar observations and fixtures are original; no execution parity claim"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/structural-pattern-contract.json",
+      "sha256": "064794a11422dab41b71774ac466abd1b80cc31e1450f6c6641c5f106c069a16",
+      "provenance": "Original concise public feature-concept notes; no upstream implementation/tests or documentation examples copied; native grammar object/capture/wildcard policy is not a compatibility or execution-parity claim"
     }
   ],
   "primarySources": [
@@ -164,7 +169,11 @@
     {
       "title": "PMD 7.29.0 duplicate report-format overview",
       "url": "https://docs.pmd-code.org/pmd-doc-7.29.0/pmd_userdocs_cpd_report_formats.html"
+    },
+    {
+      "title": "Semgrep public pattern concepts",
+      "url": "https://docs.semgrep.dev/writing-rules/pattern-syntax"
     }
   ],
-  "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version and black-box QA/report/baseline observations, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. CMake probes use public official language/function/condition documentation and original finite scripts. Tests and engine source are original. External dependencies retain upstream licenses. PMD CPD research uses the stable 7.29.0 public behavior documentation only; token fixtures, index and finite oracle are original. CMake token analysis uses the versioned 3.28.6 public language categories and original lexical/refusal fixtures. Comment suppression uses the same stable public CPD documentation; fixtures, region bookkeeping and bounded probes are original. The stable report-format overview informs multi-location reporting; it contains illustrative source excerpts, none copied or used as fixtures. No upstream implementation or test-suite files were opened; native group policy and all group fixtures are original. Optional annotation/directive filters use the stable CPD option table and original finite grammar observations. Java numeric-kind regression and correction are independently derived from original inputs."
+  "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version and black-box QA/report/baseline observations, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. CMake probes use public official language/function/condition documentation and original finite scripts. Tests and engine source are original. External dependencies retain upstream licenses. PMD CPD research uses the stable 7.29.0 public behavior documentation only; token fixtures, index and finite oracle are original. CMake token analysis uses the versioned 3.28.6 public language categories and original lexical/refusal fixtures. Comment suppression uses the same stable public CPD documentation; fixtures, region bookkeeping and bounded probes are original. The stable report-format overview informs multi-location reporting; it contains illustrative source excerpts, none copied or used as fixtures. No upstream implementation or test-suite files were opened; native group policy and all group fixtures are original. Optional annotation/directive filters use the stable CPD option table and original finite grammar observations. Java numeric-kind regression and correction are independently derived from original inputs. Structural pattern research uses the public Semgrep overview for nested matching, capture equality and sequence concepts; the native tree object API, matcher, finite work policies and fixtures are original. No upstream implementation/test-suite files or examples were copied."
 }

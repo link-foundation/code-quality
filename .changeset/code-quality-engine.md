@@ -61,3 +61,9 @@ source ranges, shared work budgets and unchanged default methods. Preserve comme
 markers, syntax validation and other rules. Correct Java numeric literal
 normalization across six grammar families. Version enabled syntax filters and
 literal normalization, requiring reviewed baseline migrations.
+
+Add optional grammar-native structural tree rules with exact node/text constraints,
+ordered named children, exact grammar fields/operators, per-candidate captures,
+repeated structural equality and one bounded sequence wildcard. Preserve legacy predicates and methods. Validate
+pattern size and share finite comparison work across rules/candidates; refuse
+applicable CMake tree rules and version enabled methods for baseline migration.

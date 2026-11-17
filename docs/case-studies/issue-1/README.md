@@ -31,7 +31,7 @@ omitting a required entry. No production Rust jobs are introduced.
 | ---------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Language parsing | Compiler subprocesses, native ast-grep/NAPI, Tree-sitter WASM, regex   | Pinned web-tree-sitter 0.20.8 + tree-sitter-wasms 0.1.13 run without native compilation on all three JS runtimes. Syntax trees do not supply type resolution. Old grammar snapshots can reject newer syntax. |
 | CMake            | Execute CMake, cmake-lint, general regex                               | Original native command/bracket/block adapter with literal arity and structural decisions; expanded headers refuse incomplete metrics. CMake execution can run project code; it is not automatic.            |
-| Rules            | Semgrep DSL, ESLint plugin, custom code evaluation                     | Small declarative AST-kind/literal rules plus versioned library plugins. Arbitrary regex and config code are not executed. No Semgrep DSL compatibility claim.                                               |
+| Rules            | Semgrep DSL, ESLint plugin, custom code evaluation                     | Declarative AST-kind/literal and bounded named-tree/capture/sequence rules plus versioned library plugins. Arbitrary regex and config code are not executed. No Semgrep DSL compatibility claim.             |
 | Reports          | Proprietary database, SARIF, JSON only                                 | Deterministic JSON/text and SARIF 2.1.0 with stable occurrence fingerprints. No hosted dashboard or SARIF consumer certification.                                                                            |
 | Git mining       | PyDriller, GitPython, git log only, custom diff parser                 | Git plumbing plus syntax snapshots; no checkout/worktree writes. Unique identity matches across revisions, repeated normalized before/after edits, file hotspots and temporal coupling.                      |
 | API              | Express/Fastify, raw HTTP                                              | Node HTTP with bounded bodies/concurrency, startup-only workspace and optional constant-time bearer auth. No database/multitenancy.                                                                          |
@@ -465,8 +465,35 @@ passes with the corrected kind inventory. Literal normalization gains its own
 method version; exact comparison remains unchanged. Seventeen filter/numeric
 cases and seven consumer integration cases pass on Node. The
 [contract notes](data/pmd-syntax-filter-contract.json) distinguish native choices
-from unverified CPD equivalence. Exact-candidate and cross-runtime checks remain
-pending.
+from unverified CPD equivalence. Candidate `76a904f` subsequently passes 227 Node checks, 211 Bun and
+frozen-Deno cases, static/types/Changeset, 413-file guards, fifteen source hashes,
+installed-package and isolated release checks. All six preceding `556f80c` workflows
+pass on attempt one and were collected before publication; new filter CI remains
+pending. GitHub refuses the combined PR diff above its 20,000-line service limit;
+paginated patches and all 173 preceding blob identities were checked against
+reviewed local Git history, including one differently coalesced package hunk.
+
+## Structural pattern draft
+
+The public Semgrep pattern overview provides feature concepts for nested syntax,
+repeated bindings and scoped sequences. The native object API is independently
+designed around each bundled grammar's named nodes. It supports exact kind/text
+constraints, exact grammar fields/operators, ordered children, per-candidate
+captures, repeated structural equality and one anchored sequence wildcard per child list. Capture equality preserves
+operators, literal spelling and tree shape while ignoring comments/formatting.
+It neither searches alternate wildcard splits nor crosses tree scopes.
+
+Original cases cover twelve grammar modes, nested calls, negative operator/literal
+boundaries, empty/middle/end wildcards, repeated captures across a wildcard,
+candidate/rule isolation, exact text, legacy behavior, baseline boundaries and
+CLI/HTTP/package consumers. Applicable CMake tree rules and malformed source
+continue to prevent complete baselines. Configuration size/depth/string budgets
+and one shared per-file comparison budget bound work. A finite 12,000-statement
+probe uses a 128 MiB heap and bounded stack to reproduce end-to-end refusal.
+The [original contract](data/structural-pattern-contract.json) records the native
+policy and provenance. Exact-candidate verification remains pending. Semgrep
+syntax, compiler equivalences, typed/list captures, Boolean combinations, dataflow,
+taint, fixes and exhaustive parity remain unfinished.
 
 ## Evolution method and limits
 

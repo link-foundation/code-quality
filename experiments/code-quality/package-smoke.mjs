@@ -77,6 +77,9 @@ const filtered = await analyzeFiles(['First','Second'].map((name,index) => ({pat
 assert.equal(filtered.incomplete, false);
 assert.equal(filtered.clones[0].tokens, 17);
 assert.equal(filtered.cloneGroups[0].occurrences.length, 2);
+const structural = await analyzeFiles([{path:'rule.js',content:'publish(first, first);\\n'}], {config:{customRules:[{id:'local/tree',message:'Review',pattern:{tree:{kind:'call_expression',children:[{text:'publish'},{kind:'arguments',children:[{capture:'ARG'},{capture:'ARG'}]}]}}}]}});
+assert.equal(structural.findings[0].ruleId, 'local/tree');
+assert.equal(structural.incomplete, false);
 console.log('Installed library and CLI passed');\n`
   );
   const smoke = await runProcess('node', ['smoke.mjs'], { cwd: root });

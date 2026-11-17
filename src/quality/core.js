@@ -8,6 +8,7 @@ import {
   detectTokenClones,
 } from './clones.js';
 import { groupTokenClones } from './clone-groups.js';
+import { matchTreePattern } from './tree-patterns.js';
 
 function finding(
   path,
@@ -58,9 +59,15 @@ function checkAbstractions(abstractions, rules, add) {
   }
 }
 
-function checkCustomRules(node, rules, language, add) {
+function checkCustomRules(node, rules, language, add, budget) {
   for (const rule of rules) {
     if (rule.languages && !rule.languages.includes(language)) {
+      continue;
+    }
+    if (
+      rule.pattern.tree &&
+      !matchTreePattern(node, rule.pattern.tree, budget)
+    ) {
       continue;
     }
     if (rule.pattern.kind && node.type !== rule.pattern.kind) {
@@ -96,6 +103,7 @@ function checkTree(syntax, config, language, add) {
     }
     return;
   }
+  const patternBudget = { remaining: 5_000_000 };
   for (const node of walk(syntax.root)) {
     const line = node.startPosition.row + 1;
     const column = node.startPosition.column + 1;
@@ -127,7 +135,7 @@ function checkTree(syntax, config, language, add) {
         'error'
       );
     }
-    checkCustomRules(node, config.customRules, language, add);
+    checkCustomRules(node, config.customRules, language, add, patternBudget);
   }
 }
 
@@ -344,6 +352,9 @@ export function finalizeReport(files, findings, config, metadata = {}) {
           'web-tree-sitter@0.20.8/tree-sitter-wasms@0.1.13/cmake-native-v2',
         rules: config.rules,
         customRules: config.customRules,
+        ...(config.customRules.some((rule) => rule.pattern.tree) && {
+          treeRules: 'named-tree-patterns-v1',
+        }),
         failOn: config.failOn,
         ...(config.clones && {
           clones: {

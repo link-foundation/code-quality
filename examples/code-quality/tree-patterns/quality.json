@@ -1,0 +1,21 @@
+{
+  "customRules": [
+    {
+      "id": "local/repeated-target",
+      "message": "Review repeated delivery targets",
+      "languages": ["javascript", "typescript"],
+      "pattern": {
+        "tree": {
+          "kind": "call_expression",
+          "children": [
+            { "kind": "identifier", "text": "deliver" },
+            {
+              "kind": "arguments",
+              "children": [{ "capture": "TARGET" }, { "capture": "TARGET" }]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

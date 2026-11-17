@@ -79,8 +79,12 @@ belongs inline in this PR, and the subsequent repository move is explicitly late
 - [x] Verify suppression candidate efad61a locally: 189 Node and 173 Bun/frozen-Deno checks, static/types/package/release, 408-file guard and thirteen source hashes; strict readiness still refuses unfinished capabilities.
 - [x] Add original occurrence groups derived from verified maximal pairs; preserve pair findings/gates and test all language modes, normalization, ranges, suppression and consumer reports in the same push batch.
 - [x] Verify/review combined candidate 556f80c: 209 Node checks, 193 Bun/frozen-Deno cases, static/types/package/release, 410-file guard and fourteen source hashes; push once.
-- [ ] Collect every same-revision CI result for 556f80c before the next push.
-- [ ] Draft optional Java/C# annotation and C# using-directive token filters from the stable public CPD contract; preserve default methods, syntax/other rules, comment markers and work budgets; verify original boundaries and consumer cases.
+- [x] Collect every same-revision CI result for 556f80c; all six workflows pass on attempt one before the next push.
+- [x] Draft optional Java/C# annotation and C# using-directive token filters from the stable public CPD contract; preserve default methods, syntax/other rules, comment markers and work budgets; verify original boundaries and consumer cases.
+- [x] Verify/review syntax-filter candidate 76a904f: 227 Node and 211 Bun/frozen-Deno checks, static/types/package/release, 413-file guard and fifteen source hashes; push once.
+- [ ] Collect every same-revision CI result for 76a904f before the next push.
+- [x] Draft native structural tree patterns with grammar fields/operators, named-child sequences, captures, repeated-capture equality and one bounded sequence wildcard; preserve legacy rules/default methods and refuse unsupported adapters.
+- [ ] Verify original positive/negative rules, budgets, typed/CLI/HTTP/package consumers and baseline boundaries; record clean-room contract and remaining Semgrep gaps.
 - [ ] Complete remaining language semantics and competitor/proprietary documented cases.
 - [ ] Update PR title/body, preserve Fixes #1, mark ready after verification.
 

@@ -93,12 +93,25 @@ export interface TokenCloneGroup {
   signature: string;
   occurrences: CloneLocation[];
 }
+export type TreePatternChild = TreePattern | { rest: true };
+export interface TreePattern {
+  kind?: string;
+  /** Exact raw node text, including internal whitespace. */
+  text?: string;
+  capture?: string;
+  /** Ordered named children, excluding comments. */
+  children?: TreePatternChild[];
+  /** Exact grammar fields; their nodes may be named or punctuation. */
+  fields?: Record<string, TreePattern>;
+}
 export interface CustomRule {
   id: string;
   message: string;
   severity?: Severity;
   languages?: Language[];
-  pattern: { kind?: string; text?: string };
+  pattern:
+    | { kind?: string; text?: string; tree?: never }
+    | { tree: TreePattern; kind?: never; text?: never };
 }
 export interface Adapter {
   id: string;
