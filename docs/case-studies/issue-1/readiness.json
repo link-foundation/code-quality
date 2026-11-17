@@ -28,6 +28,12 @@
       "status": "native",
       "evidence": "tests/quality-shell.test.js",
       "limits": "Trusted installed Bash/ShellCheck/Bats/kcov, not native reimplementations"
+    },
+    {
+      "id": "shell-download-v1",
+      "status": "native",
+      "evidence": "tests/quality-toolchain.test.js",
+      "limits": "Pinned external Bats/ShellCheck/kcov executables; shared-library dependencies supplied by host, not reimplemented"
     }
   ],
   "capabilities": [
@@ -103,9 +109,12 @@
         "tests/quality-shell-options.test.js",
         "tests/quality-baseline-io.test.js",
         "experiments/code-quality/bats-abort.mjs",
-        "experiments/code-quality/real-shell.mjs"
+        "experiments/code-quality/real-shell.mjs",
+        "tests/quality-toolchain.test.js",
+        "tests/quality-action.test.js",
+        "docs/shell-toolchain.md"
       ],
-      "description": "Downloadable kcov 43 toolchain, consumer Action, native arm64 acceptance and exhaustive documented diagnostics remain incomplete"
+      "description": "Pinned kcov 43 executable downloads and consumer Action implemented; native arm64 acceptance, bundled host libraries, upstream-schema import and exhaustive documented diagnostics remain unverified"
     }
   ]
 }

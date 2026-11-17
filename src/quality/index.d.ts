@@ -305,3 +305,30 @@ export function createQualityServer(options?: {
   maxConcurrent?: number;
 }): Server;
 export const apiDescription: Record<string, unknown>;
+export interface ShellToolPin {
+  version: string;
+  url: string;
+  sha256: string;
+  executable: string;
+}
+export type ShellToolManifest = Record<
+  'bats' | 'shellcheck' | 'kcov',
+  ShellToolPin
+>;
+export function shellToolManifest(
+  platform?: string,
+  arch?: string
+): ShellToolManifest;
+export function installShellTools(
+  directory: string,
+  options?: { platform?: string; arch?: string }
+): Promise<{
+  schemaVersion: 1;
+  directory: string;
+  platform: string;
+  arch: string;
+  manifest: ShellToolManifest;
+  files: { path: string; sha256: string }[];
+  executables: Record<'bats' | 'shellcheck' | 'kcov', string>;
+  fingerprint: string;
+}>;

@@ -30,4 +30,5 @@ rules:
       - javascript-first-example.yml
       - links.yml
       - security.yml
+      - quality-engine.yml
       - workflows.yml

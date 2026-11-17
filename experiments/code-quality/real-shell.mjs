@@ -10,6 +10,7 @@ import {
   updateBaseline,
 } from '../../src/quality/index.js';
 import { runQualityCli } from '../../src/quality/cli.js';
+import { qualityAction } from '../../scripts/quality-action.mjs';
 
 const root = await mkdtemp(join(tmpdir(), 'code-quality-real-shell-'));
 try {
@@ -128,6 +129,28 @@ try {
     'Reviewed the changed execution deadline'
   );
   assert.equal(await readFile(join(root, 'choose.sh'), 'utf8'), source);
+  assert.equal(
+    await qualityAction(
+      {
+        GITHUB_WORKSPACE: root,
+        QUALITY_COMMAND: 'qa',
+        QUALITY_INSTALL_TOOLS: 'false',
+        QUALITY_TIMEOUT_MS: '31000',
+        QUALITY_JOBS: '2',
+      },
+      {
+        cli: (args) =>
+          runQualityCli(args, {
+            stdout: () => {},
+            stderr: (value) => {
+              diagnostic += value;
+            },
+          }),
+      }
+    ),
+    0,
+    diagnostic
+  );
   await writeFile(join(root, 'choose.sh'), `${source}\nunused_value=42\n`);
   diagnostic = '';
   assert.equal(

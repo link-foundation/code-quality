@@ -6,6 +6,8 @@ import {
   readGitBaseline,
   saveReport,
   extractEvolution,
+  shellToolManifest,
+  installShellTools,
   type Config,
   type Plugin,
 } from '@link-foundation/code-quality/quality';
@@ -39,6 +41,9 @@ const history = await extractEvolution('.');
 const current: EvolutionIdentity | undefined = history.current[0];
 const language: Language | undefined = current?.language;
 void [passed, text, total, language, committed, complete];
+const toolVersion: string = shellToolManifest('linux', 'arm64').kcov.version;
+const install: typeof installShellTools = installShellTools;
+void [toolVersion, install];
 
 // @ts-expect-error Unsupported languages must be rejected by consumers' compiler.
 const unsupported: Language = 'brainfuck';

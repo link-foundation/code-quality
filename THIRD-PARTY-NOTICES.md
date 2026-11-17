@@ -41,6 +41,20 @@ External command adapters do not bundle executables. ShellCheck, Bats, kcov,
 compilers, analyzers and other configured tools retain their upstream licenses.
 The Docker image adds the Node/Debian runtime and their applicable notices.
 
+The optional shell installer downloads these separately licensed archives
+directly from their publishers; the npm package does not contain their binaries:
+
+- [Bats 1.14.0](https://github.com/bats-core/bats-core/tree/v1.14.0): MIT,
+  including bats-core contributors and Sam Stephenson notices in its installed
+  `LICENSE.md`. Its runtime helpers and notices are retained.
+- [ShellCheck 0.11.0](https://github.com/koalaman/shellcheck/releases/tag/v0.11.0):
+  GPLv3, with `LICENSE.txt` retained in the installation. Source is available
+  from the linked upstream release.
+- [Debian kcov 43](https://packages.debian.org/bookworm-backports/kcov): GPLv2,
+  with Debian's copyright and source information retained under
+  `kcov/usr/share/doc/kcov/`. Its source packages are linked from the Debian
+  package page. Host shared libraries retain their own licenses.
+
 ## tree-sitter-bash 0.20.5
 
 Registry license: MIT.

@@ -92,14 +92,19 @@ JSON, SARIF, ESLint, Ruff, Cargo, golangci-lint, PHPStan and ShellCheck output
 adapters refuse malformed reports and failed execution. Executables retain their
 own analysis semantics and licenses.
 
-For trusted shell projects with Bash, ShellCheck, Bats and kcov 42 installed
-(real-tool CI checksums the upstream Linux amd64 archive):
+For trusted shell projects with Bash, ShellCheck, Bats and kcov installed
+(real-tool CI downloads checksum-pinned Bats 1.14, ShellCheck 0.11 and kcov 43):
 
 ```sh
 node bin/code-quality.js doctor --tools
 node bin/code-quality.js baseline-update ./examples/code-quality/shell --create
 node bin/code-quality.js qa ./examples/code-quality/shell --format json
 ```
+
+`tools install <new-directory>` downloads the pinned Linux x64/arm64 shell
+executables without sudo. The host supplies their documented shared libraries.
+The repository also provides a consumer GitHub Action with automatic PR-base
+baseline enforcement. See [tool installation and Action usage](docs/shell-toolchain.md).
 
 Shell QA measures syntax, lint, a complete passing control suite, kcov Codecov JSON and every
 eligible original boolean/comparison/binary-literal mutant. It refuses partial

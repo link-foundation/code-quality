@@ -17,11 +17,15 @@ env:
 
 jobs:
   shell-tools:
-    name: Real shell QA
-    runs-on: ubuntu-22.04
+    name: Real shell QA (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     concurrency:
-      group: check-${{ github.workflow }}-${{ github.ref }}-shell
+      group: check-${{ github.workflow }}-${{ github.ref }}-shell-${{ matrix.os }}
       cancel-in-progress: true
     steps:
       - uses: actions/checkout@v7
@@ -30,24 +34,9 @@ jobs:
       - uses: actions/setup-node@v7
         with:
           node-version: '24'
-      - name: Install independent toolchain
-        run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends -y libcurl4 libdw1 libbinutils xz-utils
-          tools="$RUNNER_TEMP/quality-tools"
-          mkdir -p "$tools"
-          curl --fail --location --silent --show-error https://codeload.github.com/bats-core/bats-core/tar.gz/refs/tags/v1.14.0 -o "$tools/bats.tar.gz"
-          printf '%s  %s\n' 'bb537b70b15b732f6d8827dd6578e3d8ce166636ce1f18ea9a074184fcce9177' "$tools/bats.tar.gz" | sha256sum --check
-          tar -xzf "$tools/bats.tar.gz" -C "$tools"
-          curl --fail --location --silent --show-error https://github.com/koalaman/shellcheck/releases/download/v0.11.0/shellcheck-v0.11.0.linux.x86_64.tar.xz -o "$tools/shellcheck.tar.xz"
-          printf '%s  %s\n' 'b7af85e41cc99489dcc21d66c6d5f3685138f06d34651e6d34b42ec6d54fe6f6' "$tools/shellcheck.tar.xz" | sha256sum --check
-          tar -xJf "$tools/shellcheck.tar.xz" -C "$tools"
-          curl --fail --location --silent --show-error https://github.com/SimonKagstrom/kcov/releases/download/v42/kcov-amd64.tar.gz -o "$tools/kcov.tar.gz"
-          printf '%s  %s\n' '78aa17a5f6d27a867cc0540b1550051591d350423a1a0ef98d63c9ce7cc10f9d' "$tools/kcov.tar.gz" | sha256sum --check
-          tar -xzf "$tools/kcov.tar.gz" -C "$tools"
-          printf '%s\n' "$tools/usr/local/bin" >> "$GITHUB_PATH"
-          printf '%s\n' "$tools/bats-core-1.14.0/bin" "$tools/shellcheck-v0.11.0" >> "$GITHUB_PATH"
       - run: npm ci
+      - name: Install checksum-pinned shell tools
+        run: node examples/code-quality/install-tools.mjs
       - run: node experiments/code-quality/bats-abort.mjs
       - run: node experiments/code-quality/real-shell.mjs
 
@@ -68,6 +57,14 @@ jobs:
       - run: npm ci
       - run: npm run test:types
       - run: node experiments/code-quality/package-smoke.mjs
+      - name: Create consumer Action fixture
+        run: |
+          mkdir .quality-action-fixture
+          printf 'def answer():\n    return 42\n' > .quality-action-fixture/a.py
+      - name: Exercise consumer Action
+        uses: ./
+        with:
+          root: .quality-action-fixture
       - name: Build and exercise the non-root API container
         run: |
           docker build -t code-quality-candidate .

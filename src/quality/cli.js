@@ -16,6 +16,7 @@ import {
   toolRecipes,
   readGitBaseline,
   saveReport,
+  installShellTools,
 } from './index.js';
 import { defaultRules, validateConfig, safePath } from './config.js';
 import { finalizeReport } from './core.js';
@@ -34,6 +35,7 @@ Commands:
   serve                  Start the JSON API (default 127.0.0.1:3000)
   languages | rules      List native language parsers or quality rules
   doctor                 Inspect configured external tool versions
+  tools install <directory>  Download pinned Linux shell tools into a new directory
 Options:
   --config <file>         JSON rules, exclusions, limits and trusted adapter argv
   --format <text|json|sarif>  Check/QA report format
@@ -54,10 +56,21 @@ Options:
 Exit status: 0 passed, 1 findings/gate failed, 2 invalid input or incomplete check.
 Shell commands and adapters execute trusted code as your user.`;
 
-function parseArgs(argv) {
+function normalizeCommand(argv) {
+  if (argv[0] === 'tools' && argv[1] === 'install') {
+    if (!argv[2] || argv[2].startsWith('--')) {
+      throw new Error('tools install requires a new destination directory');
+    }
+    argv = ['tools-install', ...argv.slice(2)];
+  }
   if (argv[0] === 'baseline' && argv[1] === 'check') {
     argv = ['baseline-check', ...argv.slice(2)];
   }
+  return argv;
+}
+
+function parseArgs(argv) {
+  argv = normalizeCommand(argv);
   const options = {};
   const positional = [];
   const boolean = new Set(['create', 'tools', 'help', 'version']);
@@ -354,6 +367,10 @@ async function serveCommand(context) {
 }
 
 const handlers = {
+  'tools-install': async (context) => {
+    await emitJson(await installShellTools(context.root), context);
+    return 0;
+  },
   check: checkCommand,
   qa: checkCommand,
   lint: checkCommand,

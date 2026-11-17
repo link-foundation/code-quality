@@ -153,6 +153,31 @@ semantics. Its real-tool acceptance retains both original fixtures and their
 assertions. The [shell comparison](quality-bash.md) continues to list unimplemented
 distribution, Action and platform cases explicitly.
 
+## Fourth candidate CI investigation
+
+All six workflows at `88288e1ee8c3918ac1faa4931980edb78ced4b30` completed
+before the fifth candidate. Security, workflow policy, links and the example app
+passed. The installed package, public declarations and non-root Docker API passed
+too. Two failures were preserved and read before preparing the combined fix:
+
+- [Quality engine](https://github.com/link-foundation/code-quality/actions/runs/44148771355):
+  `ci-logs/quality-engine-44148771355.log` line 812 reports a checksum mismatch.
+  The workflow paired the ShellCheck gzip digest with an xz archive URL. The
+  native installer now selects matching publisher URLs and digests from one
+  architecture-specific manifest, and checks the bytes before extraction.
+- [Checks and release](https://github.com/link-foundation/code-quality/actions/runs/44148771398):
+  log lines 4872–4884 report three added Changesets. Consolidate the new notes
+  into one fragment, retaining the existing base-branch fragments and release
+  policy. The runtime matrix was skipped after that guard failed; it is not
+  passing evidence for this revision.
+
+The fifth draft installs and executes Bats 1.14, ShellCheck 0.11 and kcov 43 on
+actual Linux amd64. Eight real measurements retain the original coverage and
+mutation assertions and exercise the consumer Action's QA entry point. Native
+arm64 and full same-revision CI remain pending. Downloads still require the
+documented host shared libraries; bundling those dependencies and the remaining
+quality-bash gaps are explicitly unfinished.
+
 ## Evolution method and limits
 
 Use a bounded first-parent range (default last 100 commits, hard limit 1000), inspect

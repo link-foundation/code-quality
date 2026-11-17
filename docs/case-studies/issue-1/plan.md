@@ -47,8 +47,10 @@ belongs inline in this PR, and the subsequent repository move is explicitly late
 - [x] Verify and review the third exact candidate, push once and collect all CI results.
 - [x] Implement shell migration, file selection, independent check commands, bounded scheduling, raw coverage artifacts and early-stop Bats contracts.
 - [x] Verify the reviewed glob dependency patch, registry signatures, bounded regression and frozen npm/Deno graph resolutions.
-- [ ] Verify and review the fourth exact candidate, push once and collect every CI result.
-- [ ] Complete downloadable amd64/arm64 tools, consumer Action, native arm64/kcov 43 acceptance and the remaining shell diagnostic inventory.
+- [x] Verify and review the fourth exact candidate, push once and collect every CI result.
+- [x] Draft pinned amd64/arm64 executable downloads and the consumer Action; validate actual amd64 kcov 43 QA.
+- [ ] Verify the fifth exact candidate and both native architecture CI jobs; collect all same-revision results.
+- [ ] Complete downloadable shared-library dependencies, upstream-schema import and the remaining shell diagnostic inventory.
 - [ ] Complete remaining language semantics and competitor/proprietary documented cases.
 - [ ] Update PR title/body, preserve Fixes #1, mark ready after verification.
 
