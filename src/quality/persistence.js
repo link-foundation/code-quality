@@ -3,6 +3,7 @@ import { open, lstat, link, rename, unlink } from 'node:fs/promises';
 import { dirname, basename, join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { TextDecoder } from 'node:util';
+import { parseUniqueJson } from './json.js';
 
 export async function readJsonFile(path, maxBytes = 1_048_576) {
   // O_NOFOLLOW protects the opened entry on POSIX; lstat also covers Windows.
@@ -33,7 +34,7 @@ export async function readJsonFile(path, maxBytes = 1_048_576) {
     if (count > maxBytes) {
       throw new Error(`JSON file exceeds byte budget: ${path}`);
     }
-    return JSON.parse(
+    return parseUniqueJson(
       new TextDecoder('utf-8', { fatal: true }).decode(bytes.subarray(0, count))
     );
   } finally {

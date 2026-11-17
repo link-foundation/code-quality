@@ -118,6 +118,29 @@ export interface Baseline {
   metrics: Record<string, number>;
   migrations?: { reason: string; previous: string }[];
 }
+export interface QualityBashBaseline {
+  $schema: string;
+  files: string[];
+  method: {
+    coverage: { algorithm: string };
+    mutation: {
+      algorithm: string;
+      operators: string[];
+      parser: { name: string; version: string };
+    };
+    tools: Record<'bash' | 'bats' | 'shellcheck' | 'kcov', string>;
+  };
+  coverage: { linePercent: number };
+  mutation: { score: number };
+}
+export function validateQualityBashBaseline(
+  value: unknown
+): QualityBashBaseline;
+export function importQualityBashBaseline(
+  report: Report,
+  source: QualityBashBaseline,
+  options: { reason: string }
+): Baseline;
 export interface ToolStatus {
   id: string;
   available: boolean;

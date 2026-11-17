@@ -1,6 +1,7 @@
 import { hash } from './syntax.js';
 import { safePath, requireObject } from './config.js';
 import { gitOutput, resolveCommit } from './git.js';
+import { parseUniqueJson } from './json.js';
 
 function validateMetrics(metrics) {
   requireObject(metrics, 'Metrics');
@@ -165,7 +166,9 @@ export async function readGitBaseline(
     throw new Error('Committed baseline exceeds byte budget');
   }
   return validateBaseline(
-    JSON.parse(await gitOutput(root, ['cat-file', 'blob', blob], 1_048_576))
+    parseUniqueJson(
+      await gitOutput(root, ['cat-file', 'blob', blob], 1_048_576)
+    )
   );
 }
 

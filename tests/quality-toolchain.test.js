@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   mkdtemp,
   mkdir,
+  open,
   readFile,
   readdir,
   rm,
@@ -12,6 +13,7 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { shellToolManifest, installShellTools } from '../src/quality/index.js';
 import { runQualityCli } from '../src/quality/cli.js';
+import { inspectShellInstallation } from '../src/quality/toolchain.js';
 
 async function fixture(fn) {
   const root = await mkdtemp(join(tmpdir(), 'quality-toolchain-'));
@@ -23,6 +25,22 @@ async function fixture(fn) {
 }
 
 describe('pinned shell tool distribution', () => {
+  it('fingerprints the actual arm64 executable size with bounded streaming and refuses oversized files', async () =>
+    fixture(async (root) => {
+      const file = await open(join(root, 'arm64-size-fixture'), 'wx');
+      try {
+        // Sparse input uses the published binary's actual size without copying
+        // or allocating a 53 MiB fixture in the test process.
+        await file.truncate(55_043_352);
+        const files = await inspectShellInstallation(root);
+        assert.equal(files.length, 1);
+        assert.match(files[0].sha256, /^[a-f0-9]{64}$/);
+        await file.truncate(67_108_865);
+        await assert.rejects(inspectShellInstallation(root), /byte budget/);
+      } finally {
+        await file.close();
+      }
+    }));
   it('pins actual gzip assets and Debian kcov 43 for both native architectures', () => {
     for (const arch of ['x64', 'arm64']) {
       const manifest = shellToolManifest('linux', arch);

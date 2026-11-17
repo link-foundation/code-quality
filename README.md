@@ -147,7 +147,11 @@ return status 2. Check the command status as well as the manifest. Runs
 are retained for review; consumers can archive them. Raw kcov HTML, Cobertura,
 JSON and supporting resources are preserved under each run's `coverage/`
 directory (128 files, 16 MiB per file, 32 MiB total). Baseline writes use atomic replacement, and `--create` never
-overwrites a concurrently created baseline. Baseline JSON is bounded to 1 MiB.
+overwrites a concurrently created baseline. Baseline JSON is bounded to 1 MiB. Repeated
+JSON property names and nesting beyond 128 levels are refused. An explicit
+[quality-bash baseline import](docs/baseline-interchange.md) requires fresh passing
+QA, preserves source floors and records an explained independent methodology.
+The source is preserved and the destination must be new.
 Console reports still go to stdout or `--output`.
 Set `CODE_QUALITY_DEBUG=1` to trace subprocess argv, duration and bounded output
 when investigating external tools. Tracing is off by default.

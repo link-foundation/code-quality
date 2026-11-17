@@ -101,7 +101,7 @@ async function download(pin, path, fetch) {
   }
 }
 
-async function inventory(
+export async function inspectShellInstallation(
   directory,
   prefix = '',
   budget = { count: 0, bytes: 0 }
@@ -119,11 +119,13 @@ async function inventory(
     const name = prefix ? `${prefix}/${entry.name}` : entry.name;
     const path = join(directory, name);
     if (entry.isDirectory()) {
-      files.push(...(await inventory(directory, name, budget)));
+      files.push(...(await inspectShellInstallation(directory, name, budget)));
     } else if (entry.isFile()) {
       const size = (await lstat(path)).size;
       budget.bytes += size;
-      if (size > 33_554_432 || budget.bytes > 134_217_728) {
+      // The checksum-pinned aarch64 ShellCheck executable is 55,043,352 bytes.
+      // Keep a finite per-file limit that admits that actual distribution.
+      if (size > 67_108_864 || budget.bytes > 134_217_728) {
         throw new Error('Tool installation byte budget exceeded');
       }
       const file = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW);
@@ -216,7 +218,7 @@ export async function installShellTools(
         );
       }
     }
-    const files = await inventory(root);
+    const files = await inspectShellInstallation(root);
     const receipt = {
       schemaVersion: 1,
       platform,

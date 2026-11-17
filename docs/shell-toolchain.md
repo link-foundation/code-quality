@@ -30,7 +30,7 @@ The Bats archive includes only its executable, helpers and license in the
 installation; its development tests and fixtures are not installed.
 
 The installer allows at most 32 MiB per compressed download, 4000 extracted
-entries, depth 16, 32 MiB per file and 128 MiB total. Downloads and extraction
+entries, depth 16, 64 MiB per file and 128 MiB total. Downloads and extraction
 have a five-minute deadline. The archives are trusted, fixed upstream assets;
 the extractor does not accept caller-provided URLs or archives. Installed
 symlinks and special files are refused. `installation.json` records the

@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { lstat, readFile, writeFile } from 'node:fs/promises';
 import { resolve, join, relative, sep } from 'node:path';
 import { URL } from 'node:url';
 import {
@@ -17,6 +17,8 @@ import {
   readGitBaseline,
   saveReport,
   installShellTools,
+  importQualityBashBaseline,
+  validateQualityBashBaseline,
 } from './index.js';
 import { defaultRules, validateConfig, safePath } from './config.js';
 import { finalizeReport } from './core.js';
@@ -46,6 +48,7 @@ Options:
   --reports <directory>  Save run evidence (default <root>/quality-reports for shell QA)
   --create               Explicitly create a missing baseline
   --migrate <reason>     Explicit incompatible baseline migration (baseline-update only)
+  --import-quality-bash <file>  Import foreign floors with --create and --migrate
   --script <path> --test <path>  Select project files (repeatable)
   --jobs <auto|1..4>     Mutation workers, default 1; scheduling does not change floors
   --tools                Execute adapters in the chosen trusted config
@@ -83,6 +86,7 @@ function parseArgs(argv) {
     'baseline-ref',
     'reports',
     'migrate',
+    'import-quality-bash',
     'script',
     'test',
     'jobs',
@@ -128,8 +132,8 @@ function parseArgs(argv) {
   return { command: positional[0], root: positional[1] || '.', options };
 }
 
-async function loadConfig(path) {
-  return path ? JSON.parse(await readFile(path, 'utf8')) : {};
+function loadConfig(path) {
+  return path ? readJsonFile(path) : {};
 }
 
 async function emitOutput(value, context) {
@@ -167,18 +171,7 @@ async function writeBaseline(report, context, path) {
   const committed = context.options['baseline-ref']
     ? await committedBaseline(context, path)
     : undefined;
-  if (previous === undefined && context.options.migrate !== undefined) {
-    throw new Error('Migration requires an existing baseline');
-  }
-  const baseline =
-    previous !== undefined
-      ? updateBaseline(report, previous, {
-          migrate: context.options.migrate,
-          committed,
-        })
-      : committed
-        ? updateBaseline(report, committed)
-        : createBaseline(report);
+  const baseline = nextBaseline(report, previous, committed, context);
   const content = `${JSON.stringify(baseline, null, 2)}\n`;
   if (Buffer.byteLength(content) > 1_048_576) {
     throw new Error('Baseline exceeds byte budget');
@@ -191,6 +184,30 @@ async function writeBaseline(report, context, path) {
     context
   );
   return 0;
+}
+
+function nextBaseline(report, previous, committed, context) {
+  if (context.imported) {
+    if (previous !== undefined || committed || !context.options.create) {
+      throw new Error(
+        'Import requires --create and a missing native baseline without --baseline-ref'
+      );
+    }
+    return importQualityBashBaseline(report, context.imported, {
+      reason: context.options.migrate,
+    });
+  }
+  if (previous === undefined && context.options.migrate !== undefined) {
+    throw new Error('Migration requires an existing baseline');
+  }
+  return previous !== undefined
+    ? updateBaseline(report, previous, {
+        migrate: context.options.migrate,
+        committed,
+      })
+    : committed
+      ? updateBaseline(report, committed)
+      : createBaseline(report);
 }
 
 function committedBaseline(context, path) {
@@ -258,6 +275,7 @@ async function checkCommand(context) {
       local && !local.startsWith('../') && local !== '..' ? [local] : [];
   }
   try {
+    await prepareImport(context);
     return await measuredCommand(context, (value) => {
       report = value;
     });
@@ -269,6 +287,28 @@ async function checkCommand(context) {
       await saveReport(report, directory, { error: failure, artifacts });
     }
   }
+}
+
+async function prepareImport(context) {
+  if (!context.options['import-quality-bash']) {
+    return;
+  }
+  context.imported = validateQualityBashBaseline(
+    await readJsonFile(context.options['import-quality-bash'])
+  );
+  const path =
+    context.options.baseline || join(context.root, 'quality-baseline.json');
+  try {
+    await lstat(path);
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return;
+    }
+    throw error;
+  }
+  throw new Error(
+    'Import requires a missing native baseline; existing files are preserved'
+  );
 }
 
 async function measuredCommand(context, measured) {
@@ -443,15 +483,32 @@ export async function runQualityCli(
         safePath(context.options['baseline-path'])
       );
     }
-    if (
-      context.options.migrate !== undefined &&
-      context.command !== 'baseline-update'
-    ) {
-      throw new Error('--migrate is supported only by baseline-update');
-    }
+    validateBaselineOptions(context.options, context.command);
     return await handler(context);
   } catch (error) {
     stderr(`code-quality: ${error.message}\n`);
     return 2;
+  }
+}
+
+function validateBaselineOptions(options, command) {
+  if (options['import-quality-bash'] !== undefined) {
+    if (command !== 'baseline-update') {
+      throw new Error(
+        '--import-quality-bash is supported only by baseline-update'
+      );
+    }
+    if (
+      !options.create ||
+      options['baseline-ref'] ||
+      !options.migrate?.trim()
+    ) {
+      throw new Error(
+        'Import requires --create, --migrate and no --baseline-ref'
+      );
+    }
+  }
+  if (options.migrate !== undefined && command !== 'baseline-update') {
+    throw new Error('--migrate is supported only by baseline-update');
   }
 }

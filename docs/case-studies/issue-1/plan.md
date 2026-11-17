@@ -50,7 +50,8 @@ belongs inline in this PR, and the subsequent repository move is explicitly late
 - [x] Verify and review the fourth exact candidate, push once and collect every CI result.
 - [x] Draft pinned amd64/arm64 executable downloads and the consumer Action; validate actual amd64 kcov 43 QA.
 - [ ] Verify the fifth exact candidate and both native architecture CI jobs; collect all same-revision results.
-- [ ] Complete downloadable shared-library dependencies, upstream-schema import and the remaining shell diagnostic inventory.
+- [x] Implement independent upstream-schema import, preserve floors/source bytes, refuse duplicate JSON keys and verify actual CLI migration.
+- [ ] Complete downloadable shared-library dependencies and the remaining shell diagnostic inventory.
 - [ ] Complete remaining language semantics and competitor/proprietary documented cases.
 - [ ] Update PR title/body, preserve Fixes #1, mark ready after verification.
 

@@ -112,9 +112,12 @@
         "experiments/code-quality/real-shell.mjs",
         "tests/quality-toolchain.test.js",
         "tests/quality-action.test.js",
-        "docs/shell-toolchain.md"
+        "docs/shell-toolchain.md",
+        "tests/quality-baseline-import.test.js",
+        "tests/quality-json.test.js",
+        "docs/baseline-interchange.md"
       ],
-      "description": "Pinned kcov 43 executable downloads and consumer Action implemented; native arm64 acceptance, bundled host libraries, upstream-schema import and exhaustive documented diagnostics remain unverified"
+      "description": "Pinned kcov 43 executable downloads, consumer Action and independently measured upstream-schema import implemented; native arm64 acceptance, bundled host libraries and exhaustive documented diagnostics remain unverified"
     }
   ]
 }

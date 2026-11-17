@@ -8,6 +8,8 @@ import {
   extractEvolution,
   shellToolManifest,
   installShellTools,
+  validateQualityBashBaseline,
+  importQualityBashBaseline,
   type Config,
   type Plugin,
 } from '@link-foundation/code-quality/quality';
@@ -44,6 +46,12 @@ void [passed, text, total, language, committed, complete];
 const toolVersion: string = shellToolManifest('linux', 'arm64').kcov.version;
 const install: typeof installShellTools = installShellTools;
 void [toolVersion, install];
+const foreign = validateQualityBashBaseline({});
+const imported = importQualityBashBaseline(report, foreign, {
+  reason: 'Reviewed independent methodology',
+});
+const importAudit: string | undefined = imported.migrations?.[0].previous;
+void importAudit;
 
 // @ts-expect-error Unsupported languages must be rejected by consumers' compiler.
 const unsupported: Language = 'brainfuck';

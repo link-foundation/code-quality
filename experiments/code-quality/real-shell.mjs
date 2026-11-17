@@ -11,6 +11,7 @@ import {
 } from '../../src/quality/index.js';
 import { runQualityCli } from '../../src/quality/cli.js';
 import { qualityAction } from '../../scripts/quality-action.mjs';
+import { verifyBaselineImport } from './baseline-import.mjs';
 
 const root = await mkdtemp(join(tmpdir(), 'code-quality-real-shell-'));
 try {
@@ -44,6 +45,7 @@ try {
   assert.equal(report.metrics.mutationScore, 66.66);
   assert.ok(report.metrics.linePercent > 0 && report.metrics.linePercent < 100);
   assert.equal(report.incomplete, false);
+  await verifyBaselineImport(root, report);
   const baseline = createBaseline(report);
   assert.equal(checkBaseline(report, baseline).passed, true);
   const lower = globalThis.structuredClone(report);

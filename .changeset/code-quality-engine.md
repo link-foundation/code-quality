@@ -15,3 +15,7 @@ early-stop assertion failures.
 
 Add checksum-pinned Linux x64/arm64 shell tool downloads and a consumer GitHub
 Action with automatic PR-base baseline enforcement and fresh failure evidence.
+
+Import published quality-bash baseline floors through fresh independent QA and
+an explicit migration audit; preserve the source and refuse weaker measurements
+or overwrites. Reject duplicate JSON keys in working and committed baselines.

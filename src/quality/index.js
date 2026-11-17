@@ -21,3 +21,7 @@ export { parseKcov } from './coverage.js';
 export { extractEvolution } from './evolution.js';
 export { createQualityServer, apiDescription } from './server.js';
 export { shellToolManifest, installShellTools } from './toolchain.js';
+export {
+  validateQualityBashBaseline,
+  importQualityBashBaseline,
+} from './baseline-import.js';

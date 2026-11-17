@@ -178,6 +178,38 @@ arm64 and full same-revision CI remain pending. Downloads still require the
 documented host shared libraries; bundling those dependencies and the remaining
 quality-bash gaps are explicitly unfinished.
 
+## Fifth candidate CI investigation
+
+At `49bfc4e877b6ac6dd2a6193177c7c92357189320`,
+[Checks and release](https://github.com/link-foundation/code-quality/actions/runs/44152938825)
+passes all nine Linux/macOS/Windows Node/Bun/Deno jobs, static checks and release
+metadata guards. Security, workflow policy and links pass.
+[Quality engine](https://github.com/link-foundation/code-quality/actions/runs/44152938762)
+passes actual amd64 shell QA, public declarations, installed-package imports,
+the consumer composite Action and the non-root Docker API. Native arm64 fails
+while fingerprinting the installed files: `ci-logs/quality-engine-44152938762.log`
+lines 192–203 report `Tool installation byte budget exceeded`. All pinned archives
+unpacked and version probes passed before that refusal.
+
+Independent inspection of the checksum-verified arm64 ShellCheck archive shows
+a 55,043,352-byte executable. Its size exceeds the original 32 MiB per-file bound.
+The corrected candidate admits at most 64 MiB per file, still within the unchanged
+128 MiB total installation budget. An original sparse-file regression hashes the
+actual published size and refuses a file one byte above the new bound, without
+allocating that entire input in memory. Native arm64 acceptance still requires
+the next CI result. The example-app workflow's macOS package job remains queued
+at the time this draft is written; it is not passing evidence.
+
+The sixth draft also adds explicit upstream-schema baseline interchange. It
+requires fresh complete native QA, an explained methodology migration, identical
+file inventory and measurements at least as high as the imported floors. It keeps
+the foreign source unchanged and refuses an existing destination. Actual amd64
+acceptance passes nine measurements, including CLI import and repeat refusal.
+Original regression tests also reject duplicate JSON keys in working files and
+committed baseline blobs: silently keeping a later duplicate could otherwise
+replace a stronger floor. Escaped aliases are rejected as well. These changes do
+not establish full shell parity or universal competitor parity.
+
 ## Evolution method and limits
 
 Use a bounded first-parent range (default last 100 commits, hard limit 1000), inspect
