@@ -103,6 +103,11 @@ export interface TreePattern {
   children?: TreePatternChild[];
   /** Exact grammar fields; their nodes may be named or punctuation. */
   fields?: Record<string, TreePattern>;
+  /** Candidate-local filters; each clause inherits a copy of parent captures. */
+  all?: TreePattern[];
+  any?: TreePattern[];
+  /** Reject a matching candidate; temporary captures never escape the filter. */
+  not?: TreePattern;
 }
 export interface CustomRule {
   id: string;

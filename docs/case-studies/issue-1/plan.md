@@ -82,9 +82,11 @@ belongs inline in this PR, and the subsequent repository move is explicitly late
 - [x] Collect every same-revision CI result for 556f80c; all six workflows pass on attempt one before the next push.
 - [x] Draft optional Java/C# annotation and C# using-directive token filters from the stable public CPD contract; preserve default methods, syntax/other rules, comment markers and work budgets; verify original boundaries and consumer cases.
 - [x] Verify/review syntax-filter candidate 76a904f: 227 Node and 211 Bun/frozen-Deno checks, static/types/package/release, 413-file guard and fifteen source hashes; push once.
-- [ ] Collect every same-revision CI result for 76a904f before the next push.
+- [x] Collect every same-revision CI result for 76a904f; all six workflows and all desktop/runtime jobs pass on attempt one.
 - [x] Draft native structural tree patterns with grammar fields/operators, named-child sequences, captures, repeated-capture equality and one bounded sequence wildcard; preserve legacy rules/default methods and refuse unsupported adapters.
-- [ ] Verify original positive/negative rules, budgets, typed/CLI/HTTP/package consumers and baseline boundaries; record clean-room contract and remaining Semgrep gaps.
+- [x] Verify/review structural candidate 37bbe25 locally: 251 Node and 235 Bun/frozen-Deno checks, static/types/package/release, 419-file guard and sixteen source hashes; combine its next push with candidate-local filters.
+- [x] Draft original candidate-local all/any/not filters, inherited isolated capture scopes, bounded visits/copies and explicit method versioning; preserve original structural rules.
+- [ ] Verify/review original predicate cases and consumers on the exact combined candidate, push once after all 76a904f CI results and collect every new same-revision result.
 - [ ] Complete remaining language semantics and competitor/proprietary documented cases.
 - [ ] Update PR title/body, preserve Fixes #1, mark ready after verification.
 

@@ -8,7 +8,7 @@ import {
   detectTokenClones,
 } from './clones.js';
 import { groupTokenClones } from './clone-groups.js';
-import { matchTreePattern } from './tree-patterns.js';
+import { matchTreePattern, usesTreePredicates } from './tree-patterns.js';
 
 function finding(
   path,
@@ -354,6 +354,9 @@ export function finalizeReport(files, findings, config, metadata = {}) {
         customRules: config.customRules,
         ...(config.customRules.some((rule) => rule.pattern.tree) && {
           treeRules: 'named-tree-patterns-v1',
+        }),
+        ...(usesTreePredicates(config.customRules) && {
+          treePredicates: 'isolated-candidate-filters-v1',
         }),
         failOn: config.failOn,
         ...(config.clones && {

@@ -35,7 +35,16 @@ function validateNode(node, sequence, inventory) {
   if (node.rest === true && sequence && Object.keys(node).length === 1) {
     return false;
   }
-  const fields = ['kind', 'text', 'capture', 'children', 'fields'];
+  const fields = [
+    'kind',
+    'text',
+    'capture',
+    'children',
+    'fields',
+    'all',
+    'any',
+    'not',
+  ];
   for (const key of Object.keys(node)) {
     if (!fields.includes(key)) {
       throw new Error(`Unknown tree pattern key: ${key}`);
@@ -65,8 +74,25 @@ export function validateTreePattern(tree, inventory) {
         visit(child, depth + 1)
       );
     }
+    for (const key of ['all', 'any']) {
+      if (node[key] !== undefined) {
+        validateClauses(node[key], (child) => visit(child, depth + 1));
+      }
+    }
+    if (node.not !== undefined) {
+      visit(node.not, depth + 1);
+    }
   };
   visit(tree, 1);
+}
+
+function validateClauses(clauses, visit) {
+  if (!Array.isArray(clauses) || !clauses.length || clauses.length > 128) {
+    throw new Error('Tree pattern all/any must contain 1 to 128 patterns');
+  }
+  for (const clause of clauses) {
+    visit(clause);
+  }
 }
 
 function validateChildren(children, visit) {
@@ -167,10 +193,24 @@ function matches(node, pattern, captures, budget, namedOnly = true) {
   if (!matchFields(node, pattern.fields, captures, budget)) {
     return false;
   }
-  if (!pattern.children) {
-    return true;
+  if (pattern.children && !matchChildren(node, pattern, captures, budget)) {
+    return false;
   }
-  return matchChildren(node, pattern, captures, budget);
+  return matchPredicates(node, pattern, captures, budget, namedOnly);
+}
+
+function matchPredicates(node, pattern, captures, budget, namedOnly) {
+  const test = (clause) => {
+    spend(budget, captures.size + 1);
+    return matches(node, clause, new Map(captures), budget, namedOnly);
+  };
+  if (pattern.all && !pattern.all.every(test)) {
+    return false;
+  }
+  if (pattern.any && !pattern.any.some(test)) {
+    return false;
+  }
+  return !pattern.not || !test(pattern.not);
 }
 
 function matchFields(node, fields = {}, captures, budget) {
@@ -218,4 +258,19 @@ function matchChildren(node, pattern, captures, budget) {
 
 export function matchTreePattern(node, pattern, budget) {
   return matches(node, pattern, new Map(), budget);
+}
+
+export function usesTreePredicates(rules) {
+  const pending = rules.flatMap((rule) => rule.pattern.tree || []);
+  while (pending.length) {
+    const pattern = pending.pop();
+    if (pattern.all || pattern.any || pattern.not) {
+      return true;
+    }
+    pending.push(
+      ...(pattern.children || []),
+      ...Object.values(pattern.fields || {})
+    );
+  }
+  return false;
 }

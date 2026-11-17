@@ -1,0 +1,25 @@
+{
+  "customRules": [
+    {
+      "id": "local/filter",
+      "message": "Review selected operation",
+      "pattern": {
+        "tree": {
+          "kind": "call_expression",
+          "all": [
+            {
+              "fields": {
+                "arguments": { "children": [{ "capture": "VALUE" }] }
+              }
+            }
+          ],
+          "any": [
+            { "fields": { "function": { "text": "primary" } } },
+            { "fields": { "function": { "text": "secondary" } } }
+          ],
+          "not": { "fields": { "function": { "text": "secondary" } } }
+        }
+      }
+    }
+  ]
+}

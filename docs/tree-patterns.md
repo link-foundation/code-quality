@@ -43,6 +43,28 @@ Every pattern node needs at least one constraint or capture:
 | `children`         | Ordered named children after excluding comment nodes; absent means any children, `[]` means none       |
 | `{ "rest": true }` | Standalone child-list entry matching zero or more named children; at most one per list                 |
 
+Nodes may also contain `all`, `any` and `not` filters. `all` requires every clause
+to match; `any` requires at least one; `not` excludes a matching clause. Each
+clause inspects the same candidate node, including an anonymous token selected
+through a grammar field. These operators do not search descendants, ancestors,
+overlapping ranges or other files. `all` and `any` require 1–128 patterns; `not`
+requires one pattern. A sequence wildcard is valid only in a `children` list.
+
+The node's kind, text, capture, fields and children run before its filters. Every
+filter clause inherits a separate copy of those captures. A clause can compare
+against inherited names and bind temporary local names, but those new bindings
+never escape to the parent, sibling clauses or later filters. This scope keeps
+Boolean truth values independent of clause order. `all` and `any` short-circuit
+in array order; a failed branch cannot leave bindings behind. Nested filters
+follow the same rule. There is no search for alternative capture assignments.
+
+For example, `{ "kind": "call_expression", "any": [
+{ "fields": { "function": { "text": "primary" } } },
+{ "fields": { "function": { "text": "secondary" } } } ],
+"not": { "fields": { "function": { "text": "secondary" } } } }` reports
+`primary(item)` and excludes `secondary(item)` and `archive(item)`. See the
+[executable filter example](../examples/code-quality/tree-predicates/README.md).
+
 A capture binds one subtree within one candidate and rule. Repeated names require
 the same node-kind/child structure and exact leaf text after removing comments.
 Whitespace between tokens is immaterial. Operator kinds, literal spelling,
@@ -77,6 +99,11 @@ passing report. The finite probe in
 [tree-pattern-budget.mjs](../experiments/code-quality/tree-pattern-budget.mjs)
 checks shared candidate/capture work and an end-to-end 12,000-statement refusal
 with a 128 MiB heap and bounded stack.
+Predicate visits and inherited capture-map entries also consume the shared
+comparison budget. Boolean nodes count toward the same configuration depth,
+node and metadata limits. The additional
+[predicate probe](../experiments/code-quality/tree-predicate-budget.mjs) bounds
+these operations and verifies a finite end-to-end refusal with the same limits.
 
 Enabled tree rules add `named-tree-patterns-v1` to the method fingerprint;
 legacy-only methods and findings retain their existing behavior. Changing a rule
@@ -84,8 +111,11 @@ or introducing tree rules crosses a baseline method boundary and requires a
 reviewed migration. CLI, typed library, HTTP, JSON/text/SARIF and installed-package
 consumers use the same matcher. See the
 [original delivery example](../examples/code-quality/tree-patterns/README.md).
+Enabled filters additionally record `isolated-candidate-filters-v1`; methods
+without predicates retain their previous identities. Adding or changing filters
+requires a reviewed baseline migration.
 
-No constant propagation, type/import equivalence, dataflow, taint, multi-pattern
-Boolean operators, typed/list captures, source templates, automatic fixes or
+No constant propagation, type/import equivalence, dataflow, taint, Semgrep range
+intersection or binding semantics, typed/list captures, source templates, automatic fixes or
 complete Semgrep rule/case parity is implied. Those remain incomplete acceptance
 criteria in the strict readiness inventory.

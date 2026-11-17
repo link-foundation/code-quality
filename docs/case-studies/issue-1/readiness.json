@@ -70,9 +70,10 @@
       "status": "native",
       "evidence": [
         "tests/quality-core.test.js",
-        "tests/quality-tree-patterns.test.js"
+        "tests/quality-tree-patterns.test.js",
+        "tests/quality-tree-predicates.test.js"
       ],
-      "description": "Legacy literal/kind rules, bounded named-tree patterns/captures/one sequence wildcard, versioned plugins and trusted external adapters"
+      "description": "Legacy predicates, bounded structural tree/capture/sequence patterns and isolated candidate-local all/any/not filters, versioned plugins and trusted external adapters"
     },
     {
       "id": "evolution",
@@ -123,9 +124,12 @@
         "tests/quality-tree-patterns.test.js",
         "docs/case-studies/issue-1/data/structural-pattern-contract.json",
         "docs/tree-patterns.md",
-        "experiments/code-quality/tree-pattern-budget.mjs"
+        "experiments/code-quality/tree-pattern-budget.mjs",
+        "tests/quality-tree-predicates.test.js",
+        "docs/case-studies/issue-1/data/tree-predicate-contract.json",
+        "experiments/code-quality/tree-predicate-budget.mjs"
       ],
-      "description": "Original token-block minimums, normalization, pair locations, derived occurrence groups and opt-in audited comment regions verified in thirteen modes, including native CMake argument tokens; optional Java/C# annotations, C# using directives and Java numeric families covered by original cases; complete product/rule/case inventory, legacy annotations, lexer/options/equivalent grouping and native parity remain unverified; original bounded tree patterns/captures/sequence cases are native, while Semgrep syntax/equivalences/taint and exhaustive parity remain missing"
+      "description": "Original token-block minimums, normalization, pair locations, derived occurrence groups and opt-in audited comment regions verified in thirteen modes, including native CMake argument tokens; optional Java/C# annotations, C# using directives and Java numeric families covered by original cases; complete product/rule/case inventory, legacy annotations, lexer/options/equivalent grouping and native parity remain unverified; original bounded tree patterns/captures/sequence cases are native, while Semgrep syntax/equivalences/taint and exhaustive parity remain missing; isolated same-candidate Boolean filters verified independently, without Semgrep range/binding or complete rule parity"
     },
     {
       "id": "closed-source-cases",

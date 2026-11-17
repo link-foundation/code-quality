@@ -67,3 +67,8 @@ ordered named children, exact grammar fields/operators, per-candidate captures,
 repeated structural equality and one bounded sequence wildcard. Preserve legacy predicates and methods. Validate
 pattern size and share finite comparison work across rules/candidates; refuse
 applicable CMake tree rules and version enabled methods for baseline migration.
+
+Compose native structural rules with candidate-local all/any/not filters. Inherit
+parent captures into isolated clauses, discard temporary bindings and charge
+predicate/capture-copy work to the shared budget. Preserve methods without filters
+and version enabled filter semantics for reviewed baseline migration.

@@ -526,3 +526,37 @@ semantic capabilities are missing, and full quality-bash parity is not verified.
 There is no external outage preventing implementation of those features; they are
 unfinished work. Passing current CI must not close that gap or justify merging as
 full completion of issue 1. The PR remains unmerged.
+
+## Candidate-local structural filters and combined verification
+
+All six workflows pass at `76a904f8ad17310d8d2d05ec8ce1d08fe4c4b4bd`,
+including the nine runtime legs, both native shell architectures, distribution
+and Docker API, security, links, workflow checks and desktop packaging. Every
+job finished on attempt one. The queued macOS desktop job acquired a runner and
+passed; no new failure log or source change was needed.
+
+The structural draft at `37bbe25` passes 235 quality/glob cases per runtime
+(Node, Bun and frozen Deno), plus sixteen Node workflow checks. Static checks
+have no warnings and 6.03% duplicated lines. Types, Changeset validation,
+419-file line guards, installed-package consumers, isolated release versioning
+and all sixteen source hashes pass. Twenty-two new native public-rule cases
+fail against isolated preceding source; all twenty-four structural cases now
+pass, including bounded work and CLI/HTTP consumers. The finite capture probe
+uses a 128 MiB heap and bounded stack; comparison work includes hashed metadata
+bytes. No acceptance assertions were removed.
+
+The additional original filter draft advances the public conjunction, alternatives
+and negative-filter families described by [Semgrep's rule syntax](https://docs.semgrep.dev/writing-rules/rule-syntax). Every `all`, `any` and `not`
+clause inspects one candidate. Base constraints bind captures first; clauses inherit
+independent copies and discard temporary bindings. Boolean truth values therefore
+do not depend on sibling evaluation order. There is no range intersection, ancestor
+search, cross-clause capture assignment or Semgrep syntax/binding compatibility.
+The [native contract](data/tree-predicate-contract.json) records the independently
+designed semantics, budgets, method boundary and original evidence.
+
+Original cases cover positive/negative selection, nested negation, anonymous
+operator fields, inherited and discarded bindings, all twelve grammar modes,
+validation refusals, finite work bounds, CLI/HTTP reports and baseline migration.
+Applicable CMake tree rules continue to refuse incomplete analysis. Exhaustive
+compiler/project semantics, dataflow/taint, fixes, proprietary documented cases
+and quality-bash parity remain unfinished in strict readiness.

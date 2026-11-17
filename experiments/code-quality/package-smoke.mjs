@@ -80,6 +80,9 @@ assert.equal(filtered.cloneGroups[0].occurrences.length, 2);
 const structural = await analyzeFiles([{path:'rule.js',content:'publish(first, first);\\n'}], {config:{customRules:[{id:'local/tree',message:'Review',pattern:{tree:{kind:'call_expression',children:[{text:'publish'},{kind:'arguments',children:[{capture:'ARG'},{capture:'ARG'}]}]}}}]}});
 assert.equal(structural.findings[0].ruleId, 'local/tree');
 assert.equal(structural.incomplete, false);
+const predicates = await analyzeFiles([{path:'rule.js',content:'dispatch(first);\\nforward(first);\\n'}], {config:{customRules:[{id:'local/filter',message:'Review',pattern:{tree:{all:[{kind:'call_expression'}],any:[{fields:{function:{text:'dispatch'}}},{fields:{function:{text:'forward'}}}],not:{fields:{function:{text:'forward'}}}}}}]}});
+assert.deepEqual(predicates.findings.map(({ruleId,line}) => [ruleId,line]), [['local/filter',1]]);
+assert.equal(predicates.incomplete, false);
 console.log('Installed library and CLI passed');\n`
   );
   const smoke = await runProcess('node', ['smoke.mjs'], { cwd: root });

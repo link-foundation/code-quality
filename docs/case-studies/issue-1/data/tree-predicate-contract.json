@@ -1,0 +1,25 @@
+{
+  "source": "https://docs.semgrep.dev/writing-rules/rule-syntax",
+  "reviewedAt": "2026-11-17",
+  "scope": "Public AND/OR/negative-filter feature concepts only; no implementation or test-suite files opened and no documentation examples copied",
+  "publicConcepts": [
+    "Rule operators can combine conditions by conjunction and alternatives",
+    "Negative conditions can exclude selected results"
+  ],
+  "nativePolicy": {
+    "format": "Original pattern.tree all/any arrays and not object; not Semgrep configuration or range-intersection semantics",
+    "candidate": "Every clause inspects the same candidate node; fields may select anonymous tokens; no ancestor/descendant/range search",
+    "captures": "Base kind/text/capture/fields/children run first; each clause inherits a separate copy of parent captures; temporary bindings never escape the clause, even on success; nested filters follow the same scope",
+    "evaluation": "Conjunction, alternatives and exclusion all constrain the candidate; all/any short-circuit in array order; no capture-assignment backtracking",
+    "limits": "1 to 128 clauses per all/any list; one pattern per not; existing shared pattern node/depth/metadata and per-file comparison budgets include predicates and copied binding entries",
+    "compatibility": "No-predicate methods unchanged; enabled filters additionally record isolated-candidate-filters-v1; baseline method changes require reviewed migration",
+    "remaining": "No Semgrep syntax, range/binding-equivalence or exhaustive rule/case parity; no dataflow, taint, type/import/constant semantics or autofix"
+  },
+  "evidence": [
+    "tests/quality-tree-predicates.test.js",
+    "tests/types/quality.ts",
+    "experiments/code-quality/tree-predicate-budget.mjs",
+    "experiments/code-quality/package-smoke.mjs",
+    "examples/code-quality/tree-predicates/README.md"
+  ]
+}
