@@ -1,6 +1,9 @@
 FROM node:24.16.0-bookworm-slim
 ENV NODE_ENV=production
 WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates \
+    && rm -rf /var/lib/apt/lists/* \
+    && git config --system --add safe.directory /workspace
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev --ignore-scripts --no-audit --no-fund && npm cache clean --force
 COPY LICENSE THIRD-PARTY-NOTICES.md ./

@@ -3,7 +3,8 @@
   "snapshots": [
     {
       "path": "docs/case-studies/issue-1/data/ci-cd-best-practices.md",
-      "sha256": "1f0a7fd5c85ef52b916a624e84b16ca2c172fe517c22c579c9f764025918a371"
+      "sha256": "1f0a7fd5c85ef52b916a624e84b16ca2c172fe517c22c579c9f764025918a371",
+      "upstreamRevision": "c90e4c1806fa36748aafb7f002024536def16df5"
     },
     {
       "path": "docs/case-studies/issue-1/data/issue.json",
@@ -11,18 +12,21 @@
     },
     {
       "path": "docs/case-studies/issue-1/data/quality-bash-baseline.schema.json",
-      "sha256": "f702bac7ef814e1dc3cdadddfd8c1948d138c6744ab300277222f56260d08f75"
+      "sha256": "f702bac7ef814e1dc3cdadddfd8c1948d138c6744ab300277222f56260d08f75",
+      "upstreamRevision": "8dc30669aa4255dfc6f84fb0f935b8036081fab4"
     },
     {
       "path": "docs/case-studies/issue-1/data/quality-bash-readme.md",
-      "sha256": "065834589a4e95f5e802b33d86bbdfda0e396465d4e7f75058b13e28f8800ca0"
+      "sha256": "065834589a4e95f5e802b33d86bbdfda0e396465d4e7f75058b13e28f8800ca0",
+      "upstreamRevision": "8dc30669aa4255dfc6f84fb0f935b8036081fab4"
     },
     {
       "path": "docs/case-studies/issue-1/data/grammar-provenance.json",
       "sha256": "983a228fc5e8092dadec427dfc1999126790bc6784f39bce8aef1be5909456e7"
     },
     {
-      "path": "docs/case-studies/issue-1/data/quality-bash-readme.md",
+      "path": "docs/case-studies/issue-1/data/quality-bash-develop.md",
+      "sha256": "f16ec88b9638254340a02aea896399da0f537ef3e2fcf6dfd5e550e9aaa36e08",
       "upstreamRevision": "8dc30669aa4255dfc6f84fb0f935b8036081fab4"
     }
   ],

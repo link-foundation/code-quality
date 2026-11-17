@@ -57,7 +57,14 @@ jobs:
       - name: Build and exercise the non-root API container
         run: |
           docker build -t code-quality-candidate .
-          docker run -d --name quality-api --memory=512m --cpus=1 -p 127.0.0.1:3000:3000 code-quality-candidate
+          repo="$RUNNER_TEMP/quality-repo"
+          mkdir -p "$repo"
+          chmod 755 "$repo"
+          git -C "$repo" init -b main
+          printf 'def answer():\n    return 42\n' > "$repo/a.py"
+          git -C "$repo" add a.py
+          git -C "$repo" -c user.name=Quality -c user.email=quality@example.invalid commit -m 'Original API fixture'
+          docker run -d --name quality-api --memory=512m --cpus=1 -p 127.0.0.1:3000:3000 -v "$repo:/workspace:ro" code-quality-candidate
           trap 'docker logs quality-api; docker rm -f quality-api' EXIT
           for attempt in $(seq 1 30); do
             if curl --fail --silent http://127.0.0.1:3000/health; then break; fi
@@ -70,3 +77,6 @@ jobs:
             --data '{"files":[{"path":"a.py","content":"def answer():\n    return 42\n"}]}' \
             http://127.0.0.1:3000/v1/analyze > /tmp/quality-api.json
           node -e "const r=require('/tmp/quality-api.json'); if(!r.passed || r.files.length!==1) process.exit(1)"
+          curl --fail --silent -H 'content-type: application/json' \
+            --data '{}' http://127.0.0.1:3000/v1/evolution > /tmp/quality-evolution.json
+          node -e "const r=require('/tmp/quality-evolution.json'); if(r.commits.length!==1 || !r.current.some(e=>e.kind==='function')) process.exit(1)"
