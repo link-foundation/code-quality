@@ -72,3 +72,11 @@ See [installation and Action contracts](../../shell-toolchain.md).
 The [schema import contract](../../baseline-interchange.md) explicitly requires
 fresh independent QA and never lowers imported floors. The [original refusal audit](../../shell-diagnostics.md) maps finite documented
 contracts to regression evidence. An exhaustive upstream diagnostic inventory remains unfinished. The strict readiness gate continues to reject parity.
+
+A separate original operator audit exposed a bundled Bash parser/runtime failure
+before mutation analysis. The [Bash-specific parser correction](../../bash-parser.md)
+uses a checksum-verified official 0.23.3 grammar and isolated compatible runtime.
+Literal/variable/Unicode patterns, case labels, heredocs and consumers now have
+original regression coverage; syntax refusals stay active. Bash method identities
+change and require reviewed baseline migration. This correction does not establish
+operator or exhaustive diagnostic parity.

@@ -17,6 +17,7 @@
     "npm:tree-sitter-wasms@0.1.13": "0.1.13",
     "npm:typescript@5.9.3": "5.9.3",
     "npm:web-tree-sitter@0.20.8": "0.20.8",
+    "npm:web-tree-sitter@0.24.7": "0.24.7",
     "npm:yaml@2.9.1": "2.9.1"
   },
   "npm": {
@@ -1162,6 +1163,9 @@
     "web-tree-sitter@0.20.8": {
       "integrity": "sha512-weOVgZ3aAARgdnb220GqYuh7+rZU0Ka9k9yfKtGAzEYMa6GgiCzW9JjQRJyCJakvibQW+dfjJdihjInKuuCAUQ=="
     },
+    "web-tree-sitter@0.24.7": {
+      "integrity": "sha512-CdC/TqVFbXqR+C51v38hv6wOPatKEUGxa39scAeFSm98wIhZxAYonhRQPSMmfZ2w7JDI0zQDdzdmgtNk06/krQ=="
+    },
     "which-command@0.1.0": {
       "integrity": "sha512-XZyoF5/5hZtXitIwzrU4NKK+Wtbb9aB9CezUEw2Q0wlYK8NUYQxC1rRXgNueYLtBAJwXIb+/tFVk4dozciNJMA==",
       "bin": true
@@ -1231,6 +1235,7 @@
         "npm:tree-sitter-wasms@0.1.13",
         "npm:typescript@5.9.3",
         "npm:web-tree-sitter@0.20.8",
+        "npm:web-tree-sitter@0.24.7",
         "npm:yaml@2.9.1"
       ],
       "overrides": {

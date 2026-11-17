@@ -9,6 +9,7 @@ command/bracket/block syntax and literal function metrics. Checks cover syntax,
 size, complexity, parameters, structural duplicates, whitespace, risky dynamic
 execution and literal credentials.
 These are structural heuristics, not full compiler or security analysis.
+See the [Bash grammar/runtime contract](docs/bash-parser.md) and original regressions.
 
 ## Quick Start
 

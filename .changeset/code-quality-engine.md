@@ -72,3 +72,8 @@ Compose native structural rules with candidate-local all/any/not filters. Inheri
 parent captures into isolated clauses, discard temporary bindings and charge
 predicate/capture-copy work to the shared budget. Preserve methods without filters
 and version enabled filter semantics for reviewed baseline migration.
+
+Correct valid Bash literal/pattern parsing with the pinned official Bash 0.23.3
+WASM grammar and a compatible isolated runtime. Verify shipped artifact integrity,
+retain licenses and preserve non-Bash method identities. Handle both grammar API
+forms and anonymous comparison operators; require reviewed Bash baseline migration.

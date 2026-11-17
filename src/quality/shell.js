@@ -10,6 +10,7 @@ import { requireBash } from './shell-version.js';
 import { parseKcov } from './coverage.js';
 import { withSyntax, walk, hash } from './syntax.js';
 import { percentage, validateRounding } from './percentage.js';
+import { bashParserMethod } from './bash-syntax.js';
 import {
   captureWorkspace,
   assertWorkspaceUnchanged,
@@ -22,6 +23,29 @@ const arithmeticOperators = new Map([
   ['*', '/'],
   ['/', '*'],
 ]);
+const comparisonOperators = new Map([
+  ['-eq', '-ne'],
+  ['-ne', '-eq'],
+  ['-gt', '-le'],
+  ['-ge', '-lt'],
+  ['-lt', '-ge'],
+  ['-le', '-gt'],
+  ['=', '!='],
+  ['==', '!='],
+  ['!=', '=='],
+]);
+
+function comparisonReplacement(node) {
+  if (
+    node.type === 'test_operator' ||
+    (node.childCount === 0 &&
+      node.parent?.type === 'binary_expression' &&
+      node.parent.childForFieldName('operator')?.id === node.id)
+  ) {
+    return comparisonOperators.get(node.text);
+  }
+  return undefined;
+}
 
 function tapLines(source) {
   if (Buffer.byteLength(source) > 16_777_216) {
@@ -103,24 +127,7 @@ export async function shellMutants(file, max = 100) {
       if (node.childCount === 0 && ['&&', '||'].includes(node.text)) {
         replacement = node.text === '&&' ? '||' : '&&';
       }
-      if (
-        node.type === 'test_operator' &&
-        ['-eq', '-ne', '-gt', '-ge', '-lt', '-le', '=', '==', '!='].includes(
-          node.text
-        )
-      ) {
-        replacement = {
-          '-eq': '-ne',
-          '-ne': '-eq',
-          '-gt': '-le',
-          '-ge': '-lt',
-          '-lt': '-ge',
-          '-le': '-gt',
-          '=': '!=',
-          '==': '!=',
-          '!=': '==',
-        }[node.text];
-      }
+      replacement = comparisonReplacement(node) ?? replacement;
       if (node.type === 'number' && /^[01]$/.test(node.text)) {
         replacement = node.text === '0' ? '1' : '0';
       }
@@ -457,7 +464,7 @@ function shellReport(
         operators: 'bash-boolean-comparison-binary-arithmetic-v2',
         rounding,
         workspace: 'bounded-input-tree-sha256-v1',
-        grammar: 'tree-sitter-wasms@0.1.13',
+        grammar: bashParserMethod,
       })
     ),
     metrics: {

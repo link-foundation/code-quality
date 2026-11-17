@@ -88,6 +88,11 @@
       "path": "docs/case-studies/issue-1/data/tree-predicate-contract.json",
       "sha256": "9db535ce05a43ee0eaf261e7267d753b6687fc7451dfe0fceb8633dbacc197a1",
       "provenance": "Original concise public Boolean-operator concept notes; no upstream implementation/tests or documentation examples copied; native isolated-clause semantics are not Semgrep compatibility or execution parity"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/bash-parser-contract.json",
+      "sha256": "c7129c16a4415b5f53b9b59ea1df5496c432286c48a2dd62e8eed90f0f273d26",
+      "provenance": "Original parser/runtime failure, artifact metadata and finite regression contract; official release binary and license only; no competitor implementation/test-suite files read"
     }
   ],
   "primarySources": [
@@ -182,7 +187,11 @@
     {
       "title": "Semgrep public rule-operator concepts",
       "url": "https://docs.semgrep.dev/writing-rules/rule-syntax"
+    },
+    {
+      "title": "Official Tree-sitter Bash 0.23.3 release asset",
+      "url": "https://github.com/tree-sitter/tree-sitter-bash/releases/tag/v0.23.3"
     }
   ],
-  "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version and black-box QA/report/baseline observations, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. CMake probes use public official language/function/condition documentation and original finite scripts. Tests and engine source are original. External dependencies retain upstream licenses. PMD CPD research uses the stable 7.29.0 public behavior documentation only; token fixtures, index and finite oracle are original. CMake token analysis uses the versioned 3.28.6 public language categories and original lexical/refusal fixtures. Comment suppression uses the same stable public CPD documentation; fixtures, region bookkeeping and bounded probes are original. The stable report-format overview informs multi-location reporting; it contains illustrative source excerpts, none copied or used as fixtures. No upstream implementation or test-suite files were opened; native group policy and all group fixtures are original. Optional annotation/directive filters use the stable CPD option table and original finite grammar observations. Java numeric-kind regression and correction are independently derived from original inputs. Structural pattern research uses the public Semgrep overview for nested matching, capture equality and sequence concepts; the native tree object API, matcher, finite work policies and fixtures are original. No upstream implementation/test-suite files or examples were copied. Candidate-local Boolean filters use public operator concepts only; the isolated-clause capture policy, work limits and original cases do not implement Semgrep range/binding semantics."
+  "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version and black-box QA/report/baseline observations, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. CMake probes use public official language/function/condition documentation and original finite scripts. Tests and engine source are original. External dependencies retain upstream licenses. PMD CPD research uses the stable 7.29.0 public behavior documentation only; token fixtures, index and finite oracle are original. CMake token analysis uses the versioned 3.28.6 public language categories and original lexical/refusal fixtures. Comment suppression uses the same stable public CPD documentation; fixtures, region bookkeeping and bounded probes are original. The stable report-format overview informs multi-location reporting; it contains illustrative source excerpts, none copied or used as fixtures. No upstream implementation or test-suite files were opened; native group policy and all group fixtures are original. Optional annotation/directive filters use the stable CPD option table and original finite grammar observations. Java numeric-kind regression and correction are independently derived from original inputs. Structural pattern research uses the public Semgrep overview for nested matching, capture equality and sequence concepts; the native tree object API, matcher, finite work policies and fixtures are original. No upstream implementation/test-suite files or examples were copied. Candidate-local Boolean filters use public operator concepts only; the isolated-clause capture policy, work limits and original cases do not implement Semgrep range/binding semantics. Bash grammar correction inspects official release metadata/binary, runtime public APIs and licenses; independent finite cases reproduce a missing scanner import. No competitor implementation or test-suite files were read."
 }

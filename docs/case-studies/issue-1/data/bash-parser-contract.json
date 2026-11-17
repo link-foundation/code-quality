@@ -1,0 +1,262 @@
+{
+  "retrievedAt": "2026-11-17",
+  "grammar": "tree-sitter-bash@0.23.3",
+  "revision": "487734f87fd87118028a65a4599352fa99c9cde8",
+  "url": "https://github.com/tree-sitter/tree-sitter-bash/releases/download/v0.23.3/tree-sitter-bash.wasm",
+  "bytes": 1364404,
+  "sha256": "d1844429a58620f306b6f42aebe92298243ca8120cd833a3ab5d87c7a2e7b9fd",
+  "license": "MIT; original upstream LICENSE retained beside the shipped artifact",
+  "runtime": "web-tree-sitter@0.24.7 via exact npm alias web-tree-sitter-bash-runtime",
+  "rootCause": "Earlier bundled Bash grammar imports isalpha, absent from the matching runtime; a valid literal/pattern comparison throws. Runtime-only upgrades to 0.22.6 and 0.24.7 also reproduce it.",
+  "verification": "Original finite grammar probes and library/CLI/HTTP/package regressions, with syntax refusals and reviewed-baseline migration; no native build",
+  "provenance": "Official release binary, public API/metadata and license only; no competitor implementation or test-suite files read. No published release digest is available; hash records the HTTPS artifact, not independent build reproducibility.",
+  "limits": [
+    "Compiler/project semantics",
+    "Exhaustive Bash grammar cases",
+    "Full shell mutation and diagnostic parity"
+  ],
+  "beforeAfter": {
+    "sourceRevision": "ac3a370b946b78c59782ae002745f0d5d60cf645",
+    "originalValidCases": 8,
+    "previousFailures": 7,
+    "previousPasses": 1,
+    "correctedPasses": 8
+  },
+  "operatorObservation": {
+    "fixture": "experiments/code-quality/shell-operator-probe.mjs",
+    "sourceSha256": "aa5cc2a54196f45799843b8963abcaeee539ef10d5402c149b6c8d52297d3874",
+    "testSha256": "a5f731414937317559e49500d3f4e9d9c8ab5ea5d6ba67830ebb7cf595f3d910",
+    "releasedVersion": "quality-bash 1.0.0-alpha.5",
+    "releasedReport": {
+      "mutations": [
+        {
+          "id": "6618cd397eabedcd255bbb11b4aed62160c53f8dbe4fdc5d22ce57633111148b",
+          "file": "probe.sh",
+          "operator": "arithmetic",
+          "offset": 52,
+          "line": 3,
+          "column": 23,
+          "before": "+",
+          "after": "-",
+          "result": "survived"
+        },
+        {
+          "id": "2172876197e5935ae137c7ed6e209a5ad436fc98ffb439c3a7de9489eb48166f",
+          "file": "probe.sh",
+          "operator": "arithmetic",
+          "offset": 65,
+          "line": 3,
+          "column": 36,
+          "before": "-",
+          "after": "+",
+          "result": "survived"
+        },
+        {
+          "id": "0fb308671792628973ce511a0971ad0c4ab733a3f06d07c16c624173c9ae3f68",
+          "file": "probe.sh",
+          "operator": "arithmetic",
+          "offset": 78,
+          "line": 3,
+          "column": 49,
+          "before": "*",
+          "after": "+",
+          "result": "survived"
+        },
+        {
+          "id": "0cb38f68bbb0fb9529f5a6893c519bdea0efb710ebacc3643ad8a23b2eed6f73",
+          "file": "probe.sh",
+          "operator": "arithmetic",
+          "offset": 147,
+          "line": 4,
+          "column": 23,
+          "before": "<",
+          "after": ">=",
+          "result": "survived"
+        },
+        {
+          "id": "272598d2b78d3ec6959aedadfd80ed0072c3cdae610a467669bbbd9e55bfc9bf",
+          "file": "probe.sh",
+          "operator": "arithmetic",
+          "offset": 160,
+          "line": 4,
+          "column": 36,
+          "before": "<=",
+          "after": ">",
+          "result": "survived"
+        },
+        {
+          "id": "017d9533f071ed3f315df2237e396c7e3efc7d89a49736e451c9094f00b494cf",
+          "file": "probe.sh",
+          "operator": "arithmetic",
+          "offset": 174,
+          "line": 4,
+          "column": 50,
+          "before": ">",
+          "after": "<=",
+          "result": "survived"
+        },
+        {
+          "id": "47b42ee88291b30d52794224b3b41f2036cf5623684f90fad58bd926ccac0d8f",
+          "file": "probe.sh",
+          "operator": "arithmetic",
+          "offset": 187,
+          "line": 4,
+          "column": 63,
+          "before": ">=",
+          "after": "<",
+          "result": "survived"
+        },
+        {
+          "id": "3e1c2fc7c6c20a70302f08ec787fd09b91874c1aa15b0189581da3304b6dbe7f",
+          "file": "probe.sh",
+          "operator": "arithmetic",
+          "offset": 201,
+          "line": 4,
+          "column": 77,
+          "before": "==",
+          "after": "!=",
+          "result": "survived"
+        },
+        {
+          "id": "41fbbf8b91d6c227e388f10e74f92296c97f1931d6d4fe0a1977c854dab7bd93",
+          "file": "probe.sh",
+          "operator": "arithmetic",
+          "offset": 215,
+          "line": 4,
+          "column": 91,
+          "before": "!=",
+          "after": "==",
+          "result": "survived"
+        },
+        {
+          "id": "473dac81d0c5a678456580e0b8078f47334a937ad44f17a57e2663d25384a9e4",
+          "file": "probe.sh",
+          "operator": "condition",
+          "offset": 493,
+          "line": 9,
+          "column": 8,
+          "before": "-gt",
+          "after": "-le",
+          "result": "survived"
+        },
+        {
+          "id": "4d9742a7c7815cbfe1083f7cde5a8e5b44cafd1e6da6d804d616782bc4a80b91",
+          "file": "probe.sh",
+          "operator": "condition",
+          "offset": 525,
+          "line": 10,
+          "column": 11,
+          "before": "==",
+          "after": "!=",
+          "result": "survived"
+        }
+      ],
+      "score": {
+        "numerator": 0,
+        "denominator": 11
+      },
+      "qualified": true
+    },
+    "nativeCandidates": [
+      {
+        "line": 3,
+        "start": 52,
+        "end": 53,
+        "original": "+",
+        "replacement": "-"
+      },
+      {
+        "line": 3,
+        "start": 65,
+        "end": 66,
+        "original": "-",
+        "replacement": "+"
+      },
+      {
+        "line": 3,
+        "start": 78,
+        "end": 79,
+        "original": "*",
+        "replacement": "/"
+      },
+      {
+        "line": 3,
+        "start": 91,
+        "end": 92,
+        "original": "/",
+        "replacement": "*"
+      },
+      {
+        "line": 4,
+        "start": 201,
+        "end": 203,
+        "original": "==",
+        "replacement": "!="
+      },
+      {
+        "line": 4,
+        "start": 215,
+        "end": 217,
+        "original": "!=",
+        "replacement": "=="
+      },
+      {
+        "line": 6,
+        "start": 328,
+        "end": 330,
+        "original": "&&",
+        "replacement": "||"
+      },
+      {
+        "line": 6,
+        "start": 342,
+        "end": 344,
+        "original": "||",
+        "replacement": "&&"
+      },
+      {
+        "line": 9,
+        "start": 493,
+        "end": 496,
+        "original": "-gt",
+        "replacement": "-le"
+      },
+      {
+        "line": 9,
+        "start": 502,
+        "end": 504,
+        "original": "&&",
+        "replacement": "||"
+      },
+      {
+        "line": 10,
+        "start": 525,
+        "end": 527,
+        "original": "==",
+        "replacement": "!="
+      },
+      {
+        "line": 10,
+        "start": 536,
+        "end": 538,
+        "original": "&&",
+        "replacement": "||"
+      },
+      {
+        "line": 11,
+        "start": 568,
+        "end": 570,
+        "original": "&&",
+        "replacement": "||"
+      },
+      {
+        "line": 12,
+        "start": 601,
+        "end": 603,
+        "original": "&&",
+        "replacement": "||"
+      }
+    ],
+    "limits": "Finite original weak-control observation only; surviving mutants do not establish test adequacy. Native lacks arithmetic ordering mutations and uses * to / rather than * to +. Native also includes / to *, logical and list operators; exhaustive operator and diagnostic parity is unfinished."
+  }
+}

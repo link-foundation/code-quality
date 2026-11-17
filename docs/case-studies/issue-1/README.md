@@ -27,16 +27,16 @@ omitting a required entry. No production Rust jobs are introduced.
 
 ## Design choices and alternatives
 
-| Component        | Alternatives considered                                                | Choice and consequence                                                                                                                                                                                       |
-| ---------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Language parsing | Compiler subprocesses, native ast-grep/NAPI, Tree-sitter WASM, regex   | Pinned web-tree-sitter 0.20.8 + tree-sitter-wasms 0.1.13 run without native compilation on all three JS runtimes. Syntax trees do not supply type resolution. Old grammar snapshots can reject newer syntax. |
-| CMake            | Execute CMake, cmake-lint, general regex                               | Original native command/bracket/block adapter with literal arity and structural decisions; expanded headers refuse incomplete metrics. CMake execution can run project code; it is not automatic.            |
-| Rules            | Semgrep DSL, ESLint plugin, custom code evaluation                     | Declarative AST-kind/literal and bounded named-tree/capture/sequence rules plus versioned library plugins. Arbitrary regex and config code are not executed. No Semgrep DSL compatibility claim.             |
-| Reports          | Proprietary database, SARIF, JSON only                                 | Deterministic JSON/text and SARIF 2.1.0 with stable occurrence fingerprints. No hosted dashboard or SARIF consumer certification.                                                                            |
-| Git mining       | PyDriller, GitPython, git log only, custom diff parser                 | Git plumbing plus syntax snapshots; no checkout/worktree writes. Unique identity matches across revisions, repeated normalized before/after edits, file hotspots and temporal coupling.                      |
-| API              | Express/Fastify, raw HTTP                                              | Node HTTP with bounded bodies/concurrency, startup-only workspace and optional constant-time bearer auth. No database/multitenancy.                                                                          |
-| Shell QA         | Reimplement ShellCheck/Bats/kcov, copy quality-bash, explicit adapters | Execute independently installed trusted tools and validate their outputs. Mutation operators and baseline logic are original JS. No quality-bash implementation or test source was read.                     |
-| Packaging        | Rust binary, native addon, portable JS                                 | npm library and CLI plus non-root Node container. Source package stays small; grammar data is a separate pinned dependency.                                                                                  |
+| Component        | Alternatives considered                                                | Choice and consequence                                                                                                                                                                            |
+| ---------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Language parsing | Compiler subprocesses, native ast-grep/NAPI, Tree-sitter WASM, regex   | Pinned grammar-specific WASM runtimes run without native compilation on all three JS runtimes. Syntax trees do not supply type resolution. Old grammar snapshots can reject newer syntax.         |
+| CMake            | Execute CMake, cmake-lint, general regex                               | Original native command/bracket/block adapter with literal arity and structural decisions; expanded headers refuse incomplete metrics. CMake execution can run project code; it is not automatic. |
+| Rules            | Semgrep DSL, ESLint plugin, custom code evaluation                     | Declarative AST-kind/literal and bounded named-tree/capture/sequence rules plus versioned library plugins. Arbitrary regex and config code are not executed. No Semgrep DSL compatibility claim.  |
+| Reports          | Proprietary database, SARIF, JSON only                                 | Deterministic JSON/text and SARIF 2.1.0 with stable occurrence fingerprints. No hosted dashboard or SARIF consumer certification.                                                                 |
+| Git mining       | PyDriller, GitPython, git log only, custom diff parser                 | Git plumbing plus syntax snapshots; no checkout/worktree writes. Unique identity matches across revisions, repeated normalized before/after edits, file hotspots and temporal coupling.           |
+| API              | Express/Fastify, raw HTTP                                              | Node HTTP with bounded bodies/concurrency, startup-only workspace and optional constant-time bearer auth. No database/multitenancy.                                                               |
+| Shell QA         | Reimplement ShellCheck/Bats/kcov, copy quality-bash, explicit adapters | Execute independently installed trusted tools and validate their outputs. Mutation operators and baseline logic are original JS. No quality-bash implementation or test source was read.          |
+| Packaging        | Rust binary, native addon, portable JS                                 | npm library and CLI plus non-root Node container. Source package stays small; grammar data is a separate pinned dependency.                                                                       |
 
 ## Language coverage
 
@@ -560,3 +560,40 @@ validation refusals, finite work bounds, CLI/HTTP reports and baseline migration
 Applicable CMake tree rules continue to refuse incomplete analysis. Exhaustive
 compiler/project semantics, dataflow/taint, fixes, proprietary documented cases
 and quality-bash parity remain unfinished in strict readiness.
+
+## Bash grammar/runtime regression
+
+The combined structural/filter candidate at `ac3a370` passes all 273 Node and
+257 Bun/frozen-Deno quality/glob/workflow cases, static/types/package/release,
+423-file guards and seventeen source hashes. Both reviewed committed diffs match
+byte-for-byte and all 194 paginated PR file blob identities match the candidate.
+Five CI workflows pass; the exact-head runtime matrix is still queued.
+
+A new original finite shell operator fixture reproduced a valid Bash parser crash
+on `[[ word == word ]]`. The bundled 0.20.5 grammar imports `isalpha`, absent
+from its 0.20.8 runtime. Runtime-only 0.22.6/0.24.7 probes also fail. The official
+Bash 0.23.3 release asset with a separate pinned 0.24.7 runtime passes literal,
+variable and Unicode patterns, case alternatives and heredocs. Other languages
+retain their parsers and method identities. Bash reports/measurements version
+the exact new grammar/runtime/hash and require reviewed baseline migration.
+
+The [artifact contract](data/bash-parser-contract.json), retained MIT license and
+[parser documentation](../../bash-parser.md) record the binary provenance, import
+failure, compatibility probes, finite cases and limits. The asset has no published
+release digest; the pin is our recorded HTTPS artifact hash. Original tests require
+valid parsing/extraction, preserved syntax refusals, tree predicates, clones,
+comparison offsets, corrupted-artifact refusal and CLI/HTTP/package consumption.
+The original [Bats example](../../../examples/code-quality/shell-syntax/README.md)
+exercises a case label, unquoted pattern and quoted heredoc. No upstream analyzer
+implementation or tests were read. Full semantic, operator and diagnostic parity
+remains unfinished.
+
+The original eight valid parsing cases fail seven times against isolated preceding
+source and all pass after correction. Fourteen new cases pass on Node, Bun and
+frozen Deno, including source offsets after non-ASCII/astral text. The installed
+tarball and actual Bats pattern/case/heredoc example pass. Real QA retains the
+prior 3/5 arithmetic coverage, 2/3 mutation result and 100% stronger-control
+fixture. The real-shell CI experiment also runs the new Bats assertions. The
+finite released-CLI operator observation and original fixture hashes are retained
+in the artifact contract: eleven released candidates versus fourteen native
+candidates, with arithmetic ordering and multiplication-policy gaps explicit.

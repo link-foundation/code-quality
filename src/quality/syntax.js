@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import { getLanguage } from './languages.js';
 import { parseCmake } from './cmake.js';
 import { lineLocator } from './lines.js';
+import { withBashSyntax } from './bash-syntax.js';
 
 const require = createRequire(import.meta.url);
 const grammars = new Map();
@@ -67,6 +68,8 @@ const decisionKinds = new Set([
 ]);
 
 export const hash = (value) => createHash('sha256').update(value).digest('hex');
+export const isNamed = (node) =>
+  typeof node.isNamed === 'function' ? node.isNamed() : node.isNamed;
 export const position = (source, index) => {
   const before = source.slice(0, index).split('\n');
   return { line: before.length, column: before.at(-1).length + 1 };
@@ -80,7 +83,9 @@ export function* walk(root, budget = { remaining: 500_000 }) {
       if (--budget.remaining < 0) {
         throw new Error('Syntax traversal budget exceeded');
       }
-      yield cursor.currentNode();
+      yield typeof cursor.currentNode === 'function'
+        ? cursor.currentNode()
+        : cursor.currentNode;
       if (cursor.gotoFirstChild()) {
         continue;
       }
@@ -176,7 +181,7 @@ function nodeMetrics(node, budget) {
 
 function abstraction(node, source, budget) {
   if (
-    !node.isNamed() ||
+    !isNamed(node) ||
     (node.type === 'module' && !node.childForFieldName('name'))
   ) {
     return null;
@@ -210,6 +215,9 @@ export async function withSyntax(language, source, callback, options) {
   const spec = getLanguage(language);
   if (!spec.grammar) {
     return callback({ cmake: parseCmake(source, options), root: null });
+  }
+  if (spec.grammar === 'bash') {
+    return await withBashSyntax(source, callback);
   }
   initialized ||= Parser.init();
   await initialized;
@@ -284,7 +292,9 @@ export function extractSyntax(syntax, source) {
   let descriptorBytes = 0;
   const budget = { remaining: 500_000 };
   for (const node of walk(syntax.root, budget)) {
-    if (node.type === 'ERROR' || node.isMissing()) {
+    const missing =
+      typeof node.isMissing === 'function' ? node.isMissing() : node.isMissing;
+    if (node.type === 'ERROR' || missing) {
       errors.push({
         line: node.startPosition.row + 1,
         column: node.startPosition.column + 1,

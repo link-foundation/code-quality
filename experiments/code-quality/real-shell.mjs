@@ -1,4 +1,4 @@
-import { URL } from 'node:url';
+import { URL, fileURLToPath } from 'node:url';
 import assert from 'node:assert/strict';
 import { mkdtemp, cp, rm, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -11,12 +11,23 @@ import {
 } from '../../src/quality/index.js';
 import { runQualityCli } from '../../src/quality/cli.js';
 import { qualityAction } from '../../scripts/quality-action.mjs';
+import { runProcess } from '../../src/quality/process.js';
 import { verifyBaselineImport } from './baseline-import.mjs';
 import { verifyArithmeticShell } from './arithmetic-shell.mjs';
 import { verifyWorkspaceFreshness } from './workspace-freshness.mjs';
 
 const root = await mkdtemp(join(tmpdir(), 'code-quality-real-shell-'));
 try {
+  const bashSyntax = await runProcess('bats', [
+    fileURLToPath(
+      new URL(
+        '../../examples/code-quality/shell-syntax/describe.bats',
+        import.meta.url
+      )
+    ),
+  ]);
+  assert.equal(bashSyntax.code, 0, bashSyntax.stdout + bashSyntax.stderr);
+  assert.match(bashSyntax.stdout, /^ok 1 recognize a shell word/m);
   await cp(
     new URL('../../examples/code-quality/shell/', import.meta.url),
     root,
@@ -220,6 +231,7 @@ try {
   console.log(
     JSON.stringify(
       {
+        bashSyntax: 'Original pattern/case/heredoc Bats assertions passed',
         metrics: report.metrics,
         statusFixtureMetrics: statusReport.metrics,
         arithmeticFixtureMetrics: await verifyArithmeticShell(),

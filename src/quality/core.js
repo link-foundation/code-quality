@@ -1,6 +1,7 @@
 import { detectLanguage, getLanguage } from './languages.js';
 import { validateConfig, severities, safePath } from './config.js';
 import { withSyntax, extractSyntax, walk, hash, position } from './syntax.js';
+import { bashParserMethod } from './bash-syntax.js';
 import {
   cloneContext,
   collectCloneTokens,
@@ -350,6 +351,9 @@ export function finalizeReport(files, findings, config, metadata = {}) {
         engine: 'native-quality-v1',
         parser:
           'web-tree-sitter@0.20.8/tree-sitter-wasms@0.1.13/cmake-native-v2',
+        ...(files.some((file) => file.language === 'bash') && {
+          bashParser: bashParserMethod,
+        }),
         rules: config.rules,
         customRules: config.customRules,
         ...(config.customRules.some((rule) => rule.pattern.tree) && {

@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { walk } from './syntax.js';
+import { walk, isNamed } from './syntax.js';
 
 function validateFields(node, inventory) {
   for (const key of ['kind', 'text', 'capture']) {
@@ -171,7 +171,7 @@ function structure(node, budget) {
 
 function matches(node, pattern, captures, budget, namedOnly = true) {
   spend(budget);
-  if ((namedOnly && !node.isNamed()) || /comment/.test(node.type)) {
+  if ((namedOnly && !isNamed(node)) || /comment/.test(node.type)) {
     return false;
   }
   if (

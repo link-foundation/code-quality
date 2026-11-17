@@ -121,6 +121,7 @@
   },
   "dependencies": {
     "tree-sitter-wasms": "0.1.13",
-    "web-tree-sitter": "0.20.8"
+    "web-tree-sitter": "0.20.8",
+    "web-tree-sitter-bash-runtime": "npm:web-tree-sitter@0.24.7"
   }
 }

@@ -83,6 +83,11 @@ assert.equal(structural.incomplete, false);
 const predicates = await analyzeFiles([{path:'rule.js',content:'dispatch(first);\\nforward(first);\\n'}], {config:{customRules:[{id:'local/filter',message:'Review',pattern:{tree:{all:[{kind:'call_expression'}],any:[{fields:{function:{text:'dispatch'}}},{fields:{function:{text:'forward'}}}],not:{fields:{function:{text:'forward'}}}}}}]}});
 assert.deepEqual(predicates.findings.map(({ruleId,line}) => [ruleId,line]), [['local/filter',1]]);
 assert.equal(predicates.incomplete, false);
+const bash = await analyzeFiles([{path:'literal.sh',content:'choose() { [[ word == word ]]; }\\n'}]);
+assert.equal(bash.incomplete, false);
+assert.deepEqual(bash.findings, []);
+assert.equal(bash.files[0].abstractions[0].name, 'choose');
+assert.deepEqual((await shellMutants({path:'literal.sh',content:'[[ word == word ]]\\n'})).map(({original,replacement}) => [original,replacement]), [['==','!=']]);
 console.log('Installed library and CLI passed');\n`
   );
   const smoke = await runProcess('node', ['smoke.mjs'], { cwd: root });

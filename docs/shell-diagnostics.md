@@ -8,6 +8,7 @@ for remaining parity limits.
 
 | Contract                                                                                                                                  | Independent evidence                                                                                     |
 | ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Valid literal/variable/Unicode patterns, case labels and heredocs parse; corrupt shipped grammar refuses                                  | `tests/quality-bash-grammar.test.js`, `docs/bash-parser.md`                                              |
 | GNU Bash >=5.2; refuse unknown/older versions before project execution or downloads                                                       | `tests/quality-shell-version.test.js`                                                                    |
 | Checksum failure never reaches extraction; existing user directories survive failures                                                     | `tests/quality-toolchain.test.js`                                                                        |
 | Tools include helpers, private libraries and notices; reject dependency fallback outside the private tree except glibc                    | `tests/quality-runtime.test.js`, actual installer and native-architecture CI                             |

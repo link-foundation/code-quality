@@ -40,6 +40,12 @@
       "status": "native",
       "evidence": "tests/quality-runtime.test.js",
       "limits": "Downloaded Debian libraries, relocatable loader launcher and managed-tree fingerprints; host glibc, plugins and system configuration are not hermetic"
+    },
+    {
+      "id": "bash-grammar-v0233",
+      "status": "native",
+      "evidence": "tests/quality-bash-grammar.test.js",
+      "limits": "Pinned official MIT grammar binary and separate compatible JS/WASM runtime; original interface adaptation, not native reimplementation of the grammar or full Bash semantics"
     }
   ],
   "capabilities": [
@@ -164,7 +170,10 @@
         "docs/shell-measurements.md",
         "tests/quality-shell-workspace.test.js",
         "experiments/code-quality/workspace-freshness.mjs",
-        "docs/shell-inputs.md"
+        "docs/shell-inputs.md",
+        "tests/quality-bash-grammar.test.js",
+        "docs/bash-parser.md",
+        "docs/case-studies/issue-1/data/bash-parser-contract.json"
       ],
       "description": "Native amd64/arm64 private-library QA, consumer Action and independent baseline import pass at a764ae6; command-specific help, original real 3/5 coverage and 2/3 arithmetic mutants plus explicit half-up import verified; numeric-condition policies differ and exhaustive operator/diagnostic cases remain unfinished"
     }

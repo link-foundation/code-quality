@@ -65,6 +65,18 @@ metadata and retrieval provenance are recorded in
 `docs/case-studies/issue-1/data/shell-runtime-pins.json`. Host glibc, Python and
 system configuration retain their applicable licenses.
 
+`web-tree-sitter-bash-runtime` is an exact npm alias of MIT-licensed
+`web-tree-sitter` 0.24.7, copyright 2018–2021 Max Brunsfeld. Its installed LICENSE
+contains the complete MIT notice above. Only Bash uses this compatible runtime.
+
+The shipped `src/quality/grammars/tree-sitter-bash.wasm` is the unchanged official
+Tree-sitter Bash 0.23.3 release artifact at commit
+`487734f87fd87118028a65a4599352fa99c9cde8`, SHA-256
+`d1844429a58620f306b6f42aebe92298243ca8120cd833a3ab5d87c7a2e7b9fd`.
+Its complete MIT license is retained in `src/quality/grammars/BASH-LICENSE`.
+The earlier bundled Bash notice remains below because the grammar bundle is
+still distributed as a dependency; that older Bash artifact is no longer loaded.
+
 ## tree-sitter-bash 0.20.5
 
 Registry license: MIT.
