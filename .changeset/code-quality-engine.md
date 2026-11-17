@@ -51,3 +51,7 @@ Add opt-in CPD comment suppression for token clones across all language modes.
 Expose omitted ranges in JSON/text/SARIF, preserve boundaries between retained
 segments and reject malformed or excessive marker inventories. Version enabled
 methods while retaining unchanged defaults and other rules.
+
+Collect verified token-pair locations into deterministic occurrence groups in
+JSON, text and SARIF. Preserve pair findings, gates, signatures and methods;
+deduplicate locations within each language/token-count/signature group.

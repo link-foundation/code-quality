@@ -67,6 +67,7 @@ export interface Report {
   incomplete?: boolean;
   baseline?: { passed: boolean; failures: string[] };
   clones?: TokenClone[];
+  cloneGroups?: TokenCloneGroup[];
   cloneSuppressions?: CloneLocation[];
 }
 export interface CloneLocation {
@@ -85,6 +86,12 @@ export interface TokenClone {
   signature: string;
   first: CloneLocation;
   second: CloneLocation;
+}
+export interface TokenCloneGroup {
+  language: Language;
+  tokens: number;
+  signature: string;
+  occurrences: CloneLocation[];
 }
 export interface CustomRule {
   id: string;

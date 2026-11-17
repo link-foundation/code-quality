@@ -152,6 +152,8 @@ Optional [token-block duplication](docs/token-clones.md) finds repeated partial
 functions and local blocks, with both source ranges, threshold gates and explicit
 identifier/literal normalization. All thirteen language modes, including native
 CMake argument tokens, run through the library, CLI and HTTP API.
+Reports retain pair findings and collect their distinct locations into occurrence
+groups for reviewing a block repeated across several files.
 Opt-in comment regions can exclude generated duplication while retaining audited
 ranges in JSON/SARIF. Syntax validation and other rules still inspect those regions.
 

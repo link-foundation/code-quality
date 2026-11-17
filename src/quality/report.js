@@ -37,8 +37,13 @@ function sarifReport(report) {
           },
         },
         invocations: [{ executionSuccessful: !report.incomplete }],
-        ...(report.cloneSuppressions && {
-          properties: { cloneSuppressions: report.cloneSuppressions },
+        ...((report.cloneGroups || report.cloneSuppressions) && {
+          properties: {
+            ...(report.cloneGroups && { cloneGroups: report.cloneGroups }),
+            ...(report.cloneSuppressions && {
+              cloneSuppressions: report.cloneSuppressions,
+            }),
+          },
         }),
         results: report.findings.map((entry) => ({
           ruleId: entry.ruleId,
@@ -77,6 +82,16 @@ export function formatReport(report, format = 'text') {
   }
   if (report.cloneSuppressions) {
     lines.push(`${report.cloneSuppressions.length} clone suppression regions`);
+  }
+  if (report.cloneGroups) {
+    const occurrences = report.cloneGroups.reduce(
+      (total, group) => total + group.occurrences.length,
+      0
+    );
+    const count = report.cloneGroups.length;
+    lines.push(
+      `${count} clone group${count === 1 ? '' : 's'}, ${occurrences} occurrences`
+    );
   }
   lines.push(
     `${report.summary.files} files, ${report.summary.errors} errors, ${report.summary.warnings} warnings; ${report.passed ? 'passed' : 'failed'}`

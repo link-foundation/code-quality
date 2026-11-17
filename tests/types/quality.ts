@@ -39,6 +39,8 @@ const report = await analyzeFiles(
 const baseline = createBaseline(report);
 const cloneEnd: number | undefined = report.clones?.[0].second.end;
 void cloneEnd;
+const groupEnd: number | undefined = report.cloneGroups?.[0].occurrences[0].end;
+void groupEnd;
 const omittedEnd: number | undefined = report.cloneSuppressions?.[0].end;
 void omittedEnd;
 const arity: number | null = report.files[0].abstractions[0].parameters;

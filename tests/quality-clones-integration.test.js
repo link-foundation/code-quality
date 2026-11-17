@@ -106,6 +106,8 @@ describe('token clone examples through CLI and HTTP', () => {
         const http = await response.json();
         assert.equal(http.passed, example.passed);
         assert.deepEqual(http.clones, cli.clones);
+        assert.deepEqual(http.cloneGroups, cli.cloneGroups);
+        assert.equal(cli.cloneGroups.length, example.passed ? 0 : 1);
         assert.deepEqual(http.findings, cli.findings);
         assert.equal(http.method, cli.method);
         assert.deepEqual(http.cloneSuppressions, cli.cloneSuppressions);
@@ -140,6 +142,7 @@ describe('token clone examples through CLI and HTTP', () => {
     const report = JSON.parse(output);
     assert.equal(report.clones.length, 1);
     assert.equal(report.clones[0].tokens, 22);
+    assert.equal(report.cloneGroups[0].occurrences.length, 2);
     assert.equal(report.findings[0].path, 'second.js');
     assert.equal(report.findings[0].column, 29);
   });
@@ -171,6 +174,7 @@ describe('token clone examples through CLI and HTTP', () => {
       assert.equal(report.incomplete, false);
       assert.equal(report.clones.length, 1);
       assert.equal(report.clones[0].tokens, 22);
+      assert.equal(report.cloneGroups[0].occurrences.length, 2);
       assert.equal(report.clones[0].second.path, 'second.js');
     } finally {
       await new Promise((resolve, reject) =>

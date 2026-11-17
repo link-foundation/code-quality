@@ -402,8 +402,9 @@ unfinished. Candidate `4ac4c97` passes 165 Node checks (149 quality/glob plus 16
 workflow cases), 149 Bun and frozen-Deno cases, static/types/Changeset/402-file
 guards, twelve source hashes, installed-package and isolated release checks.
 The [native shell/distribution workflow](https://github.com/link-foundation/code-quality/actions/runs/44186142342),
-Security, workflow policy and links pass; full checks and the example app remain
-queued. All same-revision results must be collected before another push.
+Security, workflow policy, links, the full nine-leg runtime matrix and the example
+app all pass. All six same-revision workflows were collected before the next push;
+the checks workflow completed on its first attempt without failures.
 
 ## Reviewed comment region draft
 
@@ -418,9 +419,31 @@ budgets refuse analysis rather than silently hiding additional code.
 The [original contract notes](data/pmd-suppression-contract.json) distinguish
 native choices from unverified CPD equivalence. CLI/HTTP and installed-package
 checks use the same engine; the finite 10,002-marker probe runs with a 128 MiB
-heap and bounded stack. Exact-candidate and new same-revision CI verification
-remain pending. Legacy annotation suppression, exhaustive language-specific
+heap and bounded stack. Candidate `efad61a` passes 189 Node checks (173 quality/glob
+and 16 workflow cases), 173 Bun and frozen-Deno cases, static/types/Changeset,
+408-file guards, thirteen source hashes, installed-package and isolated release
+checks. Publication is grouped with the following occurrence view; new
+same-revision CI remains pending. Legacy annotation suppression, exhaustive language-specific
 lexical behavior and full competitor parity remain unfinished.
+
+## Clone occurrence view
+
+Pair findings can repeat a location when a block occurs in three files. The
+stable public PMD report-format overview describes multi-location reports. The
+original native draft groups already verified pairs by language, token count and
+normalized signature, deduplicating exact locations without inferring new
+matches. Pair findings, gates and method fingerprints are preserved. Distinct
+groups may overlap and are not transitively merged. Existing result limits bound
+the additional view. JSON and SARIF retain locations without source text; text
+reports group and occurrence counts.
+
+Twenty original cases first fail because group metadata is absent. The first
+native draft passes all twenty, plus 23 suppression and six consumer cases.
+Fixtures cover three copies in thirteen modes, same-file shifted matches,
+normalization, exact ranges, comment regions and deterministic ordering. The
+[contract notes](data/pmd-group-contract.json) record provenance and the policy's
+limits. Exact-candidate checks and new CI remain pending; this view does not
+establish CPD grouping or full competitor equivalence.
 
 ## Evolution method and limits
 

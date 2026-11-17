@@ -32,10 +32,22 @@ A rolling seed indexes candidates; every reported match is verified token by
 token, so hash collisions cannot create a finding. The report includes maximal
 matching **pairs**, with token counts and both source ranges. Ranges use zero-based
 JavaScript string offsets and one-based line/column positions; ends are exclusive.
-Pairs may share occurrences; they are not merged into transitive clone groups.
+Pairs may share occurrences; different signatures/lengths are not merged transitively.
 Same-file pairs must not overlap. Matching never crosses file or language boundaries.
 Source text and token spellings are absent from clone records. Each pair includes a
 SHA-256 signature of its normalized token identities, independent of input order.
+
+When token analysis is enabled, `cloneGroups` also collects each pair's locations
+by language, token count and normalized signature. Each location appears once
+within its group, ordered by path and offsets. Groups are ordered by decreasing
+token count, then language and signature. This is a view of verified pair results;
+it does not infer additional matches or change per-pair findings, gates, baseline
+identities or method fingerprints. Different groups may overlap; locations
+collected from different nonoverlapping pairs need not all be mutually
+nonoverlapping. Enabled analysis with no matches returns an empty array; disabled
+analysis omits this property. JSON and SARIF run properties retain groups, and
+text reports their count and the sum of their occurrence counts. Existing limits
+bound the view to 10,000 groups and 20,000 location entries. No source text is added.
 
 Each pair adds a `duplicate-tokens` warning at its second occurrence, so normal
 gates, JSON, SARIF and baselines include the result. SARIF retains both ranges
@@ -85,8 +97,10 @@ The [CMake example](../examples/code-quality/cmake-clones/README.md) also verifi
 matching CLI/HTTP findings and UTF-16 ranges across BOM, CRLF and multiline input.
 The public [PMD 7.29.0 CPD contract](https://docs.pmd-code.org/pmd-doc-7.29.0/pmd_userdocs_cpd.html)
 informed the feature inventory. Its implementation and tests were not inspected.
-CPD's full language-specific options, legacy annotation suppression, clone grouping
-and lexical equivalence remain unverified parity criteria.
+The public [report-format overview](https://docs.pmd-code.org/pmd-doc-7.29.0/pmd_userdocs_cpd_report_formats.html)
+also describes multi-location duplicate reports. Native occurrence groups follow
+the original policy above; equivalence to CPD's grouping, full language-specific
+options, legacy annotation suppression and lexers remains unverified.
 
 ## Reviewed comment regions
 

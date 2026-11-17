@@ -66,6 +66,12 @@
       "sha256": "76a2dcebad2a628b6c8065f957652d8fa92bdfd5f3374c2f9120d71aae2e0753",
       "upstreamRelease": "7.29.0",
       "provenance": "Original concise public comment-suppression contract notes; no upstream implementation/tests/examples copied; strict opt-in, malformed-marker and segment policies are native choices, not a parity claim"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/pmd-group-contract.json",
+      "sha256": "0fd3a9cc38a36ccf3112a01f3616397f61ec72ffe29bda6d360ac91e4b7673bb",
+      "upstreamRelease": "7.29.0",
+      "provenance": "Original concise public report-format overview notes; documentation illustrative excerpts were not copied or used as fixtures; no upstream implementation/test-suite files opened; native grouping policy is not a parity claim"
     }
   ],
   "primarySources": [
@@ -148,7 +154,11 @@
     {
       "title": "CMake 3.28 lexical command/argument categories",
       "url": "https://cmake.org/cmake/help/v3.28/manual/cmake-language.7.html"
+    },
+    {
+      "title": "PMD 7.29.0 duplicate report-format overview",
+      "url": "https://docs.pmd-code.org/pmd-doc-7.29.0/pmd_userdocs_cpd_report_formats.html"
     }
   ],
-  "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version and black-box QA/report/baseline observations, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. CMake probes use public official language/function/condition documentation and original finite scripts. Tests and engine source are original. External dependencies retain upstream licenses. PMD CPD research uses the stable 7.29.0 public behavior documentation only; token fixtures, index and finite oracle are original. CMake token analysis uses the versioned 3.28.6 public language categories and original lexical/refusal fixtures. Comment suppression uses the same stable public CPD documentation; fixtures, region bookkeeping and bounded probes are original."
+  "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version and black-box QA/report/baseline observations, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. CMake probes use public official language/function/condition documentation and original finite scripts. Tests and engine source are original. External dependencies retain upstream licenses. PMD CPD research uses the stable 7.29.0 public behavior documentation only; token fixtures, index and finite oracle are original. CMake token analysis uses the versioned 3.28.6 public language categories and original lexical/refusal fixtures. Comment suppression uses the same stable public CPD documentation; fixtures, region bookkeeping and bounded probes are original. The stable report-format overview informs multi-location reporting; it contains illustrative source excerpts, none copied or used as fixtures. No upstream implementation or test-suite files were opened; native group policy and all group fixtures are original."
 }

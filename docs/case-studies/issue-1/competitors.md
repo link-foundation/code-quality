@@ -108,6 +108,13 @@ native policies and tests. Ignored regions cannot join surrounding matches or
 disable syntax/structural rules. A finite marker probe and shared token budgets
 bound work even for ignored code.
 
+The stable public report-format overview describes multiple locations for a
+duplicate. The [original group contract](data/pmd-group-contract.json) records
+the native view: deduplicate locations within each verified pair signature,
+language and token count, retaining all pair findings and gates. Original cases
+cover three-copy blocks in thirteen modes, normalization, overlapping group
+ranges, comment regions, CLI/HTTP/package consumers and JSON/text/SARIF evidence.
+
 This does not establish equivalent lexers, language-specific normalization,
-legacy annotation suppression, grouping, or complete PMD/CPD rule and case parity.
+legacy annotation suppression, equivalent grouping, or complete PMD/CPD rule and case parity.
 The strict readiness inventory continues to reject universal competitor parity.

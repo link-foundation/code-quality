@@ -7,6 +7,7 @@ import {
   collectCmakeCloneTokens,
   detectTokenClones,
 } from './clones.js';
+import { groupTokenClones } from './clone-groups.js';
 
 function finding(
   path,
@@ -474,6 +475,7 @@ export async function analyzeFiles(input, options = {}) {
     config,
     clones && {
       clones,
+      cloneGroups: groupTokenClones(clones),
       ...(config.clones.suppressionComments && {
         cloneSuppressions: cloneInputs.suppressions.sort((a, b) =>
           a.path < b.path ? -1 : a.path > b.path ? 1 : a.start - b.start
