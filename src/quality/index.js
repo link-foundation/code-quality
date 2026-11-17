@@ -1,12 +1,13 @@
 export { languages, detectLanguage } from './languages.js';
 export { analyzeSource, analyzeFiles } from './core.js';
 export { analyzeProject, readProject } from './project.js';
-export { formatReport } from './report.js';
+export { formatReport, saveReport } from './report.js';
 export {
   createBaseline,
   checkBaseline,
   updateBaseline,
   measurementFingerprint,
+  readGitBaseline,
 } from './baseline.js';
 export {
   importFindings,

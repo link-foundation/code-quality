@@ -1,37 +1,8 @@
 import { resolve } from 'node:path';
-import { runProcess } from './process.js';
+import { gitOutput as git, resolveCommit as commitRef } from './git.js';
 import { detectLanguage } from './languages.js';
 import { safePath, positiveInteger } from './config.js';
 import { hash, withSyntax, extractSyntax } from './syntax.js';
-
-async function git(root, args, maxOutputBytes = 4_194_304) {
-  const result = await runProcess('git', ['-C', root, ...args], {
-    maxOutputBytes,
-  });
-  if (result.code !== 0) {
-    throw new Error(`Git ${args[0]} failed: ${result.stderr.trim()}`);
-  }
-  return result.stdout;
-}
-
-async function commitRef(root, ref) {
-  if (
-    typeof ref !== 'string' ||
-    !ref ||
-    ref.startsWith('-') ||
-    ref.includes('\0')
-  ) {
-    throw new Error('Invalid Git revision');
-  }
-  return (
-    await git(root, [
-      'rev-parse',
-      '--verify',
-      '--end-of-options',
-      `${ref}^{commit}`,
-    ])
-  ).trim();
-}
 
 function cacheSnapshot(cache, key, parsed) {
   const metadataBytes = Buffer.byteLength(JSON.stringify(parsed));

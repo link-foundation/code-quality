@@ -107,7 +107,25 @@ budgets, missing coverage files, skipped tests, changed source and tool timeouts
 Tests and tools execute as the current user. Baselines preserve file inventory,
 methodology and nondecreasing coverage/mutation floors. Use identical options on
 measurement and update. Plain `check --baseline <file>` also accepts a native
-report baseline created through the library. Reports go to stdout or `--output`.
+report baseline created through the library. `--baseline-ref <commit-or-ref>` also
+enforces the baseline committed at that revision, in addition to the working
+baseline. Fetch the revision first; the command never checks out or fetches code.
+This prevents a PR from accepting a new finding or lowering a floor locally and
+bypassing the target baseline. With this option, the baseline path must be inside
+the project root; the default is `quality-baseline.json` there. An explicit
+`--baseline <file>` keeps its existing working-directory-relative meaning.
+
+Shell QA and baseline updates save fresh evidence under `<root>/quality-reports/`,
+including failures before measurement completes. `--reports <directory>` chooses
+a root-relative directory and also enables persistence for `check`. Each run has
+its own directory with JSON, text, SARIF when analysis completed, diagnostic JSON
+and a manifest. `latest.json` points to the last saved run and states `complete`
+and `passed`. Incomplete checks publish a failed manifest; report-write errors
+return status 2. Check the command status as well as the manifest. Runs
+are retained for review; consumers can archive them. Raw kcov HTML/Cobertura is
+not yet preserved. Baseline writes use atomic replacement, and `--create` never
+overwrites a concurrently created baseline. Baseline JSON is bounded to 1 MiB.
+Console reports still go to stdout or `--output`.
 Set `CODE_QUALITY_DEBUG=1` to trace subprocess argv, duration and bounded output
 when investigating external tools. Tracing is off by default.
 

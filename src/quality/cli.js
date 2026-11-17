@@ -1,5 +1,5 @@
 import { readFile, writeFile } from 'node:fs/promises';
-import { resolve, join } from 'node:path';
+import { resolve, join, relative, sep } from 'node:path';
 import { URL } from 'node:url';
 import {
   analyzeProject,
@@ -14,10 +14,13 @@ import {
   doctor,
   runAdapter,
   toolRecipes,
+  readGitBaseline,
+  saveReport,
 } from './index.js';
 import { defaultRules, validateConfig } from './config.js';
 import { finalizeReport } from './core.js';
 import { hash } from './syntax.js';
+import { atomicWriteFile, readJsonFile, withFileLock } from './persistence.js';
 
 const help = `Usage: code-quality <command> [root] [options]
 Commands:
@@ -33,6 +36,8 @@ Options:
   --format <text|json|sarif>  Check/QA report format
   --output <file>         Save output (default stdout)
   --baseline <file>       Require baseline; defaults to quality-baseline.json for qa
+  --baseline-ref <ref>    Also enforce the committed baseline at this Git revision
+  --reports <directory>  Save run evidence (default <root>/quality-reports for shell QA)
   --create               Explicitly create a missing baseline
   --tools                Execute adapters in the chosen trusted config
   --from <ref> --to <ref> --max-commits <N>  Evolution history bounds
@@ -51,6 +56,8 @@ function parseArgs(argv) {
     'format',
     'output',
     'baseline',
+    'baseline-ref',
+    'reports',
     'from',
     'to',
     'max-commits',
@@ -103,21 +110,46 @@ async function emitJson(value, context) {
   await emitOutput(`${JSON.stringify(value, null, 2)}\n`, context);
 }
 
-async function baselineCommand(report, context) {
+function baselineCommand(report, context) {
   const path =
     context.options.baseline || join(context.root, 'quality-baseline.json');
+  return withFileLock(path, () => writeBaseline(report, context, path));
+}
+
+async function writeBaseline(report, context, path) {
+  if (!report.passed) {
+    throw new Error(
+      'Shell QA must pass syntax and lint before updating a baseline'
+    );
+  }
   let previous;
   try {
-    previous = JSON.parse(await readFile(path, 'utf8'));
+    previous = await readJsonFile(path);
   } catch (error) {
     if (error.code !== 'ENOENT' || !context.options.create) {
       throw error;
     }
   }
-  const baseline = previous
-    ? updateBaseline(report, previous)
-    : createBaseline(report);
-  await writeFile(path, `${JSON.stringify(baseline, null, 2)}\n`);
+  if (context.options['baseline-ref']) {
+    const target = checkBaseline(
+      report,
+      await committedBaseline(context, path)
+    );
+    if (!target.passed) {
+      throw new Error(`Committed baseline: ${target.failures.join('; ')}`);
+    }
+  }
+  const baseline =
+    previous !== undefined
+      ? updateBaseline(report, previous)
+      : createBaseline(report);
+  const content = `${JSON.stringify(baseline, null, 2)}\n`;
+  if (Buffer.byteLength(content) > 1_048_576) {
+    throw new Error('Baseline exceeds byte budget');
+  }
+  await atomicWriteFile(path, content, { create: previous === undefined });
+  report.baseline = { passed: true, failures: [] };
+  report.passed = true;
   await emitOutput(
     `Baseline ${previous ? 'raised' : 'created'}: ${path}\n`,
     context
@@ -125,14 +157,21 @@ async function baselineCommand(report, context) {
   return 0;
 }
 
+function committedBaseline(context, path) {
+  const local = relative(resolve(context.root), resolve(path))
+    .split(sep)
+    .join('/');
+  return readGitBaseline(context.root, {
+    ref: context.options['baseline-ref'],
+    path: local,
+  });
+}
+
 async function baselineGate(report, context) {
   const path =
     context.options.baseline || join(context.root, 'quality-baseline.json');
   try {
-    report.baseline = checkBaseline(
-      report,
-      JSON.parse(await readFile(path, 'utf8'))
-    );
+    report.baseline = checkBaseline(report, await readJsonFile(path));
   } catch (error) {
     if (error.code !== 'ENOENT') {
       throw error;
@@ -144,10 +183,47 @@ async function baselineGate(report, context) {
       ],
     };
   }
-  report.passed = report.baseline.passed;
+  if (context.options['baseline-ref']) {
+    const target = checkBaseline(
+      report,
+      await committedBaseline(context, path)
+    );
+    report.baseline.failures.push(
+      ...target.failures.map((failure) => `Committed baseline: ${failure}`)
+    );
+    report.baseline.passed &&= target.passed;
+  }
+  report.passed =
+    report.baseline.passed && (context.command !== 'qa' || report.passed);
 }
 
 async function checkCommand(context) {
+  const { command, root, options } = context;
+  const directory = options.reports
+    ? resolve(root, options.reports)
+    : command !== 'check'
+      ? join(root, 'quality-reports')
+      : null;
+  if (directory && resolve(directory) === resolve(root)) {
+    throw new Error('Reports directory must differ from the project root');
+  }
+  let report;
+  let failure;
+  try {
+    return await measuredCommand(context, (value) => {
+      report = value;
+    });
+  } catch (error) {
+    failure = error;
+    throw error;
+  } finally {
+    if (directory) {
+      await saveReport(report, directory, { error: failure });
+    }
+  }
+}
+
+async function measuredCommand(context, measured) {
   const { command, root, options, config } = context;
   const shellOptions = {
     config,
@@ -158,42 +234,53 @@ async function checkCommand(context) {
     command === 'check'
       ? await analyzeProject(root, { config })
       : await shellQuality(root, shellOptions);
+  measured(report);
   if (options.tools) {
-    if (command !== 'check') {
-      throw new Error(
-        '--tools is supported with check; qa already executes its required tools'
-      );
-    }
-    if (!config.adapters?.length) {
-      throw new Error('--tools requires explicit adapters in --config');
-    }
-    const versions = await doctor(config.adapters, { cwd: resolve(root) });
-    if (!versions.passed) {
-      throw new Error(
-        'Cannot fingerprint adapter tool versions; check doctor output'
-      );
-    }
-    const findings = [...report.findings];
-    for (const adapter of config.adapters) {
-      findings.push(...(await runAdapter(adapter, { cwd: resolve(root) })));
-    }
-    report = finalizeReport(report.files, findings, validateConfig(config));
-    report.method = hash(
-      JSON.stringify({
-        native: report.method,
-        adapters: config.adapters,
-        versions: versions.tools,
-      })
-    );
+    report = await includeAdapters(report, context);
+    measured(report);
   }
   if (command === 'baseline-update') {
     return baselineCommand(report, context);
   }
-  if (options.baseline || command === 'qa') {
+  if (options.baseline || options['baseline-ref'] || command === 'qa') {
     await baselineGate(report, context);
   }
   await emitOutput(formatReport(report, options.format || 'text'), context);
   return report.passed ? 0 : 1;
+}
+
+async function includeAdapters(report, { command, root, config }) {
+  if (command !== 'check') {
+    throw new Error(
+      '--tools is supported with check; qa already executes its required tools'
+    );
+  }
+  if (!config.adapters?.length) {
+    throw new Error('--tools requires explicit adapters in --config');
+  }
+  const versions = await doctor(config.adapters, { cwd: resolve(root) });
+  if (!versions.passed) {
+    throw new Error(
+      'Cannot fingerprint adapter tool versions; check doctor output'
+    );
+  }
+  const findings = [...report.findings];
+  for (const adapter of config.adapters) {
+    findings.push(...(await runAdapter(adapter, { cwd: resolve(root) })));
+  }
+  const combined = finalizeReport(
+    report.files,
+    findings,
+    validateConfig(config)
+  );
+  combined.method = hash(
+    JSON.stringify({
+      native: combined.method,
+      adapters: config.adapters,
+      versions: versions.tools,
+    })
+  );
+  return combined;
 }
 
 async function serveCommand(context) {

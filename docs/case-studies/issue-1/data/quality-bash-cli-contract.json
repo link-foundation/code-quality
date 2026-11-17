@@ -1,0 +1,20 @@
+{
+  "retrievedAt": "2026-11-17",
+  "release": "https://github.com/ever-guild/quality-bash/releases/tag/v1.0.0-alpha.5",
+  "publishedAt": "2026-11-08T05:29:04Z",
+  "asset": "quality-bash-v1.0.0-alpha.5-linux-amd64.tar.gz",
+  "sha256": "66349fa3434ee12ee64afe3fb78a1634ca7332eefa87102c6071fe7536399450",
+  "verification": "Matched released SHA256SUMS before executing public help/version commands; implementation and tests were not inspected",
+  "commands": ["version", "doctor", "tools install", "lint", "test", "coverage", "mutation", "qa", "baseline check", "baseline-update"],
+  "contracts": {
+    "baseline": "Root-relative baseline; additionally enforce a specified committed Git revision",
+    "migration": "Fresh measurements; explicit explanation for incompatible methodology; compatible floors never decrease",
+    "selection": "Repeatable script and test selection",
+    "scheduling": "Automatic or explicit positive worker count; scheduling excluded from semantic fingerprint",
+    "reports": "Root-relative quality-reports default; coverage includes HTML, Cobertura and JSON",
+    "tools": "Checksum-verified pinned tools in user cache without sudo",
+    "timeout": "Per-process duration, default five minutes"
+  },
+  "publicToolManifest": { "bats": "1.14.0", "shellcheck": "0.11.0", "kcov": "43", "platforms": ["linux-amd64", "linux-arm64"] },
+  "provenance": "Original paraphrase of observable CLI contracts and public packaging metadata; no upstream implementation or test source read"
+}

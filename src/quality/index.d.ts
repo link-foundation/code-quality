@@ -61,6 +61,7 @@ export interface Report {
   passed: boolean;
   metrics?: Record<string, number>;
   incomplete?: boolean;
+  baseline?: { passed: boolean; failures: string[] };
 }
 export interface CustomRule {
   id: string;
@@ -205,6 +206,22 @@ export function checkBaseline(
   baseline: Baseline
 ): { passed: boolean; failures: string[] };
 export function updateBaseline(report: Report, previous: Baseline): Baseline;
+export function readGitBaseline(
+  root: string,
+  options: { ref: string; path?: string }
+): Promise<Baseline>;
+export interface ReportManifest {
+  schemaVersion: 1;
+  run: string;
+  complete: boolean;
+  passed: boolean;
+  files: string[];
+}
+export function saveReport(
+  report: Report | null | undefined,
+  directory: string,
+  options?: { error?: Error }
+): Promise<ReportManifest>;
 export function measurementFingerprint(
   files: FileAnalysis[],
   methodology: unknown

@@ -100,6 +100,35 @@ exit-status assertions and kills all three mutants. A second original fixture
 uses Bats' `run` helper to inspect output without asserting exit status, so its
 return-value mutant deliberately survives and the score is 66.66.
 
+## Second candidate CI investigation
+
+All workflows at `9b8dfda57a1ef46e052cb7a13165a8f924831eff` completed before
+the third fix batch. [Quality engine](https://github.com/link-foundation/code-quality/actions/runs/44131475831)
+passed actual shell measurements, installed-package imports and the non-root
+container with read-only Git history. [Security](https://github.com/link-foundation/code-quality/actions/runs/44131476230)
+passed both CodeQL languages; workflow, link and example-app checks passed too.
+
+[Checks and release](https://github.com/link-foundation/code-quality/actions/runs/44131476038)
+failed in all eight acquired runtime jobs with the same five test assumptions.
+For example, `ci-logs/runtime-134210911097.log` lines 2071–2075 expect no Dockerfile
+in the working repository; lines 2089, 2100, 2109 and 2118 expect the old template
+package name in OIDC URLs and diagnostics. The local two-file reproduction also
+reports exactly five failures. Use an isolated empty Docker fixture, additionally
+assert that the shipped Dockerfile enables the build, and derive package-name
+expectations from the actual package metadata. Preserve the URL, status, bootstrap,
+maintainer guidance and no-secret assertions.
+
+The ninth job, macOS Bun, executed no steps and has no log. Its check annotation
+states that no hosted runner acquired it after repeated attempts and reports
+macOS arm64 capacity constraints. Preserve this as a cancelled, unverified leg;
+the next candidate still requires the complete runtime matrix.
+
+Original regression cases also cover strict baseline JSON, exclusive atomic
+creation, update locking, literal nested Git paths, Git symlink rejection, a PR
+rebaselining its own new finding, immutable report bundles and fresh diagnostics
+when measurement fails. These cases address concrete shell contract gaps without
+claiming that full quality-bash parity is finished.
+
 ## Evolution method and limits
 
 Use a bounded first-parent range (default last 100 commits, hard limit 1000), inspect

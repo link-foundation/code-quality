@@ -3,6 +3,8 @@ import {
   analyzeFiles,
   createBaseline,
   createQualityServer,
+  readGitBaseline,
+  saveReport,
   extractEvolution,
   type Config,
   type Plugin,
@@ -25,6 +27,9 @@ const report = await analyzeFiles(
   { config, plugins: [plugin] }
 );
 const baseline = createBaseline(report);
+const committed = await readGitBaseline('.', { ref: 'HEAD' });
+const manifest = await saveReport(report, '/tmp/quality-reports');
+const complete: boolean = manifest.complete;
 const passed: boolean = checkBaseline(report, baseline).passed;
 const text: string = formatReport(report, 'sarif');
 const total: number = add(1, 2);
@@ -33,7 +38,7 @@ server.close();
 const history = await extractEvolution('.');
 const current: EvolutionIdentity | undefined = history.current[0];
 const language: Language | undefined = current?.language;
-void [passed, text, total, language];
+void [passed, text, total, language, committed, complete];
 
 // @ts-expect-error Unsupported languages must be rejected by consumers' compiler.
 const unsupported: Language = 'brainfuck';

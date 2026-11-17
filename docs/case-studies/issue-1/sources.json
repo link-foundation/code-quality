@@ -28,6 +28,11 @@
       "path": "docs/case-studies/issue-1/data/quality-bash-develop.md",
       "sha256": "f16ec88b9638254340a02aea896399da0f537ef3e2fcf6dfd5e550e9aaa36e08",
       "upstreamRevision": "8dc30669aa4255dfc6f84fb0f935b8036081fab4"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/quality-bash-cli-contract.json",
+      "sha256": "dbd2a4050a273e1ecc6f649b86a073c00848af8f098fdcdbb64d0eb794e6212e",
+      "upstreamRelease": "v1.0.0-alpha.5"
     }
   ],
   "primarySources": [
@@ -82,7 +87,11 @@
     {
       "title": "quality-bash",
       "url": "https://github.com/ever-guild/quality-bash"
+    },
+    {
+      "title": "quality-bash released CLI contracts",
+      "url": "https://github.com/ever-guild/quality-bash/releases/tag/v1.0.0-alpha.5"
     }
   ],
-  "cleanRoom": "Only public README/development/schema contracts of quality-bash were inspected; no implementation or test source was read. Tests and engine source are original. External dependencies retain upstream licenses."
+  "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. Tests and engine source are original. External dependencies retain upstream licenses."
 }

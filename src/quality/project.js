@@ -13,6 +13,7 @@ const ignored = new Set([
   'dist',
   'build',
   'coverage',
+  'quality-reports',
   '.venv',
   '__pycache__',
 ]);

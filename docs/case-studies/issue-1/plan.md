@@ -3,7 +3,9 @@
 PR: https://github.com/link-foundation/code-quality/pull/2
 
 The issue and all three PR discussion channels were read on 2026-11-17.
-There are no issue comments, PR comments/reviews, or required sub-issues.
+There are no issue comments, human PR comments/reviews, or required sub-issues.
+Two automated CodeQL inline comments identified polynomial regex behavior; the
+second candidate replaces those scanners and its Security workflow passes.
 The code-evolution extraction request is tracked at
 https://github.com/link-foundation/code-evolution/issues/1; the implementation
 belongs inline in this PR, and the subsequent repository move is explicitly later.
@@ -38,7 +40,13 @@ belongs inline in this PR, and the subsequent repository move is explicitly late
 - [x] Collect all six first-candidate workflows and preserve all three failure logs.
 - [x] Draft combined release metadata, regex and real-tool adapter fixes; preserve original fixture assertions.
 - [x] Verify 44 focused tests on Node, Bun and Deno; static checks, types, real tools and isolated release versioning.
-- [ ] Verify the next exact candidate revision and collect all of its CI results.
+- [x] Verify the second exact candidate revision and collect all of its CI results.
+- [x] Preserve eight runtime failure logs and the queued macOS Bun capacity cancellation.
+- [x] Fix the five reproduced template test assumptions without removing assertions.
+- [x] Implement and verify strict atomic baseline persistence, target-revision gates and persistent fresh report bundles.
+- [ ] Verify and review the third exact candidate, push once and collect all CI results.
+- [ ] Complete explicit shell migration, file selection, independent check commands, parallel scheduling, downloadable amd64/arm64 tools, Action integration, raw coverage artifacts and early-stop Bats contracts.
+- [ ] Complete remaining language semantics and competitor/proprietary documented cases.
 - [ ] Update PR title/body, preserve Fixes #1, mark ready after verification.
 
 "Best on the planet", "all competitors" and "all cases they document" are

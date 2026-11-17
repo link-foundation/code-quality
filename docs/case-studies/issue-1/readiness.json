@@ -99,7 +99,7 @@
       "required": true,
       "status": "partial",
       "evidence": ["docs/case-studies/issue-1/quality-bash.md"],
-      "description": "Distribution, action/report/schema/platform and test-runner semantics remain incomplete"
+      "description": "Distribution, Action, migration/raw coverage, platform and test-runner semantics remain incomplete"
     }
   ]
 }
