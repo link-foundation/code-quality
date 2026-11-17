@@ -61,6 +61,9 @@ assert.equal(parseKcov({coverage:{'a.sh':{1:1,2:1,3:0}}}, {rounding:'half-up'}).
 const mutants = await shellMutants({path:'math.sh',content:'printf "%s" "$((7 + 3))"\\n'});
 assert.equal(mutants.length, 1);
 assert.equal(mutants[0].replacement, '-');
+const clones = await analyzeFiles([{path:'a.js',content:'emit(value + 2);\\n'},{path:'b.js',content:'emit(value + 2);\\n'}], {config:{clones:{minTokens:7}}});
+assert.equal(clones.clones[0].tokens, 7);
+assert.equal(clones.findings[0].ruleId, 'duplicate-tokens');
 console.log('Installed library and CLI passed');\n`
   );
   const smoke = await runProcess('node', ['smoke.mjs'], { cwd: root });

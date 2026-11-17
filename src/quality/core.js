@@ -1,6 +1,11 @@
 import { detectLanguage, getLanguage } from './languages.js';
 import { validateConfig, severities, safePath } from './config.js';
 import { withSyntax, extractSyntax, walk, hash, position } from './syntax.js';
+import {
+  cloneContext,
+  collectCloneTokens,
+  detectTokenClones,
+} from './clones.js';
 
 function finding(
   path,
@@ -187,7 +192,7 @@ function pluginMethod(plugins, method) {
   return hash(JSON.stringify([method, versions]));
 }
 
-export async function analyzeSource(file, options = {}) {
+export async function analyzeSource(file, options = {}, cloneInputs) {
   const config = validateConfig(options.config);
   const path = safePath(file.path);
   if (typeof file.content !== 'string' || file.content.includes('\0')) {
@@ -229,6 +234,24 @@ export async function analyzeSource(file, options = {}) {
     }
     checkAbstractions(abstractions, config.rules, add);
     checkTree(syntax, config, language, add);
+    if (config.clones && cloneInputs) {
+      if (syntax.root && !errors.length) {
+        collectCloneTokens(
+          syntax.root,
+          { path, language },
+          config.clones,
+          cloneInputs
+        );
+      } else if (!syntax.root) {
+        add(
+          'unsupported-analysis',
+          `${language}: token clone analysis requires a syntax tree`,
+          1,
+          1,
+          'error'
+        );
+      }
+    }
     findings.push(
       ...(await pluginFindings(
         options.plugins || [],
@@ -264,14 +287,16 @@ export function finalizeReport(files, findings, config, metadata = {}) {
       const abstraction = file?.abstractions.find(
         (value) => value.startLine <= entry.line && value.endLine >= entry.line
       );
+      const { identity, ...record } = entry;
       return {
-        ...entry,
+        ...record,
         fingerprint: hash(
           JSON.stringify([
             entry.path,
             entry.ruleId,
             abstraction?.qualifiedName || '',
             entry.message,
+            ...(identity ? [identity] : []),
           ])
         ),
       };
@@ -301,6 +326,9 @@ export function finalizeReport(files, findings, config, metadata = {}) {
         rules: config.rules,
         customRules: config.customRules,
         failOn: config.failOn,
+        ...(config.clones && {
+          clones: { method: 'bounded-token-pairs-v1', ...config.clones },
+        }),
       })
     ),
     files,
@@ -321,6 +349,63 @@ export function finalizeReport(files, findings, config, metadata = {}) {
   };
 }
 
+function duplicateFunctions(files, findings, enabled) {
+  if (!enabled) {
+    return;
+  }
+  const shapes = new Map();
+  for (const file of files) {
+    for (const entry of file.abstractions.filter(
+      (value) =>
+        value.kind === 'function' && value.endLine - value.startLine >= 3
+    )) {
+      const key = `${file.language}:${entry.shape}`;
+      const previous = shapes.get(key);
+      if (previous) {
+        if (findings.length >= 10_000) {
+          throw new Error('Finding count budget exceeded');
+        }
+        findings.push(
+          finding(
+            file.path,
+            'duplicate-function',
+            `Structural duplicate of ${previous.path}:${previous.name}`,
+            entry.startLine
+          )
+        );
+      } else {
+        shapes.set(key, { path: file.path, name: entry.qualifiedName });
+      }
+    }
+  }
+}
+
+function cloneResults(context, config, findings) {
+  if (!config) {
+    return undefined;
+  }
+  const clones = detectTokenClones(context, config);
+  for (const clone of clones) {
+    if (findings.length >= 10_000) {
+      throw new Error('Finding count budget exceeded');
+    }
+    findings.push({
+      ...finding(
+        clone.second.path,
+        'duplicate-tokens',
+        `${clone.tokens} repeated tokens; first occurrence in ${clone.first.path}`,
+        clone.second.line,
+        clone.second.column
+      ),
+      identity: clone.signature,
+      endLine: clone.second.endLine,
+      endColumn: clone.second.endColumn,
+      relatedLocations: [clone.first],
+    });
+  }
+  return clones;
+}
+
 export async function analyzeFiles(input, options = {}) {
   const config = validateConfig(options.config);
   if (
@@ -334,6 +419,7 @@ export async function analyzeFiles(input, options = {}) {
   let bytes = 0;
   const files = [];
   const findings = [];
+  const cloneInputs = config.clones ? cloneContext() : undefined;
   for (const file of input) {
     if (!file || paths.has(file.path)) {
       throw new Error('Invalid or duplicate file path');
@@ -346,7 +432,7 @@ export async function analyzeFiles(input, options = {}) {
     if (bytes > config.limits.maxTotalBytes) {
       throw new Error('Total byte budget exceeded');
     }
-    const result = await analyzeSource(file, options);
+    const result = await analyzeSource(file, options, cloneInputs);
     if (findings.length + result.findings.length > 10_000) {
       throw new Error('Finding count budget exceeded');
     }
@@ -355,31 +441,9 @@ export async function analyzeFiles(input, options = {}) {
     void ignored;
     files.push(record);
   }
-  if (config.rules['duplicate-function']) {
-    const shapes = new Map();
-    for (const file of files) {
-      for (const entry of file.abstractions.filter(
-        (value) =>
-          value.kind === 'function' && value.endLine - value.startLine >= 3
-      )) {
-        const key = `${file.language}:${entry.shape}`;
-        const previous = shapes.get(key);
-        if (previous) {
-          findings.push(
-            finding(
-              file.path,
-              'duplicate-function',
-              `Structural duplicate of ${previous.path}:${previous.name}`,
-              entry.startLine
-            )
-          );
-        } else {
-          shapes.set(key, { path: file.path, name: entry.qualifiedName });
-        }
-      }
-    }
-  }
-  const report = finalizeReport(files, findings, config);
+  duplicateFunctions(files, findings, config.rules['duplicate-function']);
+  const clones = cloneResults(cloneInputs, config.clones, findings);
+  const report = finalizeReport(files, findings, config, clones && { clones });
   report.method = pluginMethod(options.plugins, report.method);
   return report;
 }

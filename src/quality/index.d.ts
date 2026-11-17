@@ -28,6 +28,9 @@ export interface Finding {
   line: number;
   column: number;
   fingerprint: string;
+  endLine?: number;
+  endColumn?: number;
+  relatedLocations?: CloneLocation[];
 }
 export interface Abstraction {
   kind: 'function' | 'class' | 'macro';
@@ -63,6 +66,24 @@ export interface Report {
   metrics?: Record<string, number>;
   incomplete?: boolean;
   baseline?: { passed: boolean; failures: string[] };
+  clones?: TokenClone[];
+}
+export interface CloneLocation {
+  path: string;
+  start: number;
+  end: number;
+  line: number;
+  column: number;
+  endLine: number;
+  endColumn: number;
+}
+export interface TokenClone {
+  language: Language;
+  tokens: number;
+  /** SHA-256 of normalized token identities, stable across input ordering. */
+  signature: string;
+  first: CloneLocation;
+  second: CloneLocation;
 }
 export interface CustomRule {
   id: string;
@@ -95,6 +116,13 @@ export interface Config {
   customRules?: CustomRule[];
   failOn?: Severity;
   adapters?: Adapter[];
+  clones?:
+    | false
+    | {
+        minTokens?: number;
+        ignoreIdentifiers?: boolean;
+        ignoreLiterals?: boolean;
+      };
 }
 export interface Plugin {
   version: string;

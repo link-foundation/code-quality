@@ -337,6 +337,34 @@ the comparison observations retain all raw counts and add workspace evidence.
 See the [input contract and limits](../../shell-inputs.md). Exact-candidate and
 same-revision CI verification of this draft remain pending.
 
+Local verification of helper candidate `c0afb69` subsequently passes 128 Node
+tests, 112 Bun and frozen-Deno cases, static/type/Changeset/file-limit checks,
+package and isolated release checks, twelve real shell measurements and the real
+helper refusal. All ten research hashes match and the released-tool comparison
+regenerates byte-for-byte. Publication is grouped with the following token draft
+while the ninth candidate's macOS runtime jobs wait for runners.
+
+## Token-block duplication draft
+
+Whole-function shapes cannot find an identical block within otherwise different
+functions. The next native JavaScript draft adds optional bounded token pairs,
+minimum-length gates, exact source ranges and explicit identifier/literal
+normalization. Existing defaults and original tests remain. Comments and parser
+whitespace are ignored; interpolated expressions and language boundaries remain
+significant. An independent small all-pairs oracle checks 300 finite index cases,
+including same-file nonoverlap boundaries. A regression first reproduces baseline
+acceptance of a different repeated block with equal token count, then verifies
+rejection using a normalized-token signature. Twenty-six focused cases pass on Bun
+and Deno; the Node run including existing core cases passes 47 tests.
+
+The CLI example, HTTP requests, SARIF findings, baseline method checks and
+installed-package smoke use the same native engine. Unsupported CMake token
+analysis and exhausted work budgets refuse complete evidence. The
+[contract and limits](../../token-clones.md) and
+[stable PMD 7.29.0 notes](data/pmd-cpd-contract.json) distinguish implemented
+behavior from unverified language-specific lexer/options/grouping parity.
+Exact-candidate verification and same-revision CI for the combined batch remain pending.
+
 ## Evolution method and limits
 
 Use a bounded first-parent range (default last 100 commits, hard limit 1000), inspect

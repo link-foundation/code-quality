@@ -10,7 +10,14 @@ function sarifLocation(entry) {
         uri: entry.path.split('/').map(encodeURIComponent).join('/'),
         uriBaseId: '%SRCROOT%',
       },
-      region: { startLine: entry.line, startColumn: entry.column },
+      region: {
+        startLine: entry.line,
+        startColumn: entry.column,
+        ...(entry.endLine && {
+          endLine: entry.endLine,
+          endColumn: entry.endColumn,
+        }),
+      },
     },
   };
 }
@@ -36,6 +43,12 @@ function sarifReport(report) {
           message: { text: entry.message },
           partialFingerprints: { 'code-quality/v1': entry.fingerprint },
           locations: [sarifLocation(entry)],
+          ...(entry.relatedLocations && {
+            relatedLocations: entry.relatedLocations.map((location, id) => ({
+              id,
+              ...sarifLocation(location),
+            })),
+          }),
         })),
       },
     ],

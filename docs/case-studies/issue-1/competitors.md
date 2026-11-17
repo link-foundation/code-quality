@@ -8,21 +8,21 @@ source, competitor implementation, or competitor test suite is incorporated.
 
 ## Reviewed public contracts
 
-| Product / primary source                                                                                          | Public capability families                                                | This implementation and unverified gap                                                            |
-| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| [SonarQube Cloud/Server](https://www.sonarsource.com/products/sonarqube/)                                         | Structural/security rules, quality gates, taint, secrets, SCA, governance | Basic structural rules/gates native; deep taint, dependency intelligence and governance missing   |
-| [JetBrains Qodana](https://www.jetbrains.com/help/qodana/features.html)                                           | IDE inspections, baseline, coverage, quick fixes, taint, dashboards       | Baseline/import native; IDE semantic inspections, fixes and hosted services missing               |
-| [Semgrep](https://docs.semgrep.dev/writing-rules/rule-syntax)                                                     | Structural patterns, metavariables, taint rules, matching operators       | Simple AST literal/kind rules native; DSL/metavariables/taint missing                             |
-| [GitHub CodeQL/code scanning](https://docs.github.com/en/code-security/concepts/code-scanning/code-scanning)      | Database queries, security paths, SARIF alerts                            | SARIF import/export native; CodeQL query engine/database/alert hosting missing                    |
-| [Snyk Code](https://docs.snyk.io/scan-fix-and-prevent/scan-with-snyk/snyk-code)                                   | Interfile SAST and suggested fixes                                        | Heuristic risky eval detection only; dataflow and fix validation missing                          |
-| [CodeScene](https://helpcenter.codescene.com/en/help/articles/1844075-how-to-assess-coupling-health-in-codescene) | Hotspots, coupling, Code Health and prioritization                        | Observed file hotspots/coupling native; proprietary Code Health and organization analysis missing |
-| [Codacy](https://docs.codacy.com/)                                                                                | Aggregated quality/security/coverage and organization policies            | Reports and thresholds native; hosted policies/workflows missing                                  |
-| [Qlty / Code Climate Quality](https://docs.qlty.sh/what-is-qlty)                                                  | Multi-tool lint, formatting, complexity, duplication, coverage            | Structural subset and adapters native; complete rule/fix/catalog parity missing                   |
-| [DeepSource](https://docs.deepsource.com/docs/platform/getting-started)                                           | Analyzers, coverage, autofix and repository integrations                  | Adapters and coverage measurements native; analyzer inventory/autofix/hosted integrations missing |
-| [Ruff](https://docs.astral.sh/ruff/rules/)                                                                        | Python lint rules and automatic fixes                                     | Ruff output adapter; native Python rule/fix suite missing                                         |
-| [PMD/CPD](https://pmd.github.io/pmd/pmd_userdocs_cpd.html)                                                        | Multilanguage lint and token duplication                                  | Native normalized whole-function duplicates; complete rules/token-window clones missing           |
-| [Stryker](https://stryker-mutator.io/docs/stryker-js/configuration/)                                              | Mutation operators, thresholds, concurrency and reports                   | Original shell mutations/floors; JS/.NET/JVM mutation and complete operator parity missing        |
-| [quality-bash](https://github.com/ever-guild/quality-bash)                                                        | Shell syntax/lint/Bats/kcov/mutations and strict baseline                 | Pipeline subset native JS, tools external; full parity explicitly incomplete                      |
+| Product / primary source                                                                                          | Public capability families                                                | This implementation and unverified gap                                                                        |
+| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| [SonarQube Cloud/Server](https://www.sonarsource.com/products/sonarqube/)                                         | Structural/security rules, quality gates, taint, secrets, SCA, governance | Basic structural rules/gates native; deep taint, dependency intelligence and governance missing               |
+| [JetBrains Qodana](https://www.jetbrains.com/help/qodana/features.html)                                           | IDE inspections, baseline, coverage, quick fixes, taint, dashboards       | Baseline/import native; IDE semantic inspections, fixes and hosted services missing                           |
+| [Semgrep](https://docs.semgrep.dev/writing-rules/rule-syntax)                                                     | Structural patterns, metavariables, taint rules, matching operators       | Simple AST literal/kind rules native; DSL/metavariables/taint missing                                         |
+| [GitHub CodeQL/code scanning](https://docs.github.com/en/code-security/concepts/code-scanning/code-scanning)      | Database queries, security paths, SARIF alerts                            | SARIF import/export native; CodeQL query engine/database/alert hosting missing                                |
+| [Snyk Code](https://docs.snyk.io/scan-fix-and-prevent/scan-with-snyk/snyk-code)                                   | Interfile SAST and suggested fixes                                        | Heuristic risky eval detection only; dataflow and fix validation missing                                      |
+| [CodeScene](https://helpcenter.codescene.com/en/help/articles/1844075-how-to-assess-coupling-health-in-codescene) | Hotspots, coupling, Code Health and prioritization                        | Observed file hotspots/coupling native; proprietary Code Health and organization analysis missing             |
+| [Codacy](https://docs.codacy.com/)                                                                                | Aggregated quality/security/coverage and organization policies            | Reports and thresholds native; hosted policies/workflows missing                                              |
+| [Qlty / Code Climate Quality](https://docs.qlty.sh/what-is-qlty)                                                  | Multi-tool lint, formatting, complexity, duplication, coverage            | Structural subset and adapters native; complete rule/fix/catalog parity missing                               |
+| [DeepSource](https://docs.deepsource.com/docs/platform/getting-started)                                           | Analyzers, coverage, autofix and repository integrations                  | Adapters and coverage measurements native; analyzer inventory/autofix/hosted integrations missing             |
+| [Ruff](https://docs.astral.sh/ruff/rules/)                                                                        | Python lint rules and automatic fixes                                     | Ruff output adapter; native Python rule/fix suite missing                                                     |
+| [PMD/CPD 7.29.0](https://docs.pmd-code.org/pmd-doc-7.29.0/pmd_userdocs_cpd.html)                                  | Multilanguage lint and token duplication                                  | Native whole-function and optional token-block pairs; complete rules/lexer/options/grouping parity unverified |
+| [Stryker](https://stryker-mutator.io/docs/stryker-js/configuration/)                                              | Mutation operators, thresholds, concurrency and reports                   | Original shell mutations/floors; JS/.NET/JVM mutation and complete operator parity missing                    |
+| [quality-bash](https://github.com/ever-guild/quality-bash)                                                        | Shell syntax/lint/Bats/kcov/mutations and strict baseline                 | Pipeline subset native JS, tools external; full parity explicitly incomplete                                  |
 
 ## Broader discovery queue
 
@@ -87,3 +87,20 @@ original positive/negative fixtures with expected locations and refusal behavior
 locked tool versions, equivalent configurations, real execution on identical input,
 and measured correctness/resource results. Schema compatibility and matched test
 counts are insufficient evidence. No performance superiority claim is made here.
+
+## Original token-block contracts
+
+The PMD 7.29.0 public CPD contract was reviewed separately from its implementation
+and tests. The [original contract notes](data/pmd-cpd-contract.json) pin the stable
+release and document which options remain unverified. Native
+[token-block analysis](../../token-clones.md) now covers minimum lengths,
+exact-token defaults, optional identifier/literal normalization, same-file repeats,
+cross-file locations, finite work refusal and language separation. Original
+positive/negative fixtures cover all twelve grammar-backed modes; an independent
+finite all-pairs oracle checks 300 index comparisons. CLI, HTTP, SARIF, method
+changes and installed-package checks exercise the same implementation.
+
+This does not establish equivalent lexers, language-specific normalization,
+suppression controls, grouping, or complete PMD/CPD rule and case parity. CMake
+token analysis remains explicitly unsupported; the strict readiness inventory
+continues to reject universal competitor parity.

@@ -22,7 +22,11 @@ import {
   type Language,
 } from '@link-foundation/code-quality/quality';
 
-const config: Config = { rules: { complexity: 5 }, failOn: 'error' };
+const config: Config = {
+  rules: { complexity: 5 },
+  failOn: 'error',
+  clones: { minTokens: 30 },
+};
 const plugin: Plugin = {
   id: 'example',
   version: '1',
@@ -33,6 +37,8 @@ const report = await analyzeFiles(
   { config, plugins: [plugin] }
 );
 const baseline = createBaseline(report);
+const cloneEnd: number | undefined = report.clones?.[0].second.end;
+void cloneEnd;
 const arity: number | null = report.files[0].abstractions[0].parameters;
 // @ts-expect-error Unevaluated CMake arity must be checked before numeric use.
 const assumedArity: number = report.files[0].abstractions[0].parameters;

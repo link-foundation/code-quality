@@ -86,6 +86,7 @@ function customConfig(customRules = []) {
   const names = new Set([
     'syntax',
     'unsupported-analysis',
+    'duplicate-tokens',
     ...Object.keys(defaultRules),
   ]);
   for (const rule of customRules) {
@@ -110,6 +111,31 @@ function customConfig(customRules = []) {
   return customRules;
 }
 
+function clonesConfig(input) {
+  if (input === undefined || input === false) {
+    return false;
+  }
+  requireObject(input, 'clones');
+  const config = {
+    minTokens: 50,
+    ignoreIdentifiers: false,
+    ignoreLiterals: false,
+    ...input,
+  };
+  for (const key of Object.keys(config)) {
+    if (!['minTokens', 'ignoreIdentifiers', 'ignoreLiterals'].includes(key)) {
+      throw new Error(`Unknown clone option: ${key}`);
+    }
+  }
+  positiveInteger(config.minTokens, 'clones.minTokens', 1000);
+  for (const key of ['ignoreIdentifiers', 'ignoreLiterals']) {
+    if (typeof config[key] !== 'boolean') {
+      throw new Error(`clones.${key} must be boolean`);
+    }
+  }
+  return config;
+}
+
 export function validateConfig(config = {}) {
   requireObject(config, 'Configuration');
   for (const key of Object.keys(config)) {
@@ -121,6 +147,7 @@ export function validateConfig(config = {}) {
         'customRules',
         'failOn',
         'adapters',
+        'clones',
       ].includes(key)
     ) {
       throw new Error(`Unknown configuration key: ${key}`);
@@ -147,6 +174,7 @@ export function validateConfig(config = {}) {
     failOn,
     exclude,
     customRules: customConfig(config.customRules),
+    clones: clonesConfig(config.clones),
   };
 }
 

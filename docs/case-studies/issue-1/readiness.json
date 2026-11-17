@@ -7,6 +7,7 @@
     "unsupported": [
       "Compiler/type semantics",
       "CMake project evaluation, expansion-derived metrics and tree-rule compatibility",
+      "CMake token-clone analysis",
       "Exhaustive competitor documented cases"
     ]
   },
@@ -100,8 +101,15 @@
       "id": "competitor-parity",
       "required": true,
       "status": "missing",
-      "evidence": ["docs/case-studies/issue-1/competitors.md"],
-      "description": "Complete product/rule/case inventory and native parity unverified"
+      "evidence": [
+        "docs/case-studies/issue-1/competitors.md",
+        "docs/case-studies/issue-1/data/pmd-cpd-contract.json",
+        "tests/quality-clones.test.js",
+        "tests/quality-clones-integration.test.js",
+        "experiments/code-quality/clone-oracle.mjs",
+        "docs/token-clones.md"
+      ],
+      "description": "Original token-block minimums, normalization and pair locations verified in twelve grammar-backed modes; complete product/rule/case inventory, lexer/options/grouping and native parity remain unverified"
     },
     {
       "id": "closed-source-cases",

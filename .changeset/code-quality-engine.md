@@ -38,3 +38,7 @@ record original black-box measurements against the checksum-verified released CL
 Refuse shell measurements when helper data or unselected workspace inputs change
 between controls, coverage and mutants. Hash the bounded input tree with shared
 copy exclusions, record its evidence and require migration for the stricter method.
+
+Add optional bounded token-block duplication in grammar-backed languages with
+verified matching pairs, exact ranges, explicit normalization and method-aware
+gates through the library, CLI and HTTP API. Refuse unsupported or exhausted analysis.

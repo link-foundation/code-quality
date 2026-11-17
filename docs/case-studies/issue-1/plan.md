@@ -67,6 +67,9 @@ belongs inline in this PR, and the subsequent repository move is explicitly late
 - [ ] Verify and review the ninth exact candidate after collecting every eighth-candidate CI result, push once and collect all new CI results.
 - [x] Reproduce helper/data changes accepted between controls and mutants; draft bounded full-workspace consistency checks and real Bats refusal evidence.
 - [ ] Collect all ninth-candidate CI results, verify/review the tenth exact candidate and push once.
+- [x] Verify tenth-candidate helper consistency locally at c0afb69: three runtimes, static/types/package/release, twelve real measurements and helper refusal; reproduce comparison evidence byte-for-byte.
+- [x] Draft original bounded token-block pairs, normalization, source ranges and CLI/HTTP gates from the stable PMD 7.29.0 public contract; validate finite original cases and a 300-case index oracle.
+- [ ] After collecting all ninth-candidate CI, verify/review the combined helper/token candidate and push the batch once; collect every new same-revision result.
 - [ ] Complete remaining language semantics and competitor/proprietary documented cases.
 - [ ] Update PR title/body, preserve Fixes #1, mark ready after verification.
 

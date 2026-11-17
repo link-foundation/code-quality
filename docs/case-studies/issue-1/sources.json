@@ -49,6 +49,12 @@
       "sha256": "50205699a3be0e9766a978c41a06b8479c450bd438449834b6ff94d19c7a13f8",
       "upstreamRelease": "v1.0.0-alpha.5",
       "provenance": "Two original finite shell fixtures executed by the checksum-verified released CLI and native JavaScript using the same installed tool cache; real QA counts, bounded workspace fingerprints, baseline freshness refusals and native floor-preserving import; no upstream implementation or tests inspected"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/pmd-cpd-contract.json",
+      "sha256": "a8c929461ed8e8d487a962583de1bdd3ce29a230d240760ee1d7a47a79ce9f8b",
+      "upstreamRelease": "7.29.0",
+      "provenance": "Original concise public-documentation contract notes; no upstream implementation/tests or copied examples; no execution parity claim"
     }
   ],
   "primarySources": [
@@ -94,7 +100,7 @@
     },
     {
       "title": "PMD/CPD",
-      "url": "https://pmd.github.io/pmd/pmd_userdocs_cpd.html"
+      "url": "https://docs.pmd-code.org/pmd-doc-7.29.0/pmd_userdocs_cpd.html"
     },
     {
       "title": "Stryker",
@@ -129,5 +135,5 @@
       "url": "https://cmake.org/cmake/help/latest/command/if.html"
     }
   ],
-  "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version and black-box QA/report/baseline observations, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. CMake probes use public official language/function/condition documentation and original finite scripts. Tests and engine source are original. External dependencies retain upstream licenses."
+  "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version and black-box QA/report/baseline observations, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. CMake probes use public official language/function/condition documentation and original finite scripts. Tests and engine source are original. External dependencies retain upstream licenses. PMD CPD research uses the stable 7.29.0 public behavior documentation only; token fixtures, index and finite oracle are original."
 }

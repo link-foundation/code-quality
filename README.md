@@ -148,6 +148,10 @@ Helper data and unselected workspace inputs are also checked between stages;
 changed inputs refuse a score. See [workspace input consistency](docs/shell-inputs.md)
 for exclusions, bounds and migration requirements.
 
+Optional [token-block duplication](docs/token-clones.md) finds repeated partial
+functions and local blocks, with both source ranges, threshold gates and explicit
+identifier/literal normalization. It runs through the library, CLI and HTTP API.
+
 Shell QA and baseline updates save fresh evidence under `<root>/quality-reports/`,
 including failures before measurement completes. `--reports <directory>` chooses
 a root-relative directory and also enables persistence for `check`. Each run has
