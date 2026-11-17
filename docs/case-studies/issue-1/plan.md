@@ -64,12 +64,15 @@ belongs inline in this PR, and the subsequent repository move is explicitly late
 - [ ] Complete the remaining shell diagnostic inventory.
 - [x] Compare the checksum-verified released quality-bash CLI with original source/test fixtures on identical installed tools; retain measured counts, rounding and refusal differences.
 - [x] Add original arithmetic mutations, exact floor/explicit half-up rounding, reviewed-baseline method changes, Action settings and command-specific help.
-- [ ] Verify and review the ninth exact candidate after collecting every eighth-candidate CI result, push once and collect all new CI results.
+- [x] Verify and review the ninth exact candidate after collecting every eighth-candidate CI result, push once and collect all new CI results; all six workflows pass at 6713d1e after the unacquired macOS job retries.
 - [x] Reproduce helper/data changes accepted between controls and mutants; draft bounded full-workspace consistency checks and real Bats refusal evidence.
-- [ ] Collect all ninth-candidate CI results, verify/review the tenth exact candidate and push once.
+- [x] Collect all ninth-candidate CI results, verify/review the helper candidate and publish it together with the token-block batch.
 - [x] Verify tenth-candidate helper consistency locally at c0afb69: three runtimes, static/types/package/release, twelve real measurements and helper refusal; reproduce comparison evidence byte-for-byte.
 - [x] Draft original bounded token-block pairs, normalization, source ranges and CLI/HTTP gates from the stable PMD 7.29.0 public contract; validate finite original cases and a 300-case index oracle.
-- [ ] After collecting all ninth-candidate CI, verify/review the combined helper/token candidate and push the batch once; collect every new same-revision result.
+- [x] After collecting all ninth-candidate CI, verify/review the combined helper/token candidate at 77dedd9 and push the batch once.
+- [x] Collect every same-revision workflow result for 77dedd9 before the next push; all six workflows pass.
+- [x] Extend the original CMake reader with bounded lexical spans and native token pairs; preserve incomplete syntax/expansion refusals and validate original positive/negative cases.
+- [ ] Verify/review the CMake token candidate, push once and collect all same-revision CI results.
 - [ ] Complete remaining language semantics and competitor/proprietary documented cases.
 - [ ] Update PR title/body, preserve Fixes #1, mark ready after verification.
 

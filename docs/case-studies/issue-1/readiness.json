@@ -7,7 +7,6 @@
     "unsupported": [
       "Compiler/type semantics",
       "CMake project evaluation, expansion-derived metrics and tree-rule compatibility",
-      "CMake token-clone analysis",
       "Exhaustive competitor documented cases"
     ]
   },
@@ -16,7 +15,7 @@
       "id": "cmake-native-v2",
       "status": "partial",
       "evidence": "tests/quality-cmake.test.js",
-      "limits": "Literal arity and structural decisions only; expanded headers and applicable custom tree rules refuse incomplete analysis; no project evaluation or Tree-sitter node API"
+      "limits": "Literal arity, structural decisions and opt-in lexical command/argument clone tokens; expanded headers and applicable custom tree rules refuse incomplete analysis; no project evaluation or Tree-sitter node API"
     },
     {
       "id": "external-command-v1",
@@ -106,10 +105,12 @@
         "docs/case-studies/issue-1/data/pmd-cpd-contract.json",
         "tests/quality-clones.test.js",
         "tests/quality-clones-integration.test.js",
+        "tests/quality-clones-cmake.test.js",
+        "experiments/code-quality/cmake-token-budget.mjs",
         "experiments/code-quality/clone-oracle.mjs",
         "docs/token-clones.md"
       ],
-      "description": "Original token-block minimums, normalization and pair locations verified in twelve grammar-backed modes; complete product/rule/case inventory, lexer/options/grouping and native parity remain unverified"
+      "description": "Original token-block minimums, normalization and pair locations verified in thirteen modes, including native CMake argument tokens; complete product/rule/case inventory, lexer/options/grouping and native parity remain unverified"
     },
     {
       "id": "closed-source-cases",

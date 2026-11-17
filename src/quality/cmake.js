@@ -1,11 +1,22 @@
 // Original structural adapter for CMake's public language grammar (modern policies).
 // It never executes commands, expands variables or evaluates project conditions.
 class Reader {
-  constructor(source) {
+  constructor(source, { tokens = false } = {}) {
     this.source = source;
     this.index = source.startsWith('\uFEFF') ? 1 : 0;
     this.errors = [];
     this.arguments = 0;
+    this.tokens = tokens ? [] : null;
+  }
+
+  token(kind, start, end, flags = {}) {
+    if (!this.tokens) {
+      return;
+    }
+    if (this.tokens.length >= 100_000) {
+      throw new Error('CMake token count budget exceeded');
+    }
+    this.tokens.push({ kind, start, end, ...flags });
   }
 
   error(message, index = this.index) {
@@ -168,6 +179,7 @@ class Reader {
   commandArguments() {
     const args = [];
     let depth = 1;
+    this.token('cmake_parenthesis', this.index, this.index + 1);
     this.index++;
     while (this.index < this.source.length) {
       this.trivia();
@@ -179,16 +191,30 @@ class Reader {
         if (++depth > 512) {
           throw new Error('CMake parenthesis depth budget exceeded');
         }
+        this.token('cmake_parenthesis', this.index, this.index + 1);
         this.index++;
         args.push({ value: char, kind: 'unquoted', dynamic: false });
       } else if (char === ')') {
+        this.token('cmake_parenthesis', this.index, this.index + 1);
         this.index++;
         if (--depth === 0) {
           return args;
         }
         args.push({ value: char, kind: 'unquoted', dynamic: false });
       } else if (char !== undefined) {
-        args.push(this.argument());
+        const start = this.index;
+        const argument = this.argument();
+        args.push(argument);
+        if (this.tokens) {
+          const text = this.source.slice(start, this.index);
+          const identifier =
+            argument.kind === 'unquoted' &&
+            /^[A-Za-z_][A-Za-z0-9_]*$/.test(text);
+          this.token(`cmake_${argument.kind}`, start, this.index, {
+            identifier,
+            literal: !identifier && !argument.dynamic && !text.includes('$<'),
+          });
+        }
       }
     }
     this.error('Unclosed command invocation');
@@ -229,6 +255,9 @@ class Reader {
       if (commands.length >= 50_000) {
         throw new Error('CMake command count budget exceeded');
       }
+      this.token('cmake_command', start, start + name.length, {
+        identifier: true,
+      });
       const args = this.commandArguments();
       commands.push({ name: name.toLowerCase(), start, end: this.index, args });
       needsNewline = true;
@@ -407,13 +436,19 @@ function closeBlock(command, stack, definitions, abstractions, errors) {
   return (command.end - block.start) * 2;
 }
 
-export function parseCmake(source) {
+export function parseCmake(source, options) {
   if (source.length > 1_048_576) {
     throw new Error('CMake source length budget exceeded');
   }
-  const reader = new Reader(source);
+  const reader = new Reader(source, options);
   const commands = reader.commands();
   const limitations = [];
   const abstractions = extractBlocks(commands, reader.errors, limitations);
-  return { errors: reader.errors, limitations, commands, abstractions };
+  return {
+    errors: reader.errors,
+    limitations,
+    commands,
+    abstractions,
+    ...(reader.tokens && { tokens: reader.tokens }),
+  };
 }

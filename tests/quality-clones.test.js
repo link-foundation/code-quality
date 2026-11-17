@@ -216,9 +216,7 @@ describe('token clone language domains and refusals', () => {
       report.clones.every((clone) => clone.first.end <= clone.second.start)
     );
   });
-  for (const [language, fixture] of Object.entries(qualityFixtures).filter(
-    ([id]) => id !== 'cmake'
-  )) {
+  for (const [language, fixture] of Object.entries(qualityFixtures)) {
     it(`${language}: compares independent files without crossing language domains`, async () => {
       const files = [fixture, { ...fixture, path: `copy/${fixture.path}` }];
       const report = await analyzeFiles(files, {
@@ -230,10 +228,16 @@ describe('token clone language domains and refusals', () => {
     });
   }
 
-  it('refuses unsupported adapters and invalid syntax as incomplete evidence', async () => {
-    const cmake = await analyzeFiles([qualityFixtures.cmake], {
-      config: { clones: { minTokens: 5 } },
-    });
+  it('refuses unresolved CMake definitions and invalid syntax as incomplete evidence', async () => {
+    const cmake = await analyzeFiles(
+      [
+        {
+          path: 'dynamic.cmake',
+          content: 'function(${name} input)\nendfunction()\n',
+        },
+      ],
+      { config: { clones: { minTokens: 5 } } }
+    );
     assert.equal(cmake.incomplete, true);
     assert.throws(() => createBaseline(cmake), /Incomplete/);
     assert.ok(cmake.findings.some((x) => x.ruleId === 'unsupported-analysis'));

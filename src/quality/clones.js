@@ -1,4 +1,5 @@
 import { walk, hash } from './syntax.js';
+import { lineLocator } from './lines.js';
 
 const literalKinds = new Set([
   'string',
@@ -44,8 +45,16 @@ function literal(node, budget) {
   return true;
 }
 
-function tokenValue(node, atom, config, context) {
-  const identifier = /(?:^|_)identifier$/.test(node.type);
+function tokenValue(
+  node,
+  atom,
+  config,
+  context,
+  identifier = /(?:^|_)identifier$/.test(node.type)
+) {
+  if (++context.count > 100_000) {
+    throw new Error('Clone token count budget exceeded');
+  }
   const key = JSON.stringify(
     identifier && config.ignoreIdentifiers
       ? ['$identifier']
@@ -79,9 +88,6 @@ export function collectCloneTokens(root, file, config, context) {
     if ((!atom && node.childCount) || !node.text) {
       continue;
     }
-    if (++context.count > 100_000) {
-      throw new Error('Clone token count budget exceeded');
-    }
     tokens.push({
       value: tokenValue(node, atom, config, context),
       start: node.startIndex,
@@ -93,6 +99,30 @@ export function collectCloneTokens(root, file, config, context) {
     });
     coveredUntil = node.endIndex;
   }
+  context.files.push({ path: file.path, language: file.language, tokens });
+}
+
+export function collectCmakeCloneTokens(parsed, file, config, context) {
+  const locate = lineLocator(file.content);
+  const tokens = parsed.tokens.map((token) => {
+    const start = locate(token.start);
+    const end = locate(token.end);
+    return {
+      value: tokenValue(
+        { type: token.kind, text: file.content.slice(token.start, token.end) },
+        token.literal,
+        config,
+        context,
+        Boolean(token.identifier)
+      ),
+      start: token.start,
+      end: token.end,
+      line: start.line,
+      column: start.column,
+      endLine: end.line,
+      endColumn: end.column,
+    };
+  });
   context.files.push({ path: file.path, language: file.language, tokens });
 }
 

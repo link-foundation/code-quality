@@ -363,7 +363,42 @@ analysis and exhausted work budgets refuse complete evidence. The
 [contract and limits](../../token-clones.md) and
 [stable PMD 7.29.0 notes](data/pmd-cpd-contract.json) distinguish implemented
 behavior from unverified language-specific lexer/options/grouping parity.
-Exact-candidate verification and same-revision CI for the combined batch remain pending.
+The combined candidate `77dedd9` subsequently passes 138 quality/glob cases on
+each of Node, Bun and frozen Deno, plus 16 workflow-lint and 25 policy regressions
+on Node. Static/types/Changeset/398-file guards, eleven source hashes, installed
+package and isolated release versioning pass. Twelve real shell measurements and
+the passing-control helper-change refusal pass; released comparison evidence
+regenerates byte-for-byte. All six same-revision workflows pass, including the
+[nine-leg runtime matrix](https://github.com/link-foundation/code-quality/actions/runs/44182935395)
+and [both native shell architectures/distribution](https://github.com/link-foundation/code-quality/actions/runs/44182935047).
+
+All six workflows for preceding candidate `6713d1e` pass. The runtime workflow's
+first attempt lost its macOS Node job before any steps ran. GitHub annotations
+state that no hosted runner was acquired and identify macOS arm64 capacity
+constraints. The preserved attempt-one status log records `test: abandoned`;
+the workflow's automatic failed-job retry succeeds without a source change.
+
+## CMake token draft
+
+CMake was the remaining unsupported token-clone mode. The original native reader
+now optionally records command, parenthesis and whole-argument spans; default
+analysis does not allocate this inventory. Raw argument kinds, dynamic references
+and UTF-16 ranges remain visible. The existing bounded pair engine handles these
+tokens without executing CMake or introducing another parser/dependency. The
+enabled method gains `cmake-arguments-v1`, requiring reviewed baseline migration;
+the default disabled method is preserved.
+
+The original positive fixture first fails against the prior unsupported adapter.
+Forty-six focused cases now pass on Node, Bun and frozen Deno, covering all
+thirteen language modes, syntax/refusal behavior, CLI/HTTP equality, BOM/CRLF,
+multiline Unicode spans, comment separation, normalization and baseline identity.
+A finite 100,002-token probe runs with a 128 MiB heap and bounded stack and
+refuses at the 100,000-token reader limit. Existing acceptance assertions remain;
+the former unsupported fixture now uses a genuinely unresolved definition.
+The [original contract notes](data/cmake-token-contract.json) distinguish this
+lexical policy from the official language's execution rules. Project evaluation,
+expanded metrics, tree-rule compatibility and exhaustive competitor parity remain
+unfinished. Exact-candidate verification and new same-revision CI remain pending.
 
 ## Evolution method and limits
 

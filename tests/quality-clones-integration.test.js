@@ -7,6 +7,10 @@ import { runQualityCli } from '../src/quality/cli.js';
 import { runProcess } from '../src/quality/process.js';
 
 const root = new URL('../examples/code-quality/token-clones/', import.meta.url);
+const cmakeRoot = new URL(
+  '../examples/code-quality/cmake-clones/',
+  import.meta.url
+);
 
 describe('token clones through consumer interfaces', () => {
   it('matches an independent finite all-pairs oracle within a bounded process', async () => {
@@ -17,6 +21,72 @@ describe('token clones through consumer interfaces', () => {
     ]);
     assert.equal(result.code, 0, result.stderr);
     assert.match(result.stdout, /300 finite/);
+  });
+  it('refuses a finite CMake token inventory within a bounded process', async () => {
+    const result = await runProcess('node', [
+      '--max-old-space-size=128',
+      '--stack-size=512',
+      'experiments/code-quality/cmake-token-budget.mjs',
+    ]);
+    assert.equal(result.code, 0, result.stderr);
+    assert.match(result.stdout, /100,002-token probe/);
+  });
+  it('keeps CMake clone findings identical through the CLI and HTTP API', async () => {
+    let output = '';
+    const errors = [];
+    const code = await runQualityCli(
+      [
+        'check',
+        fileURLToPath(cmakeRoot),
+        '--config',
+        fileURLToPath(new URL('quality.json', cmakeRoot)),
+        '--format',
+        'json',
+      ],
+      {
+        stdout: (value) => {
+          output += value;
+        },
+        stderr: (value) => errors.push(value),
+      }
+    );
+    assert.equal(code, 1);
+    assert.deepEqual(errors, []);
+    const cli = JSON.parse(output);
+    assert.equal(cli.incomplete, false);
+    assert.equal(cli.clones.length, 1);
+    assert.equal(cli.clones[0].tokens, 9);
+    const files = await Promise.all(
+      ['first.cmake', 'second.cmake'].map(async (path) => ({
+        path,
+        content: await readFile(new URL(path, cmakeRoot), 'utf8'),
+      }))
+    );
+    const config = JSON.parse(
+      await readFile(new URL('quality.json', cmakeRoot), 'utf8')
+    );
+    const server = createQualityServer();
+    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:${server.address().port}/v1/analyze`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ files, config }),
+        }
+      );
+      assert.equal(response.status, 200);
+      const http = await response.json();
+      assert.equal(http.passed, false);
+      assert.deepEqual(http.clones, cli.clones);
+      assert.deepEqual(http.findings, cli.findings);
+      assert.equal(http.method, cli.method);
+    } finally {
+      await new Promise((resolve, reject) =>
+        server.close((error) => (error ? reject(error) : resolve()))
+      );
+    }
   });
   it('returns duplicate locations and a failing gate through the CLI', async () => {
     let output = '';

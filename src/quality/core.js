@@ -4,6 +4,7 @@ import { withSyntax, extractSyntax, walk, hash, position } from './syntax.js';
 import {
   cloneContext,
   collectCloneTokens,
+  collectCmakeCloneTokens,
   detectTokenClones,
 } from './clones.js';
 
@@ -192,6 +193,25 @@ function pluginMethod(plugins, method) {
   return hash(JSON.stringify([method, versions]));
 }
 
+function collectClones(syntax, file, config, context, errors, add) {
+  if (!config || !context || errors.length) {
+    return;
+  }
+  if (syntax.root) {
+    collectCloneTokens(syntax.root, file, config, context);
+  } else if (syntax.cmake) {
+    collectCmakeCloneTokens(syntax.cmake, file, config, context);
+  } else {
+    add(
+      'unsupported-analysis',
+      `${file.language}: token clone analysis requires a supported tokenizer`,
+      1,
+      1,
+      'error'
+    );
+  }
+}
+
 export async function analyzeSource(file, options = {}, cloneInputs) {
   const config = validateConfig(options.config);
   const path = safePath(file.path);
@@ -214,62 +234,57 @@ export async function analyzeSource(file, options = {}, cloneInputs) {
     findings.push(finding(path, ...args));
   };
   const lineCount = checkLines(file, config.rules, add);
-  return await withSyntax(language, file.content, async (syntax) => {
-    const {
-      errors,
-      abstractions,
-      limitations = [],
-    } = extractSyntax(syntax, file.content);
-    for (const error of errors) {
-      add('syntax', error.message, error.line, error.column, 'error');
-    }
-    for (const entry of limitations) {
-      add(
-        'unsupported-analysis',
-        entry.message,
-        entry.line,
-        entry.column,
-        'error'
-      );
-    }
-    checkAbstractions(abstractions, config.rules, add);
-    checkTree(syntax, config, language, add);
-    if (config.clones && cloneInputs) {
-      if (syntax.root && !errors.length) {
-        collectCloneTokens(
-          syntax.root,
-          { path, language },
-          config.clones,
-          cloneInputs
-        );
-      } else if (!syntax.root) {
+  return await withSyntax(
+    language,
+    file.content,
+    async (syntax) => {
+      const {
+        errors,
+        abstractions,
+        limitations = [],
+      } = extractSyntax(syntax, file.content);
+      for (const error of errors) {
+        add('syntax', error.message, error.line, error.column, 'error');
+      }
+      for (const entry of limitations) {
         add(
           'unsupported-analysis',
-          `${language}: token clone analysis requires a syntax tree`,
-          1,
-          1,
+          entry.message,
+          entry.line,
+          entry.column,
           'error'
         );
       }
-    }
-    findings.push(
-      ...(await pluginFindings(
-        options.plugins || [],
-        file,
+      checkAbstractions(abstractions, config.rules, add);
+      checkTree(syntax, config, language, add);
+      collectClones(
+        syntax,
+        { ...file, path, language },
+        config.clones,
+        cloneInputs,
+        errors,
+        add
+      );
+      findings.push(
+        ...(await pluginFindings(
+          options.plugins || [],
+          file,
+          language,
+          abstractions,
+          syntax.root
+        ))
+      );
+      return {
+        path,
         language,
+        hash: hash(file.content),
+        lineCount,
         abstractions,
-        syntax.root
-      ))
-    );
-    return {
-      path,
-      language,
-      hash: hash(file.content),
-      lineCount,
-      abstractions,
-      findings,
-    };
-  });
+        findings,
+      };
+    },
+    { tokens: Boolean(config.clones && cloneInputs) }
+  );
 }
 
 export function finalizeReport(files, findings, config, metadata = {}) {
@@ -327,7 +342,11 @@ export function finalizeReport(files, findings, config, metadata = {}) {
         customRules: config.customRules,
         failOn: config.failOn,
         ...(config.clones && {
-          clones: { method: 'bounded-token-pairs-v1', ...config.clones },
+          clones: {
+            method: 'bounded-token-pairs-v1',
+            cmakeTokens: 'cmake-arguments-v1',
+            ...config.clones,
+          },
         }),
       })
     ),

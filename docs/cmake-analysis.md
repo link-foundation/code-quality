@@ -35,6 +35,16 @@ Applicable custom tree rules produce an `unsupported-analysis` error rather than
 silently succeeding; plugins receive the documented nullable root. The strict
 readiness inventory records this partial adapter.
 
+Optional [token-block duplication](token-clones.md) uses lexical spans from this
+same reader, without a Tree-sitter tree. Commands, parentheses and whole arguments
+form the token inventory; comments and separating whitespace are omitted. The
+raw argument kind/text remain significant unless normalization is explicitly
+selected. This separately versioned `cmake-arguments-v1` contract follows the
+[CMake 3.28 language categories](https://cmake.org/cmake/help/v3.28/manual/cmake-language.7.html),
+with original cases in `tests/quality-clones-cmake.test.js`. It establishes lexical
+duplication only and does not complete the adapter's missing project semantics
+or tree-rule compatibility. Default analysis does not allocate token inventories.
+
 The parser is iterative. It bounds source text, 50,000 commands, 200,000 argument
 tokens, 512 nested parentheses/blocks, 1000 diagnostics, 4096 UTF-16 code units
 per qualified name and 4 MiB of aggregate definition spans. Project analysis

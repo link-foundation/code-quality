@@ -1,0 +1,26 @@
+{
+  "source": "https://cmake.org/cmake/help/v3.28/manual/cmake-language.7.html",
+  "documentationVersion": "3.28.6",
+  "retrievedAt": "2026-11-17",
+  "provenance": "Original concise public-grammar notes; no implementation or upstream tests inspected or copied",
+  "publicCategories": [
+    "Command invocations contain a command name and parenthesized arguments",
+    "Quoted, bracket and unquoted arguments have different expansion rules",
+    "Comments and separating whitespace are not arguments"
+  ],
+  "nativePolicy": {
+    "id": "cmake-arguments-v1",
+    "units": "Raw command names, parentheses and whole arguments; kind retained",
+    "default": "Exact raw spellings; command case, escapes and argument whitespace remain significant",
+    "ignoreIdentifiers": "Command names and plain ASCII unquoted identifiers",
+    "ignoreLiterals": "Static nonidentifier arguments; preserve kind, dynamic variable/environment/cache references and any $< generator marker",
+    "limits": "100,000 per-file tokens plus shared clone and source budgets",
+    "semantics": "No execution, expansion, binding resolution or semantic-equivalence claim"
+  },
+  "evidence": [
+    "tests/quality-clones-cmake.test.js",
+    "tests/quality-clones-integration.test.js",
+    "experiments/code-quality/cmake-token-budget.mjs",
+    "examples/code-quality/cmake-clones/README.md"
+  ]
+}

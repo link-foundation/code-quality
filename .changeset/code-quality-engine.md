@@ -42,3 +42,7 @@ copy exclusions, record its evidence and require migration for the stricter meth
 Add optional bounded token-block duplication in grammar-backed languages with
 verified matching pairs, exact ranges, explicit normalization and method-aware
 gates through the library, CLI and HTTP API. Refuse unsupported or exhausted analysis.
+
+Extend token-block analysis to native CMake command/argument spans, preserving
+dynamic references, argument kinds and exact ranges. Version its token policy
+and retain strict incomplete-metric and work-budget refusals.

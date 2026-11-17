@@ -64,6 +64,9 @@ assert.equal(mutants[0].replacement, '-');
 const clones = await analyzeFiles([{path:'a.js',content:'emit(value + 2);\\n'},{path:'b.js',content:'emit(value + 2);\\n'}], {config:{clones:{minTokens:7}}});
 assert.equal(clones.clones[0].tokens, 7);
 assert.equal(clones.findings[0].ruleId, 'duplicate-tokens');
+const cmake = await analyzeFiles([{path:'a.cmake',content:'message("same")\\n'},{path:'b.cmake',content:'message("same")\\n'}], {config:{clones:{minTokens:4}}});
+assert.equal(cmake.incomplete, false);
+assert.equal(cmake.clones[0].tokens, 4);
 console.log('Installed library and CLI passed');\n`
   );
   const smoke = await runProcess('node', ['smoke.mjs'], { cwd: root });

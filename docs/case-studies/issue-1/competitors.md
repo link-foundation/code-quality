@@ -96,11 +96,11 @@ release and document which options remain unverified. Native
 [token-block analysis](../../token-clones.md) now covers minimum lengths,
 exact-token defaults, optional identifier/literal normalization, same-file repeats,
 cross-file locations, finite work refusal and language separation. Original
-positive/negative fixtures cover all twelve grammar-backed modes; an independent
+positive/negative fixtures cover all thirteen modes, including native CMake
+command/argument tokens; an independent
 finite all-pairs oracle checks 300 index comparisons. CLI, HTTP, SARIF, method
 changes and installed-package checks exercise the same implementation.
 
 This does not establish equivalent lexers, language-specific normalization,
-suppression controls, grouping, or complete PMD/CPD rule and case parity. CMake
-token analysis remains explicitly unsupported; the strict readiness inventory
+suppression controls, grouping, or complete PMD/CPD rule and case parity. The strict readiness inventory
 continues to reject universal competitor parity.

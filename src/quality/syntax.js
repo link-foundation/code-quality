@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
 import { getLanguage } from './languages.js';
 import { parseCmake } from './cmake.js';
+import { lineLocator } from './lines.js';
 
 const require = createRequire(import.meta.url);
 const grammars = new Map();
@@ -205,10 +206,10 @@ function abstraction(node, source, budget) {
   };
 }
 
-export async function withSyntax(language, source, callback) {
+export async function withSyntax(language, source, callback, options) {
   const spec = getLanguage(language);
   if (!spec.grammar) {
-    return callback({ cmake: parseCmake(source), root: null });
+    return callback({ cmake: parseCmake(source, options), root: null });
   }
   initialized ||= Parser.init();
   await initialized;
@@ -242,25 +243,7 @@ export function extractSyntax(syntax, source) {
   if (syntax.cmake) {
     // A shared line index maps CMake source offsets to report positions without
     // rescanning each declaration's prefix.
-    const starts = [0];
-    for (let index = 0; index < source.length; index++) {
-      if (source[index] === '\n') {
-        starts.push(index + 1);
-      }
-    }
-    const location = (index) => {
-      let low = 0;
-      let high = starts.length;
-      while (low + 1 < high) {
-        const middle = Math.floor((low + high) / 2);
-        if (starts[middle] <= index) {
-          low = middle;
-        } else {
-          high = middle;
-        }
-      }
-      return { line: low + 1, column: index - starts[low] + 1 };
-    };
+    const location = lineLocator(source);
     let descriptorBytes = 0;
     return {
       errors: syntax.cmake.errors.map((error) => ({
