@@ -25,7 +25,7 @@ import {
 const config: Config = {
   rules: { complexity: 5 },
   failOn: 'error',
-  clones: { minTokens: 30 },
+  clones: { minTokens: 30, suppressionComments: true },
 };
 const plugin: Plugin = {
   id: 'example',
@@ -39,6 +39,8 @@ const report = await analyzeFiles(
 const baseline = createBaseline(report);
 const cloneEnd: number | undefined = report.clones?.[0].second.end;
 void cloneEnd;
+const omittedEnd: number | undefined = report.cloneSuppressions?.[0].end;
+void omittedEnd;
 const arity: number | null = report.files[0].abstractions[0].parameters;
 // @ts-expect-error Unevaluated CMake arity must be checked before numeric use.
 const assumedArity: number = report.files[0].abstractions[0].parameters;

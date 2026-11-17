@@ -283,7 +283,10 @@ export async function analyzeSource(file, options = {}, cloneInputs) {
         findings,
       };
     },
-    { tokens: Boolean(config.clones && cloneInputs) }
+    {
+      tokens: Boolean(config.clones && cloneInputs),
+      comments: Boolean(config.clones?.suppressionComments && cloneInputs),
+    }
   );
 }
 
@@ -345,6 +348,9 @@ export function finalizeReport(files, findings, config, metadata = {}) {
           clones: {
             method: 'bounded-token-pairs-v1',
             cmakeTokens: 'cmake-arguments-v1',
+            ...(config.clones.suppressionComments && {
+              suppression: 'cpd-comment-regions-v1',
+            }),
             ...config.clones,
           },
         }),
@@ -462,7 +468,19 @@ export async function analyzeFiles(input, options = {}) {
   }
   duplicateFunctions(files, findings, config.rules['duplicate-function']);
   const clones = cloneResults(cloneInputs, config.clones, findings);
-  const report = finalizeReport(files, findings, config, clones && { clones });
+  const report = finalizeReport(
+    files,
+    findings,
+    config,
+    clones && {
+      clones,
+      ...(config.clones.suppressionComments && {
+        cloneSuppressions: cloneInputs.suppressions.sort((a, b) =>
+          a.path < b.path ? -1 : a.path > b.path ? 1 : a.start - b.start
+        ),
+      }),
+    }
+  );
   report.method = pluginMethod(options.plugins, report.method);
   return report;
 }

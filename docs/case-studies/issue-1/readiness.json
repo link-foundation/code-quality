@@ -108,9 +108,12 @@
         "tests/quality-clones-cmake.test.js",
         "experiments/code-quality/cmake-token-budget.mjs",
         "experiments/code-quality/clone-oracle.mjs",
-        "docs/token-clones.md"
+        "docs/token-clones.md",
+        "tests/quality-clone-suppressions.test.js",
+        "docs/case-studies/issue-1/data/pmd-suppression-contract.json",
+        "experiments/code-quality/clone-suppression-budget.mjs"
       ],
-      "description": "Original token-block minimums, normalization and pair locations verified in thirteen modes, including native CMake argument tokens; complete product/rule/case inventory, lexer/options/grouping and native parity remain unverified"
+      "description": "Original token-block minimums, normalization, pair locations and opt-in audited comment regions verified in thirteen modes, including native CMake argument tokens; complete product/rule/case inventory, legacy annotations, lexer/options/grouping and native parity remain unverified"
     },
     {
       "id": "closed-source-cases",

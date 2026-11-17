@@ -1,12 +1,13 @@
 // Original structural adapter for CMake's public language grammar (modern policies).
 // It never executes commands, expands variables or evaluates project conditions.
 class Reader {
-  constructor(source, { tokens = false } = {}) {
+  constructor(source, { tokens = false, comments = false } = {}) {
     this.source = source;
     this.index = source.startsWith('\uFEFF') ? 1 : 0;
     this.errors = [];
     this.arguments = 0;
     this.tokens = tokens ? [] : null;
+    this.comments = comments;
   }
 
   token(kind, start, end, flags = {}) {
@@ -64,12 +65,16 @@ class Reader {
         }
         this.index++;
       } else if (value === '#') {
+        const start = this.index;
         this.index++;
         if (this.bracket() === null) {
           const end = this.source.indexOf('\n', this.index);
           this.index = end < 0 ? this.source.length : end;
         } else {
           bracketBeforeCommand = true;
+        }
+        if (this.comments) {
+          this.token('cmake_comment', start, this.index, { comment: true });
         }
       } else {
         break;

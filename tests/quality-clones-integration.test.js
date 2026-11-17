@@ -31,63 +31,91 @@ describe('token clones through consumer interfaces', () => {
     assert.equal(result.code, 0, result.stderr);
     assert.match(result.stdout, /100,002-token probe/);
   });
-  it('keeps CMake clone findings identical through the CLI and HTTP API', async () => {
-    let output = '';
-    const errors = [];
-    const code = await runQualityCli(
-      [
-        'check',
-        fileURLToPath(cmakeRoot),
-        '--config',
-        fileURLToPath(new URL('quality.json', cmakeRoot)),
-        '--format',
-        'json',
-      ],
-      {
-        stdout: (value) => {
-          output += value;
-        },
-        stderr: (value) => errors.push(value),
-      }
-    );
-    assert.equal(code, 1);
-    assert.deepEqual(errors, []);
-    const cli = JSON.parse(output);
-    assert.equal(cli.incomplete, false);
-    assert.equal(cli.clones.length, 1);
-    assert.equal(cli.clones[0].tokens, 9);
-    const files = await Promise.all(
-      ['first.cmake', 'second.cmake'].map(async (path) => ({
-        path,
-        content: await readFile(new URL(path, cmakeRoot), 'utf8'),
-      }))
-    );
-    const config = JSON.parse(
-      await readFile(new URL('quality.json', cmakeRoot), 'utf8')
-    );
-    const server = createQualityServer();
-    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
-    try {
-      const response = await fetch(
-        `http://127.0.0.1:${server.address().port}/v1/analyze`,
+});
+
+describe('token clone examples through CLI and HTTP', () => {
+  for (const example of [
+    {
+      name: 'CMake',
+      root: cmakeRoot,
+      passed: false,
+      files: ['first.cmake', 'second.cmake'],
+      tokens: 9,
+    },
+    {
+      name: 'suppressed JavaScript',
+      root: new URL(
+        '../examples/code-quality/clone-suppression/',
+        import.meta.url
+      ),
+      passed: true,
+      files: ['generated.js', 'copied.js'],
+    },
+  ]) {
+    it(`keeps ${example.name} evidence identical through the CLI and HTTP API`, async () => {
+      let output = '';
+      const errors = [];
+      const code = await runQualityCli(
+        [
+          'check',
+          fileURLToPath(example.root),
+          '--config',
+          fileURLToPath(new URL('quality.json', example.root)),
+          '--format',
+          'json',
+        ],
         {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ files, config }),
+          stdout: (value) => {
+            output += value;
+          },
+          stderr: (value) => errors.push(value),
         }
       );
-      assert.equal(response.status, 200);
-      const http = await response.json();
-      assert.equal(http.passed, false);
-      assert.deepEqual(http.clones, cli.clones);
-      assert.deepEqual(http.findings, cli.findings);
-      assert.equal(http.method, cli.method);
-    } finally {
-      await new Promise((resolve, reject) =>
-        server.close((error) => (error ? reject(error) : resolve()))
+      assert.equal(code, example.passed ? 0 : 1);
+      assert.deepEqual(errors, []);
+      const cli = JSON.parse(output);
+      assert.equal(cli.incomplete, false);
+      assert.equal(cli.passed, example.passed);
+      assert.equal(cli.clones.length, example.passed ? 0 : 1);
+      if (example.tokens) {
+        assert.equal(cli.clones[0].tokens, example.tokens);
+      } else {
+        assert.equal(cli.cloneSuppressions.length, 2);
+      }
+      const files = await Promise.all(
+        example.files.map(async (path) => ({
+          path,
+          content: await readFile(new URL(path, example.root), 'utf8'),
+        }))
       );
-    }
-  });
+      const config = JSON.parse(
+        await readFile(new URL('quality.json', example.root), 'utf8')
+      );
+      const server = createQualityServer();
+      await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:${server.address().port}/v1/analyze`,
+          {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ files, config }),
+          }
+        );
+        assert.equal(response.status, 200);
+        const http = await response.json();
+        assert.equal(http.passed, example.passed);
+        assert.deepEqual(http.clones, cli.clones);
+        assert.deepEqual(http.findings, cli.findings);
+        assert.equal(http.method, cli.method);
+        assert.deepEqual(http.cloneSuppressions, cli.cloneSuppressions);
+      } finally {
+        await new Promise((resolve, reject) =>
+          server.close((error) => (error ? reject(error) : resolve()))
+        );
+      }
+    });
+  }
   it('returns duplicate locations and a failing gate through the CLI', async () => {
     let output = '';
     const errors = [];

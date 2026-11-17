@@ -398,7 +398,29 @@ the former unsupported fixture now uses a genuinely unresolved definition.
 The [original contract notes](data/cmake-token-contract.json) distinguish this
 lexical policy from the official language's execution rules. Project evaluation,
 expanded metrics, tree-rule compatibility and exhaustive competitor parity remain
-unfinished. Exact-candidate verification and new same-revision CI remain pending.
+unfinished. Candidate `4ac4c97` passes 165 Node checks (149 quality/glob plus 16
+workflow cases), 149 Bun and frozen-Deno cases, static/types/Changeset/402-file
+guards, twelve source hashes, installed-package and isolated release checks.
+The [native shell/distribution workflow](https://github.com/link-foundation/code-quality/actions/runs/44186142342),
+Security, workflow policy and links pass; full checks and the example app remain
+queued. All same-revision results must be collected before another push.
+
+## Reviewed comment region draft
+
+The next native draft adds an explicit opt-in for comment-based clone regions,
+informed by the stable PMD suppression documentation. Original cases initially
+fail because the configuration is unsupported. The implementation recognizes
+marker words only in actual comments, separates retained token segments and
+records sorted UTF-16 ranges without source text. Syntax validation and other
+rules remain active inside regions. Malformed sequences and exhausted marker
+budgets refuse analysis rather than silently hiding additional code.
+
+The [original contract notes](data/pmd-suppression-contract.json) distinguish
+native choices from unverified CPD equivalence. CLI/HTTP and installed-package
+checks use the same engine; the finite 10,002-marker probe runs with a 128 MiB
+heap and bounded stack. Exact-candidate and new same-revision CI verification
+remain pending. Legacy annotation suppression, exhaustive language-specific
+lexical behavior and full competitor parity remain unfinished.
 
 ## Evolution method and limits
 

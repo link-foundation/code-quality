@@ -60,6 +60,12 @@
       "path": "docs/case-studies/issue-1/data/cmake-token-contract.json",
       "sha256": "822c3b4ea853fde2b5108418d67037c15e1bed0b9e86f7811ff810e3fce5c7aa",
       "provenance": "Original finite CMake lexical-token contract notes from versioned official documentation; no implementation/tests inspected; no execution parity claim"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/pmd-suppression-contract.json",
+      "sha256": "76a2dcebad2a628b6c8065f957652d8fa92bdfd5f3374c2f9120d71aae2e0753",
+      "upstreamRelease": "7.29.0",
+      "provenance": "Original concise public comment-suppression contract notes; no upstream implementation/tests/examples copied; strict opt-in, malformed-marker and segment policies are native choices, not a parity claim"
     }
   ],
   "primarySources": [
@@ -144,5 +150,5 @@
       "url": "https://cmake.org/cmake/help/v3.28/manual/cmake-language.7.html"
     }
   ],
-  "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version and black-box QA/report/baseline observations, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. CMake probes use public official language/function/condition documentation and original finite scripts. Tests and engine source are original. External dependencies retain upstream licenses. PMD CPD research uses the stable 7.29.0 public behavior documentation only; token fixtures, index and finite oracle are original. CMake token analysis uses the versioned 3.28.6 public language categories and original lexical/refusal fixtures."
+  "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version and black-box QA/report/baseline observations, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. CMake probes use public official language/function/condition documentation and original finite scripts. Tests and engine source are original. External dependencies retain upstream licenses. PMD CPD research uses the stable 7.29.0 public behavior documentation only; token fixtures, index and finite oracle are original. CMake token analysis uses the versioned 3.28.6 public language categories and original lexical/refusal fixtures. Comment suppression uses the same stable public CPD documentation; fixtures, region bookkeeping and bounded probes are original."
 }

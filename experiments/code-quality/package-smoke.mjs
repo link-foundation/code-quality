@@ -67,6 +67,10 @@ assert.equal(clones.findings[0].ruleId, 'duplicate-tokens');
 const cmake = await analyzeFiles([{path:'a.cmake',content:'message("same")\\n'},{path:'b.cmake',content:'message("same")\\n'}], {config:{clones:{minTokens:4}}});
 assert.equal(cmake.incomplete, false);
 assert.equal(cmake.clones[0].tokens, 4);
+const suppressed = await analyzeFiles(['a.js','b.js'].map(path => ({path,content:'// CPD-OFF\\nconst squares = [4, 9, 16, 25];\\n// CPD-ON\\n'})), {config:{clones:{minTokens:5,suppressionComments:true}}});
+assert.equal(suppressed.passed, true);
+assert.deepEqual(suppressed.clones, []);
+assert.equal(suppressed.cloneSuppressions.length, 2);
 console.log('Installed library and CLI passed');\n`
   );
   const smoke = await runProcess('node', ['smoke.mjs'], { cwd: root });

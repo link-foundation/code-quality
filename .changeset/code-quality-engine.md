@@ -46,3 +46,8 @@ gates through the library, CLI and HTTP API. Refuse unsupported or exhausted ana
 Extend token-block analysis to native CMake command/argument spans, preserving
 dynamic references, argument kinds and exact ranges. Version its token policy
 and retain strict incomplete-metric and work-budget refusals.
+
+Add opt-in CPD comment suppression for token clones across all language modes.
+Expose omitted ranges in JSON/text/SARIF, preserve boundaries between retained
+segments and reject malformed or excessive marker inventories. Version enabled
+methods while retaining unchanged defaults and other rules.

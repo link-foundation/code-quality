@@ -85,5 +85,38 @@ The [CMake example](../examples/code-quality/cmake-clones/README.md) also verifi
 matching CLI/HTTP findings and UTF-16 ranges across BOM, CRLF and multiline input.
 The public [PMD 7.29.0 CPD contract](https://docs.pmd-code.org/pmd-doc-7.29.0/pmd_userdocs_cpd.html)
 informed the feature inventory. Its implementation and tests were not inspected.
-CPD's full language-specific options, suppression controls, clone grouping and
-lexical equivalence remain unverified parity criteria.
+CPD's full language-specific options, legacy annotation suppression, clone grouping
+and lexical equivalence remain unverified parity criteria.
+
+## Reviewed comment regions
+
+Set `clones.suppressionComments` to `true` to recognize the case-sensitive words
+`CPD-OFF` and `CPD-ON` inside actual language comments. The default is `false`;
+explicit `false` produces the same report/method as absence. Words inside string
+or argument literals have no effect. The option applies to every supported mode,
+including CMake line/bracket comments. It affects token clones only: syntax,
+structural rules, custom rules and whole-function duplication still inspect the
+complete original source.
+
+Regions run from the end of an OFF marker to the beginning of its paired ON
+marker. Each retained segment is compared separately, so a match cannot bridge
+an omitted region. JSON exposes the sorted `cloneSuppressions` ranges; SARIF
+retains them under run properties, and text reports their count. Ranges follow
+the same UTF-16/exclusive-end convention as clone locations. Source text is not
+included in this metadata. The
+[original example](../examples/code-quality/clone-suppression/README.md)
+demonstrates the review evidence.
+
+The native policy rejects an unmatched ON, nested OFF or unterminated OFF instead
+of silently hiding additional source. At most 10,000 markers are allowed across
+the analysis; token/source/parser work budgets still apply to omitted code.
+CMake's optional trivia and token records share its 100,000-entry reader limit.
+A finite 10,002-marker probe uses a 128 MiB heap and bounded stack. Invalid syntax
+inside a region still makes the report incomplete and prevents baselining.
+
+Enabled methods include `cpd-comment-regions-v1` and require reviewed baseline
+migration. This is an original comment-based contract informed by the stable
+[PMD suppression documentation](https://docs.pmd-code.org/pmd-doc-7.29.0/pmd_userdocs_cpd.html#suppression).
+The default opt-in policy, strict malformed-marker refusals and explicit region
+boundaries are native choices. Legacy Java annotation suppression and all
+language-specific CPD lexical details remain unverified.

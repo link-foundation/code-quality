@@ -120,18 +120,34 @@ function clonesConfig(input) {
     minTokens: 50,
     ignoreIdentifiers: false,
     ignoreLiterals: false,
+    suppressionComments: false,
     ...input,
   };
   for (const key of Object.keys(config)) {
-    if (!['minTokens', 'ignoreIdentifiers', 'ignoreLiterals'].includes(key)) {
+    if (
+      ![
+        'minTokens',
+        'ignoreIdentifiers',
+        'ignoreLiterals',
+        'suppressionComments',
+      ].includes(key)
+    ) {
       throw new Error(`Unknown clone option: ${key}`);
     }
   }
   positiveInteger(config.minTokens, 'clones.minTokens', 1000);
-  for (const key of ['ignoreIdentifiers', 'ignoreLiterals']) {
+  for (const key of [
+    'ignoreIdentifiers',
+    'ignoreLiterals',
+    'suppressionComments',
+  ]) {
     if (typeof config[key] !== 'boolean') {
       throw new Error(`clones.${key} must be boolean`);
     }
+  }
+  // Explicit false and absence retain the pre-suppression method fingerprint.
+  if (!config.suppressionComments) {
+    delete config.suppressionComments;
   }
   return config;
 }

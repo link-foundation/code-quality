@@ -37,6 +37,9 @@ function sarifReport(report) {
           },
         },
         invocations: [{ executionSuccessful: !report.incomplete }],
+        ...(report.cloneSuppressions && {
+          properties: { cloneSuppressions: report.cloneSuppressions },
+        }),
         results: report.findings.map((entry) => ({
           ruleId: entry.ruleId,
           level: entry.severity,
@@ -71,6 +74,9 @@ export function formatReport(report, format = 'text') {
   }
   for (const [name, value] of Object.entries(report.metrics || {})) {
     lines.push(`${name}: ${value}`);
+  }
+  if (report.cloneSuppressions) {
+    lines.push(`${report.cloneSuppressions.length} clone suppression regions`);
   }
   lines.push(
     `${report.summary.files} files, ${report.summary.errors} errors, ${report.summary.warnings} warnings; ${report.passed ? 'passed' : 'failed'}`

@@ -101,6 +101,13 @@ command/argument tokens; an independent
 finite all-pairs oracle checks 300 index comparisons. CLI, HTTP, SARIF, method
 changes and installed-package checks exercise the same implementation.
 
+Opt-in native comment regions recognize marker words in actual comments across
+all thirteen modes, retain audited ranges and refuse malformed marker sequences.
+The [original suppression contract](data/pmd-suppression-contract.json) records
+native policies and tests. Ignored regions cannot join surrounding matches or
+disable syntax/structural rules. A finite marker probe and shared token budgets
+bound work even for ignored code.
+
 This does not establish equivalent lexers, language-specific normalization,
-suppression controls, grouping, or complete PMD/CPD rule and case parity. The strict readiness inventory
-continues to reject universal competitor parity.
+legacy annotation suppression, grouping, or complete PMD/CPD rule and case parity.
+The strict readiness inventory continues to reject universal competitor parity.

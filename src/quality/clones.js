@@ -1,5 +1,6 @@
 import { walk, hash } from './syntax.js';
 import { lineLocator } from './lines.js';
+import { cloneFile } from './clone-suppressions.js';
 
 const literalKinds = new Set([
   'string',
@@ -30,6 +31,8 @@ export function cloneContext() {
     files: [],
     count: 0,
     bytes: 0,
+    suppressionMarkers: 0,
+    suppressions: [],
   };
 }
 
@@ -74,21 +77,23 @@ function tokenValue(
 }
 
 export function collectCloneTokens(root, file, config, context) {
-  const tokens = [];
+  const output = cloneFile(file, config, context);
   const budget = { remaining: 500_000 };
   let coveredUntil = -1;
   for (const node of walk(root, budget)) {
-    if (node.startIndex < coveredUntil || /comment/.test(node.type)) {
-      if (/comment/.test(node.type)) {
-        coveredUntil = Math.max(coveredUntil, node.endIndex);
-      }
+    if (node.startIndex < coveredUntil) {
+      continue;
+    }
+    if (/comment/.test(node.type)) {
+      output.comment(node.text, node.startIndex);
+      coveredUntil = node.endIndex;
       continue;
     }
     const atom = literal(node, budget);
     if ((!atom && node.childCount) || !node.text) {
       continue;
     }
-    tokens.push({
+    output.add({
       value: tokenValue(node, atom, config, context),
       start: node.startIndex,
       end: node.endIndex,
@@ -99,15 +104,20 @@ export function collectCloneTokens(root, file, config, context) {
     });
     coveredUntil = node.endIndex;
   }
-  context.files.push({ path: file.path, language: file.language, tokens });
+  output.finish();
 }
 
 export function collectCmakeCloneTokens(parsed, file, config, context) {
   const locate = lineLocator(file.content);
-  const tokens = parsed.tokens.map((token) => {
+  const output = cloneFile(file, config, context);
+  for (const token of parsed.tokens) {
+    if (token.comment) {
+      output.comment(file.content.slice(token.start, token.end), token.start);
+      continue;
+    }
     const start = locate(token.start);
     const end = locate(token.end);
-    return {
+    output.add({
       value: tokenValue(
         { type: token.kind, text: file.content.slice(token.start, token.end) },
         token.literal,
@@ -121,9 +131,9 @@ export function collectCmakeCloneTokens(parsed, file, config, context) {
       column: start.column,
       endLine: end.line,
       endColumn: end.column,
-    };
-  });
-  context.files.push({ path: file.path, language: file.language, tokens });
+    });
+  }
+  output.finish();
 }
 
 function location(file, start, length) {

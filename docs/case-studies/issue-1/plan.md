@@ -72,7 +72,10 @@ belongs inline in this PR, and the subsequent repository move is explicitly late
 - [x] After collecting all ninth-candidate CI, verify/review the combined helper/token candidate at 77dedd9 and push the batch once.
 - [x] Collect every same-revision workflow result for 77dedd9 before the next push; all six workflows pass.
 - [x] Extend the original CMake reader with bounded lexical spans and native token pairs; preserve incomplete syntax/expansion refusals and validate original positive/negative cases.
-- [ ] Verify/review the CMake token candidate, push once and collect all same-revision CI results.
+- [x] Verify/review CMake token candidate 4ac4c97 and push once; 165 Node checks, 149 Bun/frozen-Deno cases, static/types/package/release and twelve source hashes pass.
+- [ ] Collect every same-revision CI result for 4ac4c97; four workflows pass, example app and full checks remain queued.
+- [x] Draft original opt-in comment clone regions across thirteen modes, strict marker refusals, segment boundaries and audited JSON/SARIF ranges; preserve syntax and other rules.
+- [ ] Verify/review the suppression candidate, including CLI/HTTP/package consumers, bounded marker probe and new public-contract provenance; push once after every CMake CI result.
 - [ ] Complete remaining language semantics and competitor/proprietary documented cases.
 - [ ] Update PR title/body, preserve Fixes #1, mark ready after verification.
 

@@ -67,6 +67,7 @@ export interface Report {
   incomplete?: boolean;
   baseline?: { passed: boolean; failures: string[] };
   clones?: TokenClone[];
+  cloneSuppressions?: CloneLocation[];
 }
 export interface CloneLocation {
   path: string;
@@ -122,6 +123,7 @@ export interface Config {
         minTokens?: number;
         ignoreIdentifiers?: boolean;
         ignoreLiterals?: boolean;
+        suppressionComments?: boolean;
       };
 }
 export interface Plugin {
