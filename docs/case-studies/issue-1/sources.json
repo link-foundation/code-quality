@@ -33,6 +33,11 @@
       "path": "docs/case-studies/issue-1/data/quality-bash-cli-contract.json",
       "sha256": "dbd2a4050a273e1ecc6f649b86a073c00848af8f098fdcdbb64d0eb794e6212e",
       "upstreamRelease": "v1.0.0-alpha.5"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/shell-runtime-pins.json",
+      "sha256": "8131edcba8023c982ba7bcef5c1f2dd44fb8f75f38efc2ed92f60abc23899912",
+      "provenance": "Independent Debian HTTPS package indexes; unsigned local metadata research, not competitor code"
     }
   ],
   "primarySources": [
@@ -91,6 +96,14 @@
     {
       "title": "quality-bash released CLI contracts",
       "url": "https://github.com/ever-guild/quality-bash/releases/tag/v1.0.0-alpha.5"
+    },
+    {
+      "title": "Debian kcov runtime dependencies",
+      "url": "https://packages.debian.org/bookworm-backports/kcov"
+    },
+    {
+      "title": "Linux dynamic loader library-path contract",
+      "url": "https://manpages.debian.org/bookworm/manpages/ld.so.8.en.html"
     }
   ],
   "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. Tests and engine source are original. External dependencies retain upstream licenses."

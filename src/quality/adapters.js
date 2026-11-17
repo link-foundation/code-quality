@@ -1,7 +1,8 @@
 import { isAbsolute, relative, resolve, sep } from 'node:path';
 import { safePath } from './config.js';
 import { runProcess } from './process.js';
-import { executableHash } from './executable.js';
+import { executableProvenance } from './executable.js';
+import { parseUniqueJson } from './json.js';
 
 // These are integration recipes, not claims that those analyzers are reimplemented.
 export const toolRecipes = Object.freeze({
@@ -249,8 +250,8 @@ export async function runAdapter(adapter, { cwd, run = runProcess } = {}) {
           .trim()
           .split('\n')
           .filter(Boolean)
-          .map((line) => JSON.parse(line))
-      : JSON.parse(result.stdout);
+          .map((line) => parseUniqueJson(line))
+      : parseUniqueJson(result.stdout);
   const findings = importFindings(data, { ...adapter, root: cwd });
   if (result.code && !findings.length) {
     throw new Error(`${adapter.id}: nonzero exit without findings`);
@@ -260,12 +261,17 @@ export async function runAdapter(adapter, { cwd, run = runProcess } = {}) {
 
 export async function doctor(adapters, { cwd, run = runProcess } = {}) {
   const results = [];
+  const installations = new Map();
   for (const adapter of adapters) {
     try {
+      const provenance =
+        run === runProcess
+          ? await executableProvenance(adapter.command, cwd, installations)
+          : {};
       const result = await run(
         adapter.command,
         adapter.versionArgs || ['--version'],
-        { cwd, timeoutMs: 10_000 }
+        { cwd, timeoutMs: 10_000, env: { ...process.env, LC_ALL: 'C' } }
       );
       if (result.code !== 0 || !result.stdout.trim()) {
         throw new Error(`exit ${result.code} or empty version`);
@@ -274,9 +280,7 @@ export async function doctor(adapters, { cwd, run = runProcess } = {}) {
         id: adapter.id,
         available: true,
         version: result.stdout.trim(),
-        ...(run === runProcess
-          ? { sha256: await executableHash(adapter.command, cwd) }
-          : {}),
+        ...provenance,
       });
     } catch (error) {
       results.push({ id: adapter.id, available: false, reason: error.message });

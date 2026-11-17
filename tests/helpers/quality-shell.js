@@ -27,7 +27,11 @@ export function runner(root, options = {}) {
   return async (command, args, { cwd } = {}) => {
     const ok = (stdout = '') => ({ code: 0, stdout, stderr: '' });
     if (args[0] === '--version') {
-      return ok(`${command} fixture-version`);
+      return ok(
+        command === 'bash'
+          ? 'GNU bash, version 5.2.0'
+          : `${command} fixture-version`
+      );
     }
     if (command === 'bash') {
       return ok();

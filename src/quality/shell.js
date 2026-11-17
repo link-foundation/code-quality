@@ -6,11 +6,34 @@ import { analyzeFiles, finalizeReport } from './core.js';
 import { validateConfig, positiveInteger, safePath } from './config.js';
 import { runProcess } from './process.js';
 import { doctor, runAdapter } from './adapters.js';
+import { requireBash } from './shell-version.js';
 import { parseKcov } from './coverage.js';
 import { withSyntax, walk, hash } from './syntax.js';
 
-function tapPlan(source, expectedTotal) {
+function tapLines(source) {
+  if (Buffer.byteLength(source) > 16_777_216) {
+    throw new Error('TAP report exceeds byte budget');
+  }
   const lines = source.split(/\r?\n/);
+  let content = false;
+  for (const line of lines) {
+    if (!line.trim()) {
+      continue;
+    }
+    if (line === 'TAP version 13') {
+      if (content) {
+        throw new Error('TAP version must be the first record');
+      }
+    } else if (!/^(?:1\.\.\d+$|(?:not )?ok\s+\d+(?:\s|$)|\s*#)/.test(line)) {
+      throw new Error('Unknown or malformed Bats TAP record');
+    }
+    content = true;
+  }
+  return lines;
+}
+
+function tapPlan(source, expectedTotal) {
+  const lines = tapLines(source);
   const plans = lines.filter((line) => /^1\.\.\d+$/.test(line));
   const tests = lines.filter((line) => /^(?:not )?ok(?:\s|$)/.test(line));
   const count = Number(plans[0]?.slice(3));
@@ -31,7 +54,7 @@ function tapPlan(source, expectedTotal) {
 export function parseTap(source, { allowAbort = false, expectedTotal } = {}) {
   const { tests, count } = tapPlan(source, expectedTotal);
   const numbers = tests.map((line) =>
-    Number(line.match(/^(?:not )?ok\s+(\d+)\b/)?.[1])
+    Number(line.match(/^(?:not )?ok\s+(\d+)(?:\s|$)/)?.[1])
   );
   if (numbers.some((number, index) => number !== index + 1)) {
     throw new Error('TAP test numbers must be sequential');
@@ -390,7 +413,15 @@ async function shellPrerequisites(absolute, sources, stage, run) {
       `Missing shell QA prerequisites: ${JSON.stringify(tools.tools.filter((tool) => !tool.available))}`
     );
   }
+  requireBash(tools.tools.find((tool) => tool.id === 'bash').version);
   return tools;
+}
+
+async function assertToolsUnchanged(absolute, sources, stage, run, tools) {
+  const currentTools = await shellPrerequisites(absolute, sources, stage, run);
+  if (JSON.stringify(currentTools) !== JSON.stringify(tools)) {
+    throw new Error('Shell toolchain changed during measurement');
+  }
 }
 
 function shellReport(
@@ -526,6 +557,8 @@ export async function shellQuality(
           excludedPaths,
         })
       : undefined;
+    await assertUnchanged(absolute, measuredFiles);
+    await assertToolsUnchanged(absolute, sources, stage, run, tools);
     await assertUnchanged(absolute, measuredFiles);
     return shellReport(native, config, {
       tools: tools.tools,

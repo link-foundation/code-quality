@@ -146,6 +146,7 @@ export interface ToolStatus {
   available: boolean;
   version?: string;
   sha256?: string;
+  installation?: string;
   reason?: string;
 }
 export interface EvolutionIdentity extends Partial<Omit<Abstraction, 'kind'>> {
@@ -328,11 +329,18 @@ export function createQualityServer(options?: {
   maxConcurrent?: number;
 }): Server;
 export const apiDescription: Record<string, unknown>;
+export interface ShellRuntimePackage {
+  name: string;
+  version: string;
+  url: string;
+  sha256: string;
+}
 export interface ShellToolPin {
   version: string;
   url: string;
   sha256: string;
   executable: string;
+  dependencies?: ShellRuntimePackage[];
 }
 export type ShellToolManifest = Record<
   'bats' | 'shellcheck' | 'kcov',
@@ -353,5 +361,11 @@ export function installShellTools(
   manifest: ShellToolManifest;
   files: { path: string; sha256: string }[];
   executables: Record<'bats' | 'shellcheck' | 'kcov', string>;
+  runtime: {
+    launcher: string;
+    loader: string;
+    libraries: string[];
+    dependencies: { name: string; path: string }[];
+  };
   fingerprint: string;
 }>;

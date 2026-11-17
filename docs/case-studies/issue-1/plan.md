@@ -49,8 +49,12 @@ belongs inline in this PR, and the subsequent repository move is explicitly late
 - [x] Verify the reviewed glob dependency patch, registry signatures, bounded regression and frozen npm/Deno graph resolutions.
 - [x] Verify and review the fourth exact candidate, push once and collect every CI result.
 - [x] Draft pinned amd64/arm64 executable downloads and the consumer Action; validate actual amd64 kcov 43 QA.
-- [ ] Verify the fifth exact candidate and both native architecture CI jobs; collect all same-revision results.
+- [x] Verify the fifth exact candidate and collect all results, including the reproduced arm64 size failure.
 - [x] Implement independent upstream-schema import, preserve floors/source bytes, refuse duplicate JSON keys and verify actual CLI migration.
+- [x] Verify the sixth exact candidate, both native architectures and all six workflows.
+- [x] Draft pinned private shared-library downloads, retained notices, loader resolution and managed-tree verification.
+- [x] Reproduce and fix missing Bash prerequisite, changing toolchains, duplicate coverage/diagnostic JSON and malformed TAP records.
+- [ ] Verify the seventh exact candidate and both native architectures; collect all same-revision results.
 - [ ] Complete downloadable shared-library dependencies and the remaining shell diagnostic inventory.
 - [ ] Complete remaining language semantics and competitor/proprietary documented cases.
 - [ ] Update PR title/body, preserve Fixes #1, mark ready after verification.

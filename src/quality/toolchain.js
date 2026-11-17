@@ -1,17 +1,16 @@
 import { createHash } from 'node:crypto';
 import { constants } from 'node:fs';
-import {
-  access,
-  chmod,
-  lstat,
-  mkdir,
-  open,
-  readdir,
-  rm,
-  writeFile,
-} from 'node:fs/promises';
+import { access, chmod, mkdir, open, rm, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { runProcess } from './process.js';
+import { requireBash } from './shell-version.js';
+import { runtimePins } from './runtime-pins.js';
+import { installRuntime } from './shell-runtime.js';
+import {
+  inspectShellInstallation,
+  installationFingerprint,
+} from './installation.js';
+export { inspectShellInstallation } from './installation.js';
 
 // Distribution metadata only. These tools remain separately licensed native
 // adapters. In particular, this is not a JavaScript port of their behavior.
@@ -67,6 +66,7 @@ export function shellToolManifest(
       url: `https://deb.debian.org/debian/pool/main/k/kcov/kcov_43+dfsg-1~bpo12+1_${pin.kcov[0]}.deb`,
       sha256: pin.kcov[1],
       executable: 'usr/bin/kcov',
+      dependencies: runtimePins[arch].map((pin) => ({ ...pin })),
     },
   };
 }
@@ -101,58 +101,34 @@ async function download(pin, path, fetch) {
   }
 }
 
-export async function inspectShellInstallation(
-  directory,
-  prefix = '',
-  budget = { count: 0, bytes: 0 }
-) {
-  if (prefix.split('/').length > 16) {
-    throw new Error('Tool installation depth budget exceeded');
+async function unpackTool(name, archive, component, run) {
+  const result = await run(
+    name === 'kcov' ? 'dpkg-deb' : 'tar',
+    name === 'kcov'
+      ? ['--extract', archive, component]
+      : [
+          '--extract',
+          '--gzip',
+          '--file',
+          archive,
+          '--directory',
+          component,
+          '--no-same-owner',
+          '--no-same-permissions',
+          ...(name === 'bats'
+            ? [
+                'bats-core-1.14.0/bin',
+                'bats-core-1.14.0/lib',
+                'bats-core-1.14.0/libexec',
+                'bats-core-1.14.0/LICENSE.md',
+              ]
+            : []),
+        ],
+    { timeoutMs: 300_000, maxOutputBytes: 65_536 }
+  );
+  if (result.code !== 0) {
+    throw new Error(`Cannot unpack ${name}: ${result.stderr}`);
   }
-  const files = [];
-  for (const entry of await readdir(join(directory, prefix), {
-    withFileTypes: true,
-  })) {
-    if (++budget.count > 4000) {
-      throw new Error('Tool installation entry budget exceeded');
-    }
-    const name = prefix ? `${prefix}/${entry.name}` : entry.name;
-    const path = join(directory, name);
-    if (entry.isDirectory()) {
-      files.push(...(await inspectShellInstallation(directory, name, budget)));
-    } else if (entry.isFile()) {
-      const size = (await lstat(path)).size;
-      budget.bytes += size;
-      // The checksum-pinned aarch64 ShellCheck executable is 55,043,352 bytes.
-      // Keep a finite per-file limit that admits that actual distribution.
-      if (size > 67_108_864 || budget.bytes > 134_217_728) {
-        throw new Error('Tool installation byte budget exceeded');
-      }
-      const file = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW);
-      const hash = createHash('sha256');
-      let bytes = 0;
-      try {
-        for await (const chunk of file.createReadStream()) {
-          bytes += chunk.length;
-          if (bytes > size) {
-            throw new Error('Tool installation changed during fingerprinting');
-          }
-          hash.update(chunk);
-        }
-      } finally {
-        await file.close();
-      }
-      if (bytes !== size) {
-        throw new Error('Tool installation changed during fingerprinting');
-      }
-      files.push({ path: name, sha256: hash.digest('hex') });
-    } else {
-      throw new Error(
-        `Tool installation contains a link or special file: ${name}`
-      );
-    }
-  }
-  return files.sort((a, b) => a.path.localeCompare(b.path));
 }
 
 export async function installShellTools(
@@ -166,45 +142,40 @@ export async function installShellTools(
 ) {
   const manifest = shellToolManifest(platform, arch);
   const root = resolve(directory);
+  if (/[:;$\r\n]/.test(root)) {
+    throw new Error(
+      'Tool directory contains unsupported dynamic-loader path tokens'
+    );
+  }
   // Exclusive creation is also the ownership boundary for failure cleanup.
   // Existing directories, dependencies and caches are never replaced or removed.
   await mkdir(root, { mode: 0o700 });
   try {
+    const bash = await run('bash', ['--version'], {
+      env: { ...process.env, LC_ALL: 'C' },
+      maxOutputBytes: 65_536,
+    });
+    if (bash.code !== 0) {
+      throw new Error('Shell tools require GNU Bash >= 5.2');
+    }
+    requireBash(bash.stdout);
     const executables = {};
+    let runtime;
     for (const [name, pin] of Object.entries(manifest)) {
       const archive = join(root, `${name}.download`);
       const component = join(root, name);
       await download(pin, archive, fetch);
       await mkdir(component);
-      const result = await run(
-        name === 'kcov' ? 'dpkg-deb' : 'tar',
-        name === 'kcov'
-          ? ['--extract', archive, component]
-          : [
-              '--extract',
-              '--gzip',
-              '--file',
-              archive,
-              '--directory',
-              component,
-              '--no-same-owner',
-              '--no-same-permissions',
-              ...(name === 'bats'
-                ? [
-                    'bats-core-1.14.0/bin',
-                    'bats-core-1.14.0/lib',
-                    'bats-core-1.14.0/libexec',
-                    'bats-core-1.14.0/LICENSE.md',
-                  ]
-                : []),
-            ],
-        { timeoutMs: 300_000, maxOutputBytes: 65_536 }
-      );
-      if (result.code !== 0) {
-        throw new Error(`Cannot unpack ${name}: ${result.stderr}`);
-      }
+      await unpackTool(name, archive, component, run);
       await rm(archive);
       executables[name] = join(component, pin.executable);
+      if (name === 'kcov') {
+        runtime = await installRuntime(root, pin, arch, {
+          run,
+          download: (dependency, path) => download(dependency, path, fetch),
+        });
+        executables[name] = runtime.launcher;
+      }
       await access(executables[name], constants.X_OK);
       const version = await run(executables[name], ['--version'], {
         maxOutputBytes: 65_536,
@@ -214,7 +185,7 @@ export async function installShellTools(
         !`${version.stdout}\n${version.stderr}`.includes(pin.version)
       ) {
         throw new Error(
-          'Cannot execute pinned tool; check glibc, Python 3, libcurl, libdw, libelf and C++ runtime prerequisites'
+          'Cannot execute pinned tool; check GNU Bash >= 5.2, glibc >= 2.36 and Python 3 prerequisites'
         );
       }
     }
@@ -226,6 +197,7 @@ export async function installShellTools(
       manifest,
       files,
       executables,
+      runtime,
     };
     await writeFile(
       join(root, 'installation.json'),
@@ -236,9 +208,7 @@ export async function installShellTools(
     return {
       ...receipt,
       directory: root,
-      fingerprint: createHash('sha256')
-        .update(JSON.stringify(files))
-        .digest('hex'),
+      fingerprint: installationFingerprint(files),
     };
   } catch (error) {
     await rm(root, { recursive: true, force: true });

@@ -13,13 +13,13 @@ executed as separate tools and retain their licenses.
 | Syntax, lint, Bats control, coverage and mutation all required                         | `shellQuality`, injected tests and real Linux Bash 5.2.21 / ShellCheck 0.11.0 / Bats 1.14.0 / kcov 43 acceptance                                         | Other tool/platform combinations remain unverified                                                                |
 | Coverage 3/5, mutation 2/3 public measurement example                                  | Injected Codecov JSON/TAP pipeline asserts 60 and 66.66; independent real fixtures measure 75% coverage and 100 / 66.66 mutation                         | Original fixtures, not the upstream real fixture                                                                  |
 | Baseline created only after measurement, explicit creation, updates never lower floors | CLI baseline-update --create after passing lint/control; atomic locked writes; monotonic gates                                                           | Audited independent schema import preserves floors; numeric methodology equivalence is not assumed                |
-| Every measured source represented; empty/malformed data fail                           | Exact Codecov/source inventory and integer hit counts; LCOV API validates DA/LF/LH; missing TAP fails                                                    | Full upstream diagnostic case inventory not replicated                                                            |
+| Every measured source represented; empty/malformed data fail                           | Exact Codecov/source inventory and integer hit counts; LCOV API validates DA/LF/LH; missing TAP fails                                                    | Original refusal audit in docs/shell-diagnostics.md; exhaustive upstream catalog remains unfinished               |
 | Timeouts/tool errors are not killed mutants                                            | Bounded subprocess refuses timeout/output budget; complete controls plus strict planned mutant assertion prefixes; exit 1 required for killed mutants    | Actual Bats 1.14 assertion/setup/teardown/setup_file abort cases pass; broader diagnostic inventory unfinished    |
-| Include semantic execution settings in baseline, exclude scheduling jobs               | Parser/operator/tool versions, executable SHA-256, selected test inventory, stage, native rules and timeout hashed                                       | Bounded jobs auto or 1–4 supported; no performance equivalence demonstrated                                       |
+| Include semantic execution settings in baseline, exclude scheduling jobs               | Parser/operator/tool versions, executable SHA-256, managed-tree fingerprint, selected tests, stage, rules and timeout hashed                             | Bounded jobs auto or 1–4 supported; no performance equivalence demonstrated                                       |
 | Read committed target-branch baseline in CI                                            | --baseline-ref additionally checks a bounded regular Git blob without checkout; nested and literal paths tested                                          | Actual consumer Action and base-SHA refusal tests pass; absent base blobs fail closed                             |
 | Reports under quality-reports                                                          | Default persistent fresh run bundles, JSON/text/SARIF/diagnostics, atomic latest manifest, incomplete runs never reuse green results                     | Raw HTML/Cobertura/Codecov artifacts retained within explicit budgets; validated internal kcov alias materialized |
-| Pinned checked toolchain downloads, doctor                                             | Doctor inspects installed versions and hashes executable bytes; Checksum-pinned downloads for Bats 1.14, ShellCheck 0.11 and Debian kcov 43, amd64/arm64 | Host shared libraries remain prerequisites; native arm64 acceptance pending                                       |
-| Linux amd64/arm64 acceptance                                                           | Portable JS unit matrix; real Linux CI                                                                                                                   | Native Ubuntu 24.04 arm64 installer exceeds a per-file byte bound; corrected candidate pending                    |
+| Pinned checked toolchain downloads, doctor                                             | Doctor inspects installed versions and hashes executable bytes; Checksum-pinned downloads for Bats 1.14, ShellCheck 0.11 and Debian kcov 43, amd64/arm64 | Private Debian libraries drafted; new library validation on native arm64 pending                                  |
+| Linux amd64/arm64 acceptance                                                           | Portable JS unit matrix; real Linux CI                                                                                                                   | Both native architecture jobs pass at dbbcce7; new private-runtime candidate pending                              |
 | Symlinks/special/comma coverage paths unsupported                                      | Explicit refusals, isolated owned mutant copies                                                                                                          | Complete upstream path edge-case audit unfinished                                                                 |
 | Shell coverage excludes embedded awk/jq/etc                                            | kcov Bash only, explicitly documented                                                                                                                    | No claim to measure embedded-language coverage                                                                    |
 | Trusted project execution, no sandbox                                                  | Explicit qa/--tools; HTTP never executes config adapters                                                                                                 | Project tests remain trusted code running as current user                                                         |
@@ -49,12 +49,15 @@ for Linux amd64 and arm64. This engine now downloads those executable versions
 with independently checked pins, refuses existing installation directories,
 retains runtime helpers/licenses and records all installed file hashes. Actual
 amd64 acceptance passes nine measurements including consumer-Action QA and an
-audited upstream-schema import with kcov 43. The first native arm64 CI install
-failed because its 55,043,352-byte ShellCheck executable exceeded the 32 MiB
-per-file bound. A bounded sparse-file regression reproduces that size, and the
-next candidate permits 64 MiB per file while retaining the 128 MiB total bound. Host glibc/Python
-and shared libraries remain prerequisites; fully bundled dependencies are
-unfinished. See [installation and Action contracts](../../shell-toolchain.md).
+audited upstream-schema import with kcov 43. Both native architecture jobs pass
+at `dbbcce7d424d9e15837d683d93825e943c1af6ab` after the bounded arm64 size
+correction. The next draft downloads a separately pinned Debian library closure,
+retains notices and checks loader resolution; actual amd64 QA passes with those
+libraries. Managed-tree verification covers helpers and libraries before and
+after measurement, with relocatable fingerprints. Host Bash >=5.2, glibc >=2.36,
+Python and dynamically loaded plugins remain explicit prerequisites/limits.
+New private-library acceptance on native arm64 still requires CI.
+See [installation and Action contracts](../../shell-toolchain.md).
 The [schema import contract](../../baseline-interchange.md) explicitly requires
-fresh independent QA and never lowers imported floors. The complete upstream
-documented diagnostic inventory remains unfinished. The strict readiness gate continues to reject parity.
+fresh independent QA and never lowers imported floors. The [original refusal audit](../../shell-diagnostics.md) maps finite documented
+contracts to regression evidence. An exhaustive upstream diagnostic inventory remains unfinished. The strict readiness gate continues to reject parity.

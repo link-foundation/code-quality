@@ -1,6 +1,15 @@
 // Validate executable-line hit counts from kcov's Codecov JSON.
+import { parseUniqueJson } from './json.js';
+
+function decodeKcov(source) {
+  if (typeof source === 'string' && Buffer.byteLength(source) > 16_777_216) {
+    throw new Error('kcov coverage report exceeds byte budget');
+  }
+  return typeof source === 'string' ? parseUniqueJson(source) : source;
+}
+
 export function parseKcov(source) {
-  const report = typeof source === 'string' ? JSON.parse(source) : source;
+  const report = decodeKcov(source);
   const object = (value) =>
     value && typeof value === 'object' && !Array.isArray(value);
   if (!object(report) || !object(report.coverage)) {

@@ -53,7 +53,17 @@ directly from their publishers; the npm package does not contain their binaries:
 - [Debian kcov 43](https://packages.debian.org/bookworm-backports/kcov): GPLv2,
   with Debian's copyright and source information retained under
   `kcov/usr/share/doc/kcov/`. Its source packages are linked from the Debian
-  package page. Host shared libraries retain their own licenses.
+  package page.
+
+The optional installer also downloads pinned Debian runtime libraries and
+`base-files` for license texts. It retains each package's copyright/source
+notice in `runtime/licenses/<package>.copyright`, common licenses in
+`runtime/licenses/common/`, and exact binary URLs/versions/digests in
+`runtime/packages.json`. These libraries include separately licensed GPL,
+LGPL, OpenSSL, BSD and MIT components; they are not public domain. Distribution
+metadata and retrieval provenance are recorded in
+`docs/case-studies/issue-1/data/shell-runtime-pins.json`. Host glibc, Python and
+system configuration retain their applicable licenses.
 
 ## tree-sitter-bash 0.20.5
 

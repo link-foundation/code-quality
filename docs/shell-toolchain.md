@@ -10,16 +10,28 @@ directory created by that call.
 
 ```sh
 node bin/code-quality.js tools install /tmp/my-quality-tools > /tmp/quality-tools.json
-export PATH="/tmp/my-quality-tools/bats/bats-core-1.14.0/bin:/tmp/my-quality-tools/shellcheck/shellcheck-v0.11.0:/tmp/my-quality-tools/kcov/usr/bin:$PATH"
+export PATH="/tmp/my-quality-tools/bats/bats-core-1.14.0/bin:/tmp/my-quality-tools/shellcheck/shellcheck-v0.11.0:/tmp/my-quality-tools/bin:$PATH"
 node bin/code-quality.js baseline-update ./my-shell-project --create
 node bin/code-quality.js qa ./my-shell-project
 ```
 
-The host supplies Bash, tar, dpkg-deb, Python 3, glibc >= 2.34, libcurl,
-libdw, libelf, libgcc, libstdc++ and zlib with their transitive dependencies.
-The installer does not download shared libraries or support musl. It checks
-each executable's reported version and refuses a missing runtime. The real
-acceptance workflow uses Ubuntu 24.04 on native x64 and arm64 runners.
+The host supplies GNU Bash >= 5.2, tar, dpkg-deb, Python 3 and glibc >= 2.36.
+Unsupported or unrecognized Bash versions fail before downloads or project
+execution. The installer downloads the pinned Debian libraries for kcov,
+including libcurl, libdw, libelf, libgcc, libstdc++ and their dependency closure.
+It also downloads Debian's common license texts. It does not support musl.
+The real acceptance workflow uses Ubuntu 24.04 on native x64 and arm64 runners.
+
+Use the returned `executables.kcov` launcher, under `bin/`; calling the raw
+`kcov/usr/bin/kcov` bypasses its private libraries. The relocatable launcher
+passes a private `--library-path` to the host dynamic loader. Installation
+refuses a directly linked dependency that resolves outside the private tree,
+apart from glibc libraries. It clears `LD_LIBRARY_PATH`, `LD_PRELOAD` and
+`LD_AUDIT` for that process tree. Tool-directory paths containing colon,
+semicolon, dollar, CR or LF are refused because the loader interprets path
+tokens. Spaces and quotes are passed literally. Project tests remain trusted
+code; plugins, certificates, system configuration and host runtime behavior
+are not a hermetic execution environment.
 
 Every archive must match a repository-pinned SHA-256 before extraction. The
 ShellCheck pins were independently matched to the release asset digests; gzip
@@ -29,14 +41,28 @@ and [arm64 package metadata](https://packages.debian.org/bookworm-backports/arm6
 The Bats archive includes only its executable, helpers and license in the
 installation; its development tests and fixtures are not installed.
 
+Library versions, archive digests, binary URLs and public-index provenance are
+recorded in [the runtime metadata](case-studies/issue-1/data/shell-runtime-pins.json).
+These pins were independently resolved from Debian's HTTPS package indexes;
+they were not checked against a local Debian signing keyring. Every downloaded
+package must match the committed digest before extraction. Only shared-library
+files and license notices are retained from dependency packages. Internal
+SONAME aliases become regular files; external links and special files fail.
+
 The installer allows at most 32 MiB per compressed download, 4000 extracted
 entries, depth 16, 64 MiB per file and 128 MiB total. Downloads and extraction
 have a five-minute deadline. The archives are trusted, fixed upstream assets;
 the extractor does not accept caller-provided URLs or archives. Installed
 symlinks and special files are refused. `installation.json` records the
-archive pins, installed file hashes and executable paths. This inventory
-describes the installed tree; it is not a signature or verification of host
-shared libraries. Tools retain their upstream licenses and source offers.
+archive pins, installed file hashes, executable paths and loader resolution.
+Doctor checks the entire managed tree before executing its tools. Changed or
+missing helpers/libraries, added files and malformed receipts fail; an accepted
+inventory fingerprint becomes part of the measurement method. Relocating an
+unchanged tree preserves that fingerprint. Unmanaged tools still hash their
+entry executables. This inventory is not a signature or verification of host
+glibc or dynamically loaded plugins. Tools retain their upstream licenses and
+source offers in `runtime/licenses/`, with package metadata in
+`runtime/packages.json`.
 
 The repository-root composite Action uses the same engine and locked
 dependencies. Pin its `uses` reference to a reviewed commit when integrating

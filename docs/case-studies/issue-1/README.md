@@ -210,6 +210,41 @@ committed baseline blobs: silently keeping a later duplicate could otherwise
 replace a stronger floor. Escaped aliases are rejected as well. These changes do
 not establish full shell parity or universal competitor parity.
 
+## Sixth candidate verification and private-runtime draft
+
+All six workflows at `dbbcce7d424d9e15837d683d93825e943c1af6ab` pass.
+[Quality engine](https://github.com/link-foundation/code-quality/actions/runs/44156199827)
+passes real shell QA on native amd64 and arm64, the installed package, public
+types, consumer composite Action and Docker API.
+[Checks and release](https://github.com/link-foundation/code-quality/actions/runs/44156200086)
+passes all nine Linux/macOS/Windows Node/Bun/Deno jobs.
+[Security](https://github.com/link-foundation/code-quality/actions/runs/44156200101),
+[workflow policy](https://github.com/link-foundation/code-quality/actions/runs/44156199953),
+[links](https://github.com/link-foundation/code-quality/actions/runs/44156200010) and
+[example app](https://github.com/link-foundation/code-quality/actions/runs/44156199946)
+pass too. The previously queued fifth-candidate example app also finished
+successfully before the sixth push.
+
+The seventh draft resolves kcov's library closure independently from Debian's
+public package indexes for both architectures, including security updates.
+It checks package hashes before extraction, retains library/source notices and
+common license texts, and does not execute package maintainer scripts. A private
+loader path keeps its directly linked libraries separate from host libraries;
+installation refuses unexpected host resolution except glibc. Host glibc >=2.36,
+Bash >=5.2, Python and system configuration remain explicit dependencies. Local
+metadata research used HTTPS index hashes, without a Debian signing keyring;
+that distinction is preserved in [the provenance](data/shell-runtime-pins.json).
+No competitor implementation or tests were inspected.
+
+Original regressions reproduce missing Bash version enforcement, mid-measurement
+tool changes, duplicate coverage counters/diagnostic fields and ignored malformed
+TAP records. Each fails before its fix and passes afterward. Managed-tree hashes
+cover helpers/libraries as well as executable bytes and survive relocation.
+Actual amd64 QA passes nine measurements using the downloaded private libraries.
+The stricter final diagnostic code and both new native-architecture installations
+still require exact-candidate verification. The [refusal audit](../../shell-diagnostics.md)
+records finite evidence and remaining limits without certifying universal parity.
+
 ## Evolution method and limits
 
 Use a bounded first-parent range (default last 100 commits, hard limit 1000), inspect

@@ -19,3 +19,8 @@ Action with automatic PR-base baseline enforcement and fresh failure evidence.
 Import published quality-bash baseline floors through fresh independent QA and
 an explicit migration audit; preserve the source and refuse weaker measurements
 or overwrites. Reject duplicate JSON keys in working and committed baselines.
+
+Download and verify kcov's private Debian runtime libraries without sudo, retain
+their notices, check loader resolution and fingerprint managed helpers/libraries.
+Enforce GNU Bash 5.2 before installation or project execution. Refuse changed
+toolchains, duplicate coverage/diagnostic JSON and malformed Bats TAP records.

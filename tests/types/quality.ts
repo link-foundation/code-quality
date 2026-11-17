@@ -45,7 +45,11 @@ const language: Language | undefined = current?.language;
 void [passed, text, total, language, committed, complete];
 const toolVersion: string = shellToolManifest('linux', 'arm64').kcov.version;
 const install: typeof installShellTools = installShellTools;
-void [toolVersion, install];
+const libraryVersion: string | undefined = shellToolManifest('linux', 'arm64')
+  .kcov.dependencies?.[0]?.version;
+type Runtime = Awaited<ReturnType<typeof installShellTools>>['runtime'];
+const privateLoader = (runtime: Runtime): string => runtime.loader;
+void [toolVersion, install, libraryVersion, privateLoader];
 const foreign = validateQualityBashBaseline({});
 const imported = importQualityBashBaseline(report, foreign, {
   reason: 'Reviewed independent methodology',

@@ -100,7 +100,14 @@ describe('pinned shell tool distribution', () => {
             platform: 'linux',
             arch: 'x64',
             fetch: async () => response,
-            run: () => {
+            run: (command) => {
+              if (command === 'bash') {
+                return {
+                  code: 0,
+                  stdout: 'GNU bash, version 5.2.0',
+                  stderr: '',
+                };
+              }
               throw new Error('Unexpected extraction');
             },
           }),
@@ -112,6 +119,23 @@ describe('pinned shell tool distribution', () => {
         await readFile(join(root, 'existing/keep'), 'utf8'),
         'preserve'
       );
+    }));
+
+  it('refuses dynamic-loader path tokens before creating output or fetching', async () =>
+    fixture(async (root) => {
+      for (const token of [':', ';', '$', '\r', '\n']) {
+        await assert.rejects(
+          installShellTools(join(root, `unsafe${token}directory`), {
+            platform: 'linux',
+            arch: 'x64',
+            fetch: () => {
+              throw new Error('Unexpected network call');
+            },
+          }),
+          /dynamic-loader path tokens/
+        );
+        assert.deepEqual(await readdir(root), []);
+      }
     }));
 
   it('requires an explicit installation destination in the CLI', async () => {

@@ -1,0 +1,546 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-17T19:33:58.162Z",
+  "verification": "HTTPS Debian package-index SHA-256 fields; no local Debian signing keyring",
+  "hostDependencies": [
+    "libc6 >= 2.36",
+    "Bash >= 5.2",
+    "Python 3"
+  ],
+  "indexes": [
+    {
+      "url": "https://deb.debian.org/debian/dists/bookworm/main/binary-amd64/Packages.xz",
+      "sha256": "9e0b5aabb2465b3d2e7a7fe27f9913846277833f7a2826e7767acccff5b588c5",
+      "retrievedAt": "2026-11-17T19:15:37.788Z",
+      "inflatedBytes": 50060337
+    },
+    {
+      "url": "https://deb.debian.org/debian-security/dists/bookworm-security/main/binary-amd64/Packages.xz",
+      "sha256": "4119d4849ab0362d5ccd5e05b38200fafb3cffa65beb84b436726cbd32591a59",
+      "retrievedAt": "2026-11-17T19:19:19.336Z",
+      "inflatedBytes": 2508495
+    },
+    {
+      "url": "https://deb.debian.org/debian/dists/bookworm/main/binary-arm64/Packages.xz",
+      "sha256": "2ddb1737692e8c45c53e8d57c0ce4cd21c78c5703b830c3226b1423566a06c00",
+      "retrievedAt": "2026-11-17T19:19:20.178Z",
+      "inflatedBytes": 49434864
+    },
+    {
+      "url": "https://deb.debian.org/debian-security/dists/bookworm-security/main/binary-arm64/Packages.xz",
+      "sha256": "44550512df31ab5bda6a7afd07db400ef82f3dd77b385b7a5e19a7cd00e8a263",
+      "retrievedAt": "2026-11-17T19:19:21.767Z",
+      "inflatedBytes": 2514109
+    }
+  ],
+  "pins": {
+    "x64": [
+      {
+        "name": "base-files",
+        "version": "12.4+deb12u15",
+        "url": "https://deb.debian.org/debian/pool/main/b/base-files/base-files_12.4+deb12u15_amd64.deb",
+        "sha256": "3eb1ea6d85488f488cc2a163b98ad640ef88cee4c79287cf14e361aaf6206f47",
+        "depends": "awk"
+      },
+      {
+        "name": "gcc-12-base",
+        "version": "12.2.0-14+deb12u1",
+        "url": "https://deb.debian.org/debian/pool/main/g/gcc-12/gcc-12-base_12.2.0-14+deb12u1_amd64.deb",
+        "sha256": "1896a2aacf4ad681ff5eacc24a5b0ca4d5d9c9b9c9e4b6de5197bc1e116ea619",
+        "depends": ""
+      },
+      {
+        "name": "libbrotli1",
+        "version": "1.0.9-2+deb12u1",
+        "url": "https://deb.debian.org/debian-security/pool/updates/main/b/brotli/libbrotli1_1.0.9-2+deb12u1_amd64.deb",
+        "sha256": "e27b3d655fa6fadd7a56f706687e94573c0af68b7d6df394a32a381a3a6c6d8b",
+        "depends": "libc6 (>= 2.29)"
+      },
+      {
+        "name": "libbz2-1.0",
+        "version": "1.0.8-5+b1",
+        "url": "https://deb.debian.org/debian/pool/main/b/bzip2/libbz2-1.0_1.0.8-5+b1_amd64.deb",
+        "sha256": "54149da3f44b22d523b26b692033b84503d822cc5122fed606ea69cc83ca5aeb",
+        "depends": "libc6 (>= 2.4)"
+      },
+      {
+        "name": "libcom-err2",
+        "version": "1.47.0-2+b2",
+        "url": "https://deb.debian.org/debian/pool/main/e/e2fsprogs/libcom-err2_1.47.0-2+b2_amd64.deb",
+        "sha256": "a2bac7015e78fbc0c504df3e441f3a22292f1d2d77f9ccda760057f3690e22f2",
+        "depends": "libc6 (>= 2.17)"
+      },
+      {
+        "name": "libcurl4",
+        "version": "7.88.1-10+deb12u15",
+        "url": "https://deb.debian.org/debian/pool/main/c/curl/libcurl4_7.88.1-10+deb12u15_amd64.deb",
+        "sha256": "3042904de01f9c4fbdcf1452b8f81abedcf2b015f9b9deba109063322b5bd68b",
+        "depends": "libbrotli1 (>= 0.6.0), libc6 (>= 2.34), libgssapi-krb5-2 (>= 1.17), libidn2-0 (>= 0.6), libldap-2.5-0 (>= 2.5.4), libnghttp2-14 (>= 1.50.0), libpsl5 (>= 0.16.0), librtmp1 (>= 2.3), libssh2-1 (>= 1.7.0), libssl3 (>= 3.0.0), libzstd1 (>= 1.5.2), zlib1g (>= 1:1.1.4)"
+      },
+      {
+        "name": "libdb5.3",
+        "version": "5.3.28+dfsg2-1",
+        "url": "https://deb.debian.org/debian/pool/main/d/db5.3/libdb5.3_5.3.28+dfsg2-1_amd64.deb",
+        "sha256": "7dc5127b8dd0da80e992ba594954c005ae4359d839a24eb65d0d8129b5235c84",
+        "depends": "libc6 (>= 2.34)"
+      },
+      {
+        "name": "libdw1",
+        "version": "0.188-2.1",
+        "url": "https://deb.debian.org/debian/pool/main/e/elfutils/libdw1_0.188-2.1_amd64.deb",
+        "sha256": "ffd7b1bad982ad1afd9c2b75ab2edd18e229508df731a8f4d8443f093a91442f",
+        "depends": "libbz2-1.0, libc6 (>= 2.34), libelf1 (= 0.188-2.1), liblzma5 (>= 5.1.1alpha+20120614), zlib1g (>= 1:1.2.2.3)"
+      },
+      {
+        "name": "libelf1",
+        "version": "0.188-2.1",
+        "url": "https://deb.debian.org/debian/pool/main/e/elfutils/libelf1_0.188-2.1_amd64.deb",
+        "sha256": "619add379c606b3ac6c1a175853b918e6939598a83d8ebadf3bdfd50d10b3c8c",
+        "depends": "libc6 (>= 2.34), zlib1g (>= 1:1.1.4)"
+      },
+      {
+        "name": "libffi8",
+        "version": "3.4.4-1",
+        "url": "https://deb.debian.org/debian/pool/main/libf/libffi/libffi8_3.4.4-1_amd64.deb",
+        "sha256": "6d9f6c25c30efccce6d4bceaa48ea86c329a3432abb360a141f76ac223a4c34a",
+        "depends": "libc6 (>= 2.34)"
+      },
+      {
+        "name": "libgcc-s1",
+        "version": "12.2.0-14+deb12u1",
+        "url": "https://deb.debian.org/debian/pool/main/g/gcc-12/libgcc-s1_12.2.0-14+deb12u1_amd64.deb",
+        "sha256": "3016e62cb4b7cd8038822870601f5ed131befe942774d0f745622cc77d8a88f7",
+        "depends": "gcc-12-base (= 12.2.0-14+deb12u1), libc6 (>= 2.35)"
+      },
+      {
+        "name": "libgmp10",
+        "version": "2:6.2.1+dfsg1-1.1",
+        "url": "https://deb.debian.org/debian/pool/main/g/gmp/libgmp10_6.2.1+dfsg1-1.1_amd64.deb",
+        "sha256": "187aedef2ed763f425c1e523753b9719677633c7eede660401739e9c893482bd",
+        "depends": "libc6 (>= 2.14)"
+      },
+      {
+        "name": "libgnutls30",
+        "version": "3.7.9-2+deb12u7",
+        "url": "https://deb.debian.org/debian/pool/main/g/gnutls28/libgnutls30_3.7.9-2+deb12u7_amd64.deb",
+        "sha256": "30abec8c824feb1d2d7e9000a34083cccd19d139625e1b21547e3ac53b922f8e",
+        "depends": "libc6 (>= 2.34), libgmp10 (>= 2:6.2.1+dfsg1), libhogweed6 (>= 3.6), libidn2-0 (>= 2.0.0), libnettle8 (>= 3.7~), libp11-kit0 (>= 0.23.18.1), libtasn1-6 (>= 4.14), libunistring2 (>= 0.9.7)"
+      },
+      {
+        "name": "libgssapi-krb5-2",
+        "version": "1.20.1-2+deb12u5",
+        "url": "https://deb.debian.org/debian/pool/main/k/krb5/libgssapi-krb5-2_1.20.1-2+deb12u5_amd64.deb",
+        "sha256": "d8b87aea91b956b416c01a28c44ff6228315ae3b73de40acddac3dc5043607d2",
+        "depends": "libc6 (>= 2.33), libcom-err2 (>= 1.43.9), libk5crypto3 (>= 1.20), libkrb5-3 (= 1.20.1-2+deb12u5), libkrb5support0 (>= 1.15~beta1)"
+      },
+      {
+        "name": "libhogweed6",
+        "version": "3.8.1-2",
+        "url": "https://deb.debian.org/debian/pool/main/n/nettle/libhogweed6_3.8.1-2_amd64.deb",
+        "sha256": "ed8185c28b2cb519744a5a462dcd720d3b332c9b88a1d0002eac06dc8550cb94",
+        "depends": "libc6 (>= 2.14), libgmp10 (>= 2:6.2.1+dfsg1), libnettle8"
+      },
+      {
+        "name": "libidn2-0",
+        "version": "2.3.3-1+b1",
+        "url": "https://deb.debian.org/debian/pool/main/libi/libidn2/libidn2-0_2.3.3-1+b1_amd64.deb",
+        "sha256": "d50716d5824083d667427817d506b45d3f59dc77e1ca52de000f3f62d4918afa",
+        "depends": "libc6 (>= 2.14), libunistring2 (>= 0.9.7)"
+      },
+      {
+        "name": "libk5crypto3",
+        "version": "1.20.1-2+deb12u5",
+        "url": "https://deb.debian.org/debian/pool/main/k/krb5/libk5crypto3_1.20.1-2+deb12u5_amd64.deb",
+        "sha256": "7b6e47d15c5c9cdcd456137533d8308aeba608a54cec73b28bd59bfc4b54cf06",
+        "depends": "libc6 (>= 2.33), libkrb5support0 (>= 1.20)"
+      },
+      {
+        "name": "libkeyutils1",
+        "version": "1.6.3-2",
+        "url": "https://deb.debian.org/debian/pool/main/k/keyutils/libkeyutils1_1.6.3-2_amd64.deb",
+        "sha256": "cfac89e6a7a54ff3c6a4f843310e25efeddaa771baeae470bd98bd588c373563",
+        "depends": "libc6 (>= 2.14)"
+      },
+      {
+        "name": "libkrb5-3",
+        "version": "1.20.1-2+deb12u5",
+        "url": "https://deb.debian.org/debian/pool/main/k/krb5/libkrb5-3_1.20.1-2+deb12u5_amd64.deb",
+        "sha256": "c90801be09701af221b54dd502a59cb378b7284ff31e480738baca317d2f7653",
+        "depends": "libc6 (>= 2.34), libcom-err2 (>= 1.43.9), libk5crypto3 (>= 1.20), libkeyutils1 (>= 1.5.9), libkrb5support0 (= 1.20.1-2+deb12u5), libssl3 (>= 3.0.0)"
+      },
+      {
+        "name": "libkrb5support0",
+        "version": "1.20.1-2+deb12u5",
+        "url": "https://deb.debian.org/debian/pool/main/k/krb5/libkrb5support0_1.20.1-2+deb12u5_amd64.deb",
+        "sha256": "8b9c05f2d8d461a10d657b118f572af5bf8fd6c8f93dcef81e852c5ab0f428ab",
+        "depends": "libc6 (>= 2.34)"
+      },
+      {
+        "name": "libldap-2.5-0",
+        "version": "2.5.13+dfsg-5",
+        "url": "https://deb.debian.org/debian/pool/main/o/openldap/libldap-2.5-0_2.5.13+dfsg-5_amd64.deb",
+        "sha256": "4b6c30f6554149c594628d945edc6003f0eea8d0cc1341638c0e71375db147ed",
+        "depends": "libc6 (>= 2.34), libgnutls30 (>= 3.7.5), libsasl2-2 (>= 2.1.28+dfsg)"
+      },
+      {
+        "name": "liblzma5",
+        "version": "5.4.1-1+deb12u2",
+        "url": "https://deb.debian.org/debian-security/pool/updates/main/x/xz-utils/liblzma5_5.4.1-1+deb12u2_amd64.deb",
+        "sha256": "3d8c29c8c21ec6007635e1b2591edf98b771c9572a085968f47452b33040f384",
+        "depends": "libc6 (>= 2.34)"
+      },
+      {
+        "name": "libnettle8",
+        "version": "3.8.1-2",
+        "url": "https://deb.debian.org/debian/pool/main/n/nettle/libnettle8_3.8.1-2_amd64.deb",
+        "sha256": "45922e6e289ffd92f0f92d2bb9159e84236ff202d552a461bf10e5335b3f0261",
+        "depends": "libc6 (>= 2.17)"
+      },
+      {
+        "name": "libnghttp2-14",
+        "version": "1.52.0-1+deb12u3",
+        "url": "https://deb.debian.org/debian/pool/main/n/nghttp2/libnghttp2-14_1.52.0-1+deb12u3_amd64.deb",
+        "sha256": "5a5736cee57e51c1baed869979e6ecdbc6495e939e33203d6cfe3b6e5a149e3f",
+        "depends": "libc6 (>= 2.17)"
+      },
+      {
+        "name": "libp11-kit0",
+        "version": "0.24.1-2",
+        "url": "https://deb.debian.org/debian/pool/main/p/p11-kit/libp11-kit0_0.24.1-2_amd64.deb",
+        "sha256": "251330faddbf013f060fcdb41f4b0c037c8a6e89ba7c09b04bfcc4e3f0807b22",
+        "depends": "libc6 (>= 2.34), libffi8 (>= 3.4)"
+      },
+      {
+        "name": "libpsl5",
+        "version": "0.21.2-1",
+        "url": "https://deb.debian.org/debian/pool/main/libp/libpsl/libpsl5_0.21.2-1_amd64.deb",
+        "sha256": "4f0d35610204e4e754b057748719744114621f2f6f4202d846c314860a981afb",
+        "depends": "libidn2-0 (>= 0.16), libc6 (>= 2.33), libunistring2 (>= 0.9.7)"
+      },
+      {
+        "name": "librtmp1",
+        "version": "2.4+20151223.gitfa8646d.1-2+b2",
+        "url": "https://deb.debian.org/debian/pool/main/r/rtmpdump/librtmp1_2.4+20151223.gitfa8646d.1-2+b2_amd64.deb",
+        "sha256": "e1f69020dc2c466e421ec6a58406b643be8b5c382abf0f8989011c1d3df91c87",
+        "depends": "libc6 (>= 2.14), libgmp10, libgnutls30 (>= 3.6.14), libhogweed6, libnettle8, zlib1g (>= 1:1.1.4)"
+      },
+      {
+        "name": "libsasl2-2",
+        "version": "2.1.28+dfsg-10+deb12u1",
+        "url": "https://deb.debian.org/debian-security/pool/updates/main/c/cyrus-sasl2/libsasl2-2_2.1.28+dfsg-10+deb12u1_amd64.deb",
+        "sha256": "d6f20408e2be92ebd9f5e3b1c1935b075efb3f03abb5f48f7b991a0ad3e2d6a5",
+        "depends": "libsasl2-modules-db (>= 2.1.28+dfsg-10+deb12u1), libc6 (>= 2.34)"
+      },
+      {
+        "name": "libsasl2-modules-db",
+        "version": "2.1.28+dfsg-10+deb12u1",
+        "url": "https://deb.debian.org/debian-security/pool/updates/main/c/cyrus-sasl2/libsasl2-modules-db_2.1.28+dfsg-10+deb12u1_amd64.deb",
+        "sha256": "6c86ca8fe9a7d652e618874b8753b4b6ec6b42ed7649b3f388e38d0a99047ba5",
+        "depends": "libc6 (>= 2.14), libdb5.3"
+      },
+      {
+        "name": "libssh2-1",
+        "version": "1.10.0-3+deb12u1",
+        "url": "https://deb.debian.org/debian-security/pool/updates/main/libs/libssh2/libssh2-1_1.10.0-3+deb12u1_amd64.deb",
+        "sha256": "fff72a194e493f88e100a2567e22472bb4ab828d429c2956965c6f2f134f1b3a",
+        "depends": "libc6 (>= 2.14), libssl3 (>= 3.0.0), zlib1g (>= 1:1.1.4)"
+      },
+      {
+        "name": "libssl3",
+        "version": "3.0.22-1~deb12u2",
+        "url": "https://deb.debian.org/debian-security/pool/updates/main/o/openssl/libssl3_3.0.22-1~deb12u2_amd64.deb",
+        "sha256": "cb4784740daa9b3b0eaea2b444bbefa686794afbbf3d678d238c1fd9875f2efd",
+        "depends": "libc6 (>= 2.34)"
+      },
+      {
+        "name": "libstdc++6",
+        "version": "12.2.0-14+deb12u1",
+        "url": "https://deb.debian.org/debian/pool/main/g/gcc-12/libstdc++6_12.2.0-14+deb12u1_amd64.deb",
+        "sha256": "5cd3171216d4ab0fc911cfe9c35509bf2dd8f47761c43b7f6a4296701551a24d",
+        "depends": "gcc-12-base (= 12.2.0-14+deb12u1), libc6 (>= 2.36), libgcc-s1 (>= 4.2)"
+      },
+      {
+        "name": "libtasn1-6",
+        "version": "4.19.0-2+deb12u1",
+        "url": "https://deb.debian.org/debian/pool/main/libt/libtasn1-6/libtasn1-6_4.19.0-2+deb12u1_amd64.deb",
+        "sha256": "2c27c613b69be248d09432839ea3d3382f6ee27fabaa65987aa2d884cd00afda",
+        "depends": "libc6 (>= 2.14)"
+      },
+      {
+        "name": "libunistring2",
+        "version": "1.0-2",
+        "url": "https://deb.debian.org/debian/pool/main/libu/libunistring/libunistring2_1.0-2_amd64.deb",
+        "sha256": "d466bbfe011d764d793c1d9d777cad9c7cf65b938e11598f27408171ad95a951",
+        "depends": "libc6 (>= 2.34)"
+      },
+      {
+        "name": "libzstd1",
+        "version": "1.5.4+dfsg2-5",
+        "url": "https://deb.debian.org/debian/pool/main/libz/libzstd/libzstd1_1.5.4+dfsg2-5_amd64.deb",
+        "sha256": "6315b5ac38b724a710fb96bf1042019398cb656718b1522279a5185ed39318fa",
+        "depends": "libc6 (>= 2.34)"
+      },
+      {
+        "name": "zlib1g",
+        "version": "1:1.2.13.dfsg-1",
+        "url": "https://deb.debian.org/debian/pool/main/z/zlib/zlib1g_1.2.13.dfsg-1_amd64.deb",
+        "sha256": "d7dd1d1411fedf27f5e27650a6eff20ef294077b568f4c8c5e51466dc7c08ce4",
+        "depends": "libc6 (>= 2.14)"
+      }
+    ],
+    "arm64": [
+      {
+        "name": "base-files",
+        "version": "12.4+deb12u15",
+        "url": "https://deb.debian.org/debian/pool/main/b/base-files/base-files_12.4+deb12u15_arm64.deb",
+        "sha256": "b1272fbdc197f7d5bd22c05b741a03840f8bec66ca68c8d797f567ff2c99d42d",
+        "depends": "awk"
+      },
+      {
+        "name": "gcc-12-base",
+        "version": "12.2.0-14+deb12u1",
+        "url": "https://deb.debian.org/debian/pool/main/g/gcc-12/gcc-12-base_12.2.0-14+deb12u1_arm64.deb",
+        "sha256": "674cf6cba6d432bd200c45fe866c1652c7a53523cc2e7a613e05bc4abf7b5440",
+        "depends": ""
+      },
+      {
+        "name": "libbrotli1",
+        "version": "1.0.9-2+deb12u1",
+        "url": "https://deb.debian.org/debian-security/pool/updates/main/b/brotli/libbrotli1_1.0.9-2+deb12u1_arm64.deb",
+        "sha256": "131e62b9708da9aea88be990d275cb5c7b119e40beccf174c23ac8dc7246bb0f",
+        "depends": "libc6 (>= 2.29)"
+      },
+      {
+        "name": "libbz2-1.0",
+        "version": "1.0.8-5+b1",
+        "url": "https://deb.debian.org/debian/pool/main/b/bzip2/libbz2-1.0_1.0.8-5+b1_arm64.deb",
+        "sha256": "d3a96ece03326498b39ff093a76800dfcbcb1d4049d6ae6e9f6fa1aa7a590ad6",
+        "depends": "libc6 (>= 2.17)"
+      },
+      {
+        "name": "libcom-err2",
+        "version": "1.47.0-2+b2",
+        "url": "https://deb.debian.org/debian/pool/main/e/e2fsprogs/libcom-err2_1.47.0-2+b2_arm64.deb",
+        "sha256": "36c15f933a965b50f4c9558d792d9556934c84e532703935d8ae7e69dd3fa863",
+        "depends": "libc6 (>= 2.17)"
+      },
+      {
+        "name": "libcurl4",
+        "version": "7.88.1-10+deb12u15",
+        "url": "https://deb.debian.org/debian/pool/main/c/curl/libcurl4_7.88.1-10+deb12u15_arm64.deb",
+        "sha256": "e54bdd269c960b643ded903c3dbde36fe5d4d5f5b6389b47a0344d4a711cf70a",
+        "depends": "libbrotli1 (>= 0.6.0), libc6 (>= 2.34), libgssapi-krb5-2 (>= 1.17), libidn2-0 (>= 0.6), libldap-2.5-0 (>= 2.5.4), libnghttp2-14 (>= 1.50.0), libpsl5 (>= 0.16.0), librtmp1 (>= 2.3), libssh2-1 (>= 1.7.0), libssl3 (>= 3.0.0), libzstd1 (>= 1.5.2), zlib1g (>= 1:1.1.4)"
+      },
+      {
+        "name": "libdb5.3",
+        "version": "5.3.28+dfsg2-1",
+        "url": "https://deb.debian.org/debian/pool/main/d/db5.3/libdb5.3_5.3.28+dfsg2-1_arm64.deb",
+        "sha256": "344367608d622298a3d916f4cee3dc3173286f3b21f8f497ab21e7178ba930f9",
+        "depends": "libc6 (>= 2.34)"
+      },
+      {
+        "name": "libdw1",
+        "version": "0.188-2.1",
+        "url": "https://deb.debian.org/debian/pool/main/e/elfutils/libdw1_0.188-2.1_arm64.deb",
+        "sha256": "3b403c886653e2ea496b74cf3b5c89aa0f50a7c2af9eda343be185970d3f440d",
+        "depends": "libbz2-1.0, libc6 (>= 2.34), libelf1 (= 0.188-2.1), liblzma5 (>= 5.1.1alpha+20120614), zlib1g (>= 1:1.2.2.3)"
+      },
+      {
+        "name": "libelf1",
+        "version": "0.188-2.1",
+        "url": "https://deb.debian.org/debian/pool/main/e/elfutils/libelf1_0.188-2.1_arm64.deb",
+        "sha256": "32971952d8f5d563447bf275f24e26057500924da2d855c1edb53b0f0400bd11",
+        "depends": "libc6 (>= 2.34), zlib1g (>= 1:1.1.4)"
+      },
+      {
+        "name": "libffi8",
+        "version": "3.4.4-1",
+        "url": "https://deb.debian.org/debian/pool/main/libf/libffi/libffi8_3.4.4-1_arm64.deb",
+        "sha256": "80b5c36177dc0e29d531c7eddbed3cc7355cb490e49f8cfa5959572d161f27b3",
+        "depends": "libc6 (>= 2.34)"
+      },
+      {
+        "name": "libgcc-s1",
+        "version": "12.2.0-14+deb12u1",
+        "url": "https://deb.debian.org/debian/pool/main/g/gcc-12/libgcc-s1_12.2.0-14+deb12u1_arm64.deb",
+        "sha256": "576926b283613db80168ddf76380a3bd877602778cf0d226caa7bfbfa71eacf3",
+        "depends": "gcc-12-base (= 12.2.0-14+deb12u1), libc6 (>= 2.35)"
+      },
+      {
+        "name": "libgmp10",
+        "version": "2:6.2.1+dfsg1-1.1",
+        "url": "https://deb.debian.org/debian/pool/main/g/gmp/libgmp10_6.2.1+dfsg1-1.1_arm64.deb",
+        "sha256": "9906387c1dd806518c915bd8616d072c741061d7fa26b222e52763456060b31a",
+        "depends": "libc6 (>= 2.17)"
+      },
+      {
+        "name": "libgnutls30",
+        "version": "3.7.9-2+deb12u7",
+        "url": "https://deb.debian.org/debian/pool/main/g/gnutls28/libgnutls30_3.7.9-2+deb12u7_arm64.deb",
+        "sha256": "84f7f70084c9179d6670f4a6ebdf32adc36c6e4741a3a118104377e18cfa977f",
+        "depends": "libc6 (>= 2.34), libgmp10 (>= 2:6.2.1+dfsg1), libhogweed6 (>= 3.6), libidn2-0 (>= 2.0.0), libnettle8 (>= 3.7~), libp11-kit0 (>= 0.23.18.1), libtasn1-6 (>= 4.14), libunistring2 (>= 0.9.7)"
+      },
+      {
+        "name": "libgssapi-krb5-2",
+        "version": "1.20.1-2+deb12u5",
+        "url": "https://deb.debian.org/debian/pool/main/k/krb5/libgssapi-krb5-2_1.20.1-2+deb12u5_arm64.deb",
+        "sha256": "a00678963f692a929312968f19b77a61a8fc0011690d7dc909a8a2c4810fc7b3",
+        "depends": "libc6 (>= 2.33), libcom-err2 (>= 1.43.9), libk5crypto3 (>= 1.20), libkrb5-3 (= 1.20.1-2+deb12u5), libkrb5support0 (>= 1.15~beta1)"
+      },
+      {
+        "name": "libhogweed6",
+        "version": "3.8.1-2",
+        "url": "https://deb.debian.org/debian/pool/main/n/nettle/libhogweed6_3.8.1-2_arm64.deb",
+        "sha256": "e653a1a7e5a44be0f7b6443dc6ac865d2504e49149660fc253655245965e157f",
+        "depends": "libc6 (>= 2.17), libgmp10 (>= 2:6.2.1+dfsg1), libnettle8"
+      },
+      {
+        "name": "libidn2-0",
+        "version": "2.3.3-1+b1",
+        "url": "https://deb.debian.org/debian/pool/main/libi/libidn2/libidn2-0_2.3.3-1+b1_arm64.deb",
+        "sha256": "12a3efc056671bf1c1bed4c3444c2559c8d5e0c158a13316fc728f263b83ddc4",
+        "depends": "libc6 (>= 2.17), libunistring2 (>= 0.9.7)"
+      },
+      {
+        "name": "libk5crypto3",
+        "version": "1.20.1-2+deb12u5",
+        "url": "https://deb.debian.org/debian/pool/main/k/krb5/libk5crypto3_1.20.1-2+deb12u5_arm64.deb",
+        "sha256": "8ae2c31cde0b3e6f80c573a495b0f90bf6d9efb4455d900728278bb54d9092e5",
+        "depends": "libc6 (>= 2.33), libkrb5support0 (>= 1.20)"
+      },
+      {
+        "name": "libkeyutils1",
+        "version": "1.6.3-2",
+        "url": "https://deb.debian.org/debian/pool/main/k/keyutils/libkeyutils1_1.6.3-2_arm64.deb",
+        "sha256": "aac46cb6faec4e737502b3c2290b7b02f8ba04e8accd5af7fd07934df0c867b1",
+        "depends": "libc6 (>= 2.17)"
+      },
+      {
+        "name": "libkrb5-3",
+        "version": "1.20.1-2+deb12u5",
+        "url": "https://deb.debian.org/debian/pool/main/k/krb5/libkrb5-3_1.20.1-2+deb12u5_arm64.deb",
+        "sha256": "c3c7227f5db903a7a8b8936d47d1d79643edcda36365c4c992e1a96bcc2d4c7e",
+        "depends": "libc6 (>= 2.34), libcom-err2 (>= 1.43.9), libk5crypto3 (>= 1.20), libkeyutils1 (>= 1.5.9), libkrb5support0 (= 1.20.1-2+deb12u5), libssl3 (>= 3.0.0)"
+      },
+      {
+        "name": "libkrb5support0",
+        "version": "1.20.1-2+deb12u5",
+        "url": "https://deb.debian.org/debian/pool/main/k/krb5/libkrb5support0_1.20.1-2+deb12u5_arm64.deb",
+        "sha256": "3043fd4a54b945a1b503170749527f825dcfc7add2f8bf5abb4a329deeb48f4a",
+        "depends": "libc6 (>= 2.34)"
+      },
+      {
+        "name": "libldap-2.5-0",
+        "version": "2.5.13+dfsg-5",
+        "url": "https://deb.debian.org/debian/pool/main/o/openldap/libldap-2.5-0_2.5.13+dfsg-5_arm64.deb",
+        "sha256": "71e6ae4291a20db999c62cd0a4f30a92a799c46b99205d5e787d4acd7c343b91",
+        "depends": "libc6 (>= 2.34), libgnutls30 (>= 3.7.5), libsasl2-2 (>= 2.1.28+dfsg)"
+      },
+      {
+        "name": "liblzma5",
+        "version": "5.4.1-1+deb12u2",
+        "url": "https://deb.debian.org/debian-security/pool/updates/main/x/xz-utils/liblzma5_5.4.1-1+deb12u2_arm64.deb",
+        "sha256": "36358d245f246234721e6c1c2ee5d11a46c1c877023c63f7570df02cd79964f5",
+        "depends": "libc6 (>= 2.34)"
+      },
+      {
+        "name": "libnettle8",
+        "version": "3.8.1-2",
+        "url": "https://deb.debian.org/debian/pool/main/n/nettle/libnettle8_3.8.1-2_arm64.deb",
+        "sha256": "c945ff210df69cf7b95e935b8fa936e81c1c1f475355e3d5db83510b174f0cd6",
+        "depends": "libc6 (>= 2.17)"
+      },
+      {
+        "name": "libnghttp2-14",
+        "version": "1.52.0-1+deb12u3",
+        "url": "https://deb.debian.org/debian/pool/main/n/nghttp2/libnghttp2-14_1.52.0-1+deb12u3_arm64.deb",
+        "sha256": "7767833033739adb2e2e374f2c4b36134d9f36fcdfe8e2aab7029bf850146da9",
+        "depends": "libc6 (>= 2.17)"
+      },
+      {
+        "name": "libp11-kit0",
+        "version": "0.24.1-2",
+        "url": "https://deb.debian.org/debian/pool/main/p/p11-kit/libp11-kit0_0.24.1-2_arm64.deb",
+        "sha256": "d1f1f55023e9fc085b9ebfc9c4113d2d2dab2dc6b81a337f274b75c95ad8dc0a",
+        "depends": "libc6 (>= 2.34), libffi8 (>= 3.4)"
+      },
+      {
+        "name": "libpsl5",
+        "version": "0.21.2-1",
+        "url": "https://deb.debian.org/debian/pool/main/libp/libpsl/libpsl5_0.21.2-1_arm64.deb",
+        "sha256": "90a68e4a6d9eb95abee32595762dbf67974f13c158e4ce4a05c7c2b54440db73",
+        "depends": "libidn2-0 (>= 0.16), libc6 (>= 2.33), libunistring2 (>= 0.9.7)"
+      },
+      {
+        "name": "librtmp1",
+        "version": "2.4+20151223.gitfa8646d.1-2+b2",
+        "url": "https://deb.debian.org/debian/pool/main/r/rtmpdump/librtmp1_2.4+20151223.gitfa8646d.1-2+b2_arm64.deb",
+        "sha256": "a3a1a6e4b02bcd3254e932b1972ed744082fd7dd5cc1545eec3dd3d539ce6c93",
+        "depends": "libc6 (>= 2.17), libgmp10, libgnutls30 (>= 3.6.14), libhogweed6, libnettle8, zlib1g (>= 1:1.1.4)"
+      },
+      {
+        "name": "libsasl2-2",
+        "version": "2.1.28+dfsg-10+deb12u1",
+        "url": "https://deb.debian.org/debian-security/pool/updates/main/c/cyrus-sasl2/libsasl2-2_2.1.28+dfsg-10+deb12u1_arm64.deb",
+        "sha256": "b3686e0815d99e5ca6ce9234e486ca0ecd373d491e34457c3b9cba5c6dbba287",
+        "depends": "libsasl2-modules-db (>= 2.1.28+dfsg-10+deb12u1), libc6 (>= 2.34)"
+      },
+      {
+        "name": "libsasl2-modules-db",
+        "version": "2.1.28+dfsg-10+deb12u1",
+        "url": "https://deb.debian.org/debian-security/pool/updates/main/c/cyrus-sasl2/libsasl2-modules-db_2.1.28+dfsg-10+deb12u1_arm64.deb",
+        "sha256": "37d5834fa07d30275b75dc1ec2ccf43f9ce55d0885bb846db7cf04c98da30ae5",
+        "depends": "libc6 (>= 2.17), libdb5.3"
+      },
+      {
+        "name": "libssh2-1",
+        "version": "1.10.0-3+deb12u1",
+        "url": "https://deb.debian.org/debian-security/pool/updates/main/libs/libssh2/libssh2-1_1.10.0-3+deb12u1_arm64.deb",
+        "sha256": "72db6dc64cb0dd4c8a6b0f1b998063338956a7b3eb8a27125beb27bee0d7cc46",
+        "depends": "libc6 (>= 2.17), libssl3 (>= 3.0.0), zlib1g (>= 1:1.1.4)"
+      },
+      {
+        "name": "libssl3",
+        "version": "3.0.22-1~deb12u2",
+        "url": "https://deb.debian.org/debian-security/pool/updates/main/o/openssl/libssl3_3.0.22-1~deb12u2_arm64.deb",
+        "sha256": "3d04ecd8d0f57fed50d205abaeedfcc84c1960073ea085719c00add44b0ccd7f",
+        "depends": "libc6 (>= 2.34)"
+      },
+      {
+        "name": "libstdc++6",
+        "version": "12.2.0-14+deb12u1",
+        "url": "https://deb.debian.org/debian/pool/main/g/gcc-12/libstdc++6_12.2.0-14+deb12u1_arm64.deb",
+        "sha256": "26e138c677a985775331373828a6c286c551ff397cb735d00e2383cb273d1cb2",
+        "depends": "gcc-12-base (= 12.2.0-14+deb12u1), libc6 (>= 2.36), libgcc-s1 (>= 4.5)"
+      },
+      {
+        "name": "libtasn1-6",
+        "version": "4.19.0-2+deb12u1",
+        "url": "https://deb.debian.org/debian/pool/main/libt/libtasn1-6/libtasn1-6_4.19.0-2+deb12u1_arm64.deb",
+        "sha256": "7e80513007e8a71b5e737d3307dedbb06712f9cfed05ec2fad6fc00de460cc5f",
+        "depends": "libc6 (>= 2.17)"
+      },
+      {
+        "name": "libunistring2",
+        "version": "1.0-2",
+        "url": "https://deb.debian.org/debian/pool/main/libu/libunistring/libunistring2_1.0-2_arm64.deb",
+        "sha256": "05b0b7700bfe269ff7af61f45e92055d7ef4c532c9584e4e2a352cf0bd4de5b1",
+        "depends": "libc6 (>= 2.34)"
+      },
+      {
+        "name": "libzstd1",
+        "version": "1.5.4+dfsg2-5",
+        "url": "https://deb.debian.org/debian/pool/main/libz/libzstd/libzstd1_1.5.4+dfsg2-5_arm64.deb",
+        "sha256": "95e173c9538f96ede4fc275ec7863f395a97dd0ea62454be9bc914efa1b9be93",
+        "depends": "libc6 (>= 2.34)"
+      },
+      {
+        "name": "zlib1g",
+        "version": "1:1.2.13.dfsg-1",
+        "url": "https://deb.debian.org/debian/pool/main/z/zlib/zlib1g_1.2.13.dfsg-1_arm64.deb",
+        "sha256": "52b8b8a145bbe1956bba82034f77022cbef0c3d0885c9e32d9817a7932fe1913",
+        "depends": "libc6 (>= 2.17)"
+      }
+    ]
+  }
+}
