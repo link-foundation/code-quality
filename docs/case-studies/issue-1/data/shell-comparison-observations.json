@@ -17,7 +17,7 @@
       },
       "original": {
         "floor": {
-          "method": "b03aa2fe3b3e4dab77eb7625ba26048ae3da7c0931cf5e6657f8076998440a47",
+          "method": "1c0b2de32e792ccdc2112217ad30396dbd1455d04784993af715f7efff6bfc85",
           "coverage": {
             "total": 5,
             "covered": 3,
@@ -58,10 +58,15 @@
               "replacement": "1",
               "status": "survived"
             }
-          ]
+          ],
+          "workspace": {
+            "sha256": "233e609872a7776a1a829ddc1e126e53f81de6b9e215f99e451dc0c3af82d875",
+            "files": 4,
+            "bytes": 1011
+          }
         },
         "half-up": {
-          "method": "2a350051434cdc3d0b32726a0d4be57f0ed9cd2d94e9826c55e9a490add77f29",
+          "method": "597cfbc65a77fb4417e812142cef044e829327c7354e8307b5016731d73c6f2a",
           "coverage": {
             "total": 5,
             "covered": 3,
@@ -102,7 +107,12 @@
               "replacement": "1",
               "status": "survived"
             }
-          ]
+          ],
+          "workspace": {
+            "sha256": "233e609872a7776a1a829ddc1e126e53f81de6b9e215f99e451dc0c3af82d875",
+            "files": 4,
+            "bytes": 1011
+          }
         }
       },
       "tools": [
@@ -292,7 +302,7 @@
       },
       "original": {
         "floor": {
-          "method": "b03aa2fe3b3e4dab77eb7625ba26048ae3da7c0931cf5e6657f8076998440a47",
+          "method": "1c0b2de32e792ccdc2112217ad30396dbd1455d04784993af715f7efff6bfc85",
           "coverage": {
             "total": 5,
             "covered": 3,
@@ -333,10 +343,15 @@
               "replacement": "1",
               "status": "survived"
             }
-          ]
+          ],
+          "workspace": {
+            "sha256": "7b566cb5dd9bd0ef1aa7e3e4adc660d1df8a49c020dd1b3bc6be296671ddf519",
+            "files": 4,
+            "bytes": 1024
+          }
         },
         "half-up": {
-          "method": "2a350051434cdc3d0b32726a0d4be57f0ed9cd2d94e9826c55e9a490add77f29",
+          "method": "597cfbc65a77fb4417e812142cef044e829327c7354e8307b5016731d73c6f2a",
           "coverage": {
             "total": 5,
             "covered": 3,
@@ -377,7 +392,12 @@
               "replacement": "1",
               "status": "survived"
             }
-          ]
+          ],
+          "workspace": {
+            "sha256": "7b566cb5dd9bd0ef1aa7e3e4adc660d1df8a49c020dd1b3bc6be296671ddf519",
+            "files": 4,
+            "bytes": 1024
+          }
         }
       },
       "tools": [

@@ -10,6 +10,11 @@ import { requireBash } from './shell-version.js';
 import { parseKcov } from './coverage.js';
 import { withSyntax, walk, hash } from './syntax.js';
 import { percentage, validateRounding } from './percentage.js';
+import {
+  captureWorkspace,
+  assertWorkspaceUnchanged,
+  workspaceExcluded,
+} from './shell-workspace.js';
 
 const arithmeticOperators = new Map([
   ['+', '-'],
@@ -137,31 +142,15 @@ export async function shellMutants(file, max = 100) {
 async function copyWorkspace(source, destination, excludedPaths = []) {
   let bytes = 0;
   let count = 0;
+  let visited = 0;
   await cp(source, destination, {
     recursive: true,
     filter: async (path) => {
       const local = relative(source, path).split(sep).join('/');
-      if (
-        excludedPaths.some(
-          (excluded) => local === excluded || local.startsWith(`${excluded}/`)
-        )
-      ) {
-        return false;
+      if (++visited > 100_000) {
+        throw new Error('Shell workspace entry budget exceeded');
       }
-      if (
-        local
-          .split(/[\\/]/)
-          .some((part) =>
-            [
-              '.git',
-              'node_modules',
-              'target',
-              'dist',
-              'coverage',
-              'quality-reports',
-            ].includes(part)
-          )
-      ) {
+      if (workspaceExcluded(local, excludedPaths)) {
         return false;
       }
       const stat = await lstat(path);
@@ -451,6 +440,7 @@ function shellReport(
     controlTests,
     lint,
     rounding,
+    workspace,
   }
 ) {
   return {
@@ -466,6 +456,7 @@ function shellReport(
         coverage: 'kcov-codecov-json-no-binary-dir-v2',
         operators: 'bash-boolean-comparison-binary-arithmetic-v2',
         rounding,
+        workspace: 'bounded-input-tree-sha256-v1',
         grammar: 'tree-sitter-wasms@0.1.13',
       })
     ),
@@ -484,6 +475,7 @@ function shellReport(
       coverage,
       mutants: mutants?.results,
       rounding,
+      workspace,
     },
     incomplete: false,
   };
@@ -534,6 +526,11 @@ export async function shellQuality(
   if (!sources.length || (stage !== 'lint' && !tests.length)) {
     throw new Error('Shell QA requires shell sources and Bats tests');
   }
+  const snapshot = await captureWorkspace(
+    absolute,
+    excludedPaths,
+    [...sources, ...testFiles].map((file) => file.path)
+  );
   const tools = await shellPrerequisites(absolute, sources, stage, run);
   const native = await analyzeFiles(sources, { config: inputConfig });
   if (native.incomplete) {
@@ -551,6 +548,7 @@ export async function shellQuality(
   );
   const measuredFiles = [...sources, ...testFiles];
   await assertUnchanged(absolute, measuredFiles);
+  await assertWorkspaceUnchanged(absolute, snapshot, excludedPaths);
   const abort = supportsAbort(tools.tools);
   const workspace = await mkdtemp(join(tmpdir(), 'code-quality-shell-'));
   try {
@@ -564,6 +562,7 @@ export async function shellQuality(
         })
       : undefined;
     await assertUnchanged(absolute, measuredFiles);
+    await assertWorkspaceUnchanged(absolute, snapshot, excludedPaths);
     const mutants = ['qa', 'mutation'].includes(stage)
       ? await measureMutants(absolute, sources, tests, workspace, {
           timeoutMs,
@@ -576,8 +575,10 @@ export async function shellQuality(
         })
       : undefined;
     await assertUnchanged(absolute, measuredFiles);
+    await assertWorkspaceUnchanged(absolute, snapshot, excludedPaths);
     await assertToolsUnchanged(absolute, sources, stage, run, tools);
     await assertUnchanged(absolute, measuredFiles);
+    await assertWorkspaceUnchanged(absolute, snapshot, excludedPaths);
     return shellReport(native, config, {
       tools: tools.tools,
       timeoutMs,
@@ -589,6 +590,11 @@ export async function shellQuality(
       controlTests,
       lint,
       rounding,
+      workspace: {
+        sha256: snapshot.sha256,
+        files: snapshot.files,
+        bytes: snapshot.bytes,
+      },
     });
   } finally {
     await rm(workspace, { recursive: true, force: true });

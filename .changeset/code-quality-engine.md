@@ -34,3 +34,7 @@ Add bounded arithmetic shell mutations and explicit fingerprinted half-up
 percentage rounding with exact count arithmetic. Preserve default floor rounding
 and require reviewed baseline migrations. Provide command-specific CLI help and
 record original black-box measurements against the checksum-verified released CLI.
+
+Refuse shell measurements when helper data or unselected workspace inputs change
+between controls, coverage and mutants. Hash the bounded input tree with shared
+copy exclusions, record its evidence and require migration for the stricter method.

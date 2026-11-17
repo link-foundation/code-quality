@@ -65,6 +65,8 @@ belongs inline in this PR, and the subsequent repository move is explicitly late
 - [x] Compare the checksum-verified released quality-bash CLI with original source/test fixtures on identical installed tools; retain measured counts, rounding and refusal differences.
 - [x] Add original arithmetic mutations, exact floor/explicit half-up rounding, reviewed-baseline method changes, Action settings and command-specific help.
 - [ ] Verify and review the ninth exact candidate after collecting every eighth-candidate CI result, push once and collect all new CI results.
+- [x] Reproduce helper/data changes accepted between controls and mutants; draft bounded full-workspace consistency checks and real Bats refusal evidence.
+- [ ] Collect all ninth-candidate CI results, verify/review the tenth exact candidate and push once.
 - [ ] Complete remaining language semantics and competitor/proprietary documented cases.
 - [ ] Update PR title/body, preserve Fixes #1, mark ready after verification.
 

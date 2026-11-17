@@ -318,6 +318,25 @@ Exact-candidate and same-revision CI verification of this ninth draft remain pen
 The strict readiness gate still refuses unfinished compiler semantics and complete
 competitor/proprietary/quality-bash cases.
 
+## Helper/data freshness reproduction
+
+The tenth draft identifies a measurement consistency gap: selected source/test
+bytes were rechecked, while ordinary helper data and unselected shell helpers
+were copied from the current root without a matching freshness check. Four
+original replacement/addition/deletion/helper cases all failed before the fix
+because a changed input tree still received a score. A real passing Bats control
+also demonstrates the helper change and expected refusal after the correction.
+
+The native engine now hashes the bounded copy input tree before execution and
+checks it after measurement stages and tool verification. The fingerprint uses
+relative names, entry kinds, permissions, sizes and streamed file hashes. Generated
+report trees use the same exclusions as isolated copies. Selected inputs cannot
+be hidden by an exclusion. The recorded method changes explicitly and earlier
+shell baselines require reviewed migration. Original score assertions remain;
+the comparison observations retain all raw counts and add workspace evidence.
+See the [input contract and limits](../../shell-inputs.md). Exact-candidate and
+same-revision CI verification of this draft remain pending.
+
 ## Evolution method and limits
 
 Use a bounded first-parent range (default last 100 commits, hard limit 1000), inspect

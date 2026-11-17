@@ -64,6 +64,7 @@ const importAudit: string | undefined = imported.migrations?.[0].previous;
 void importAudit;
 const rounding: NonNullable<Parameters<typeof shellQuality>[1]> = {
   rounding: 'half-up',
+  excludedPaths: ['generated-evidence'],
 };
 const roundedCoverage = parseKcov({}, { rounding: 'half-up' });
 // @ts-expect-error Rounding policies are explicit finite choices.

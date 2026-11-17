@@ -98,6 +98,7 @@ for (const name of ['numeric-condition', 'arithmetic']) {
         coverage: native.measurement.coverage,
         metrics: native.metrics,
         mutants: native.measurement.mutants,
+        workspace: native.measurement.workspace,
       };
     }
     assert.deepEqual(measurement.coverageCounts, {

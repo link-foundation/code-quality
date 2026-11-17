@@ -144,6 +144,9 @@ selects the released quality-bash rounding policy. The new arithmetic/rounding
 method requires reviewed migration for earlier shell baselines. See the
 [original real-tool measurements](docs/shell-measurements.md) for raw counts,
 observed operator differences and a released-baseline import.
+Helper data and unselected workspace inputs are also checked between stages;
+changed inputs refuse a score. See [workspace input consistency](docs/shell-inputs.md)
+for exclusions, bounds and migration requirements.
 
 Shell QA and baseline updates save fresh evidence under `<root>/quality-reports/`,
 including failures before measurement completes. `--reports <directory>` chooses

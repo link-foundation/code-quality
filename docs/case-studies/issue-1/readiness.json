@@ -133,7 +133,10 @@
         "tests/quality-cli-help.test.js",
         "tests/quality-shell-arithmetic.test.js",
         "experiments/code-quality/shell-comparison.mjs",
-        "docs/shell-measurements.md"
+        "docs/shell-measurements.md",
+        "tests/quality-shell-workspace.test.js",
+        "experiments/code-quality/workspace-freshness.mjs",
+        "docs/shell-inputs.md"
       ],
       "description": "Native amd64/arm64 private-library QA, consumer Action and independent baseline import pass at a764ae6; command-specific help, original real 3/5 coverage and 2/3 arithmetic mutants plus explicit half-up import verified; numeric-condition policies differ and exhaustive operator/diagnostic cases remain unfinished"
     }

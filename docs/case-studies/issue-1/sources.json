@@ -46,9 +46,9 @@
     },
     {
       "path": "docs/case-studies/issue-1/data/shell-comparison-observations.json",
-      "sha256": "ad171f19311c6e385a923a460713916edfa5a8e8c0cc7ee9fbbed575b566655e",
+      "sha256": "50205699a3be0e9766a978c41a06b8479c450bd438449834b6ff94d19c7a13f8",
       "upstreamRelease": "v1.0.0-alpha.5",
-      "provenance": "Two original finite shell fixtures executed by the checksum-verified released CLI and native JavaScript using the same installed tool cache; real QA counts, baseline freshness refusals and native floor-preserving import; no upstream implementation or tests inspected"
+      "provenance": "Two original finite shell fixtures executed by the checksum-verified released CLI and native JavaScript using the same installed tool cache; real QA counts, bounded workspace fingerprints, baseline freshness refusals and native floor-preserving import; no upstream implementation or tests inspected"
     }
   ],
   "primarySources": [

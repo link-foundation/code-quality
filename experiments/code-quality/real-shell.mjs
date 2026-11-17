@@ -13,6 +13,7 @@ import { runQualityCli } from '../../src/quality/cli.js';
 import { qualityAction } from '../../scripts/quality-action.mjs';
 import { verifyBaselineImport } from './baseline-import.mjs';
 import { verifyArithmeticShell } from './arithmetic-shell.mjs';
+import { verifyWorkspaceFreshness } from './workspace-freshness.mjs';
 
 const root = await mkdtemp(join(tmpdir(), 'code-quality-real-shell-'));
 try {
@@ -222,6 +223,7 @@ try {
         metrics: report.metrics,
         statusFixtureMetrics: statusReport.metrics,
         arithmeticFixtureMetrics: await verifyArithmeticShell(),
+        workspaceFreshness: await verifyWorkspaceFreshness(),
         tools: report.measurement.tools,
         mutants: report.measurement.mutants,
       },

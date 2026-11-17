@@ -313,6 +313,7 @@ export function shellQuality(
     tests?: string[];
     jobs?: 'auto' | number;
     rounding?: 'floor' | 'half-up';
+    excludedPaths?: string[];
     onCoverage?: (directory: string) => Promise<void> | void;
   }
 ): Promise<Report & { measurement: unknown; metrics: Record<string, number> }>;
