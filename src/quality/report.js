@@ -1,6 +1,7 @@
 import { mkdir, mkdtemp, lstat } from 'node:fs/promises';
 import { join, basename, dirname } from 'node:path';
 import { atomicWriteFile } from './persistence.js';
+import { formatLino } from './lino.js';
 import { validateArtifacts } from './artifacts.js';
 
 function sarifLocation(entry) {
@@ -80,9 +81,15 @@ function sarifReport(report) {
   };
 }
 
+const structuredFormats = {
+  json: (report) => `${JSON.stringify(report, null, 2)}\n`,
+  sarif: (report) => `${JSON.stringify(sarifReport(report), null, 2)}\n`,
+  lino: formatLino,
+};
+
 export function formatReport(report, format = 'text') {
-  if (format === 'json' || format === 'sarif') {
-    return `${JSON.stringify(format === 'json' ? report : sarifReport(report), null, 2)}\n`;
+  if (Object.hasOwn(structuredFormats, format)) {
+    return structuredFormats[format](report);
   }
   if (format !== 'text') {
     throw new Error(`Unknown report format: ${format}`);
@@ -136,6 +143,7 @@ function reportFiles(current, error) {
   };
   if (current) {
     files['report.sarif'] = formatReport(current, 'sarif');
+    files['report.lino'] = formatReport(current, 'lino');
   }
   if (error && current) {
     files['report.txt'] += `Incomplete check: ${error.message}\n`;

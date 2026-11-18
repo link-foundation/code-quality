@@ -4,6 +4,31 @@ import { analyzeFiles } from './core.js';
 import { extractEvolution } from './evolution.js';
 import { languages } from './languages.js';
 import { positiveInteger } from './config.js';
+import { formatLino, linoMediaType, parseCanonicalLino } from './lino.js';
+
+const analyzeSchema = {
+  type: 'object',
+  required: ['files'],
+  properties: {
+    files: {
+      type: 'array',
+      minItems: 1,
+      maxItems: 1000,
+      items: {
+        type: 'object',
+        required: ['path', 'content'],
+        properties: {
+          path: { type: 'string' },
+          content: { type: 'string' },
+          language: { type: 'string' },
+        },
+        additionalProperties: false,
+      },
+    },
+    config: { type: 'object' },
+  },
+  additionalProperties: false,
+};
 
 export const apiDescription = {
   openapi: '3.1.0',
@@ -22,31 +47,8 @@ export const apiDescription = {
         requestBody: {
           required: true,
           content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                required: ['files'],
-                properties: {
-                  files: {
-                    type: 'array',
-                    minItems: 1,
-                    maxItems: 1000,
-                    items: {
-                      type: 'object',
-                      required: ['path', 'content'],
-                      properties: {
-                        path: { type: 'string' },
-                        content: { type: 'string' },
-                        language: { type: 'string' },
-                      },
-                      additionalProperties: false,
-                    },
-                  },
-                  config: { type: 'object' },
-                },
-                additionalProperties: false,
-              },
-            },
+            'application/json': { schema: analyzeSchema },
+            'text/x-lino': { schema: analyzeSchema },
           },
         },
         responses: {
@@ -74,12 +76,13 @@ export const apiDescription = {
 };
 
 async function readJson(request, limit) {
-  if (
-    !/^application\/json(?:\s*;|$)/i.test(request.headers['content-type'] || '')
-  ) {
-    throw Object.assign(new Error('Content-Type must be application/json'), {
-      status: 415,
-    });
+  const type = request.headers['content-type'] || '';
+  const lino = /^text\/x-lino(?:\s*;|$)/i.test(type);
+  if (!lino && !/^application\/json(?:\s*;|$)/i.test(type)) {
+    throw Object.assign(
+      new Error(`Content-Type must be application/json or ${linoMediaType}`),
+      { status: 415 }
+    );
   }
   const chunks = [];
   let bytes = 0;
@@ -92,7 +95,8 @@ async function readJson(request, limit) {
     }
     chunks.push(chunk);
   }
-  return JSON.parse(Buffer.concat(chunks).toString('utf8'));
+  const text = Buffer.concat(chunks).toString('utf8');
+  return lino ? parseCanonicalLino(text) : JSON.parse(text);
 }
 
 function authorize(header, token) {
@@ -133,6 +137,22 @@ async function analyzeRequest(path, body, root) {
   }
 }
 
+// Links Notation is negotiated explicitly; JSON stays the default.
+function responder(request, response) {
+  const lino = String(request.headers.accept || '').includes(linoMediaType);
+  return (status, value) => {
+    if (!response.writableEnded) {
+      response.writeHead(status, {
+        'content-type': `${lino ? linoMediaType : 'application/json'}; charset=utf-8`,
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff',
+        vary: 'accept',
+      });
+      response.end(lino ? formatLino(value) : JSON.stringify(value));
+    }
+  };
+}
+
 export function createQualityServer({
   token,
   root,
@@ -143,16 +163,7 @@ export function createQualityServer({
   positiveInteger(maxConcurrent, 'maxConcurrent', 4);
   let active = 0;
   const server = httpServer(async (request, response) => {
-    const send = (status, value) => {
-      if (!response.writableEnded) {
-        response.writeHead(status, {
-          'content-type': 'application/json; charset=utf-8',
-          'cache-control': 'no-store',
-          'x-content-type-options': 'nosniff',
-        });
-        response.end(JSON.stringify(value));
-      }
-    };
+    const send = responder(request, response);
     const path = request.url;
     if (path === '/health' && request.method === 'GET') {
       send(200, { status: 'ok' });

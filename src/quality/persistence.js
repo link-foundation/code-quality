@@ -4,8 +4,21 @@ import { dirname, basename, join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { TextDecoder } from 'node:util';
 import { parseUniqueJson } from './json.js';
+import { parseCanonicalLino } from './lino.js';
 
 export async function readJsonFile(path, maxBytes = 1_048_576) {
+  return parseUniqueJson(await readTextFile(path, maxBytes));
+}
+
+// Config files may be JSON or canonical Links Notation (`.lino`).
+export async function readConfigFile(path, maxBytes = 1_048_576) {
+  const text = await readTextFile(path, maxBytes);
+  return /\.lino$/i.test(path)
+    ? parseCanonicalLino(text)
+    : parseUniqueJson(text);
+}
+
+export async function readTextFile(path, maxBytes = 1_048_576) {
   // O_NOFOLLOW protects the opened entry on POSIX; lstat also covers Windows.
   if (!(await lstat(path)).isFile()) {
     throw new Error(`Expected a regular JSON file: ${path}`);
@@ -34,8 +47,8 @@ export async function readJsonFile(path, maxBytes = 1_048_576) {
     if (count > maxBytes) {
       throw new Error(`JSON file exceeds byte budget: ${path}`);
     }
-    return parseUniqueJson(
-      new TextDecoder('utf-8', { fatal: true }).decode(bytes.subarray(0, count))
+    return new TextDecoder('utf-8', { fatal: true }).decode(
+      bytes.subarray(0, count)
     );
   } finally {
     await file.close();

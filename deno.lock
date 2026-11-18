@@ -11,6 +11,7 @@
     "npm:husky@^9.1.7": "9.1.7",
     "npm:jscpd@^5.4.0": "5.4.0",
     "npm:lino-arguments@0.4.0": "0.4.0",
+    "npm:lino-objects-codec@1.0.0": "1.0.0",
     "npm:lint-staged@^16.4.0": "16.4.0",
     "npm:prettier@^3.6.2": "3.8.4",
     "npm:test-anywhere@~0.8.48": "0.8.50",
@@ -882,6 +883,9 @@
     "links-notation@0.27.1": {
       "integrity": "sha512-fTmzw/t3AHRTYhR6Ry8hCHzf0eroYGEH/8JsC7FALyGtWxQE0cHdp4YuZnMXqKqmcpMWWiTWoQiIo1D5AvsbQA=="
     },
+    "links-notation@0.31.6": {
+      "integrity": "sha512-2T+JRHelBU5GGGgKZsF2r9ZdVKQHa3cuKrCYISmT0wP7xn+WP25S8gOc/PLJJDYwyyn+/xktFwpr2vF4qSw2Tg=="
+    },
     "lino-arguments@0.4.0": {
       "integrity": "sha512-pdsrPxmZYHu5Hy1w2JRoXnydrc5UGvjWe+NvPO9k0MvrMVXzeSiuqJsKToNqoCZ7pQy/fbkEBgbn1x4lWOEQxg==",
       "dependencies": [
@@ -895,6 +899,12 @@
       "integrity": "sha512-j9JcPo8LWCSlWCO7B1SSL3OlpRc/bGaR/OYnH22DTiANaMaLWan7ebRIo2Pwaw/apcIzdV+UD5EXamdapbn6kA==",
       "dependencies": [
         "links-notation@0.11.2"
+      ]
+    },
+    "lino-objects-codec@1.0.0": {
+      "integrity": "sha512-6R/3twBL4hG+U1aqqJlz37PycGVor0XR9OZCNSITm7vZ90oH5Yp08/rluHjpzAL7qmSjNn6RLzjuwuzhTT/sEw==",
+      "dependencies": [
+        "links-notation@0.31.6"
       ]
     },
     "lint-staged@16.4.0": {
@@ -1229,6 +1239,7 @@
         "npm:husky@^9.1.7",
         "npm:jscpd@^5.4.0",
         "npm:lino-arguments@0.4.0",
+        "npm:lino-objects-codec@1.0.0",
         "npm:lint-staged@^16.4.0",
         "npm:prettier@^3.6.2",
         "npm:test-anywhere@~0.8.48",

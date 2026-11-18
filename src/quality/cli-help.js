@@ -1,8 +1,8 @@
 const options = {
   config:
-    '--config <file>         JSON rules, exclusions, limits and trusted adapter argv',
+    '--config <file>         JSON or canonical .lino rules, exclusions, limits and adapter argv',
   output: '--output <file>         Save output here; the default is stdout',
-  format: '--format <text|json|sarif>  Report format; default text',
+  format: '--format <text|json|sarif|lino>  Report format; default text',
   tools:
     '--tools                 Execute explicitly configured trusted adapters',
   baseline:

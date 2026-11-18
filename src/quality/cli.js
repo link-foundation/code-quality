@@ -23,7 +23,13 @@ import {
 import { defaultRules, validateConfig, safePath } from './config.js';
 import { finalizeReport } from './core.js';
 import { hash } from './syntax.js';
-import { atomicWriteFile, readJsonFile, withFileLock } from './persistence.js';
+import {
+  atomicWriteFile,
+  readConfigFile,
+  readJsonFile,
+  withFileLock,
+} from './persistence.js';
+import { formatLino } from './lino.js';
 import { readCoverageArtifacts } from './artifacts.js';
 import { commandHelp } from './cli-help.js';
 
@@ -41,8 +47,8 @@ Commands:
   tools install <directory>  Download pinned Linux shell tools into a new directory
   help | version         Show usage or package version without project/tool lookup
 Options:
-  --config <file>         JSON rules, exclusions, limits and trusted adapter argv
-  --format <text|json|sarif>  Check/QA report format
+  --config <file>         JSON or canonical .lino rules, exclusions, limits and adapter argv
+  --format <text|json|sarif|lino>  Check/QA report format; lino also applies to JSON-like commands
   --output <file>         Save output (default stdout)
   --baseline <file>       Require baseline; defaults to quality-baseline.json for qa
   --baseline-path <file> Root-relative alternative to --baseline
@@ -142,7 +148,7 @@ function parseArgs(argv) {
 }
 
 function loadConfig(path) {
-  return path ? readJsonFile(path) : {};
+  return path ? readConfigFile(path) : {};
 }
 
 async function emitOutput(value, context) {
@@ -154,7 +160,12 @@ async function emitOutput(value, context) {
 }
 
 async function emitJson(value, context) {
-  await emitOutput(`${JSON.stringify(value, null, 2)}\n`, context);
+  await emitOutput(
+    context.options.format === 'lino'
+      ? formatLino(value)
+      : `${JSON.stringify(value, null, 2)}\n`,
+    context
+  );
 }
 
 function baselineCommand(report, context) {

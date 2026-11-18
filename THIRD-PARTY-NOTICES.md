@@ -4,6 +4,10 @@ Original Code Quality source and tests are dedicated to the public domain under
 the repository's Unlicense. This does not relicense dependencies or external tools.
 No quality-bash implementation or tests are incorporated.
 
+`lino-objects-codec` 1.0.0 and its `links-notation` dependency (link-foundation)
+are Unlicense (public domain); they encode and decode Links Notation reports and
+configuration.
+
 `web-tree-sitter` 0.20.8 is MIT, copyright 2018–2021 Max Brunsfeld. Its complete
 notice is supplied by the installed package at `web-tree-sitter/LICENSE`:
 

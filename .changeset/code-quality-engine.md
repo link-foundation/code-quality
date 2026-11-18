@@ -92,3 +92,8 @@ call returns, simple parameter sources, assignments, sanitizers and sink argumen
 traces. Refuse unsupported control flow, shadowed models and exhausted budgets;
 preserve default methods and version enabled models for baseline migration.
 Export ordered locations in JSON, text and SARIF through CLI/library/HTTP APIs.
+
+Use Links Notation from the associative tech stack: `--format lino` reports and
+JSON-like command output, `report.lino` in saved bundles, canonical `.lino`
+configuration files that refuse repeated keys, and `text/x-lino` HTTP request
+and response negotiation.

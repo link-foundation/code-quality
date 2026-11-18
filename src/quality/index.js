@@ -2,6 +2,7 @@ export { languages, detectLanguage } from './languages.js';
 export { analyzeSource, analyzeFiles } from './core.js';
 export { analyzeProject, readProject } from './project.js';
 export { formatReport, saveReport } from './report.js';
+export { formatLino, parseCanonicalLino, linoMediaType } from './lino.js';
 export {
   createBaseline,
   checkBaseline,

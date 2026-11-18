@@ -301,7 +301,7 @@ export function analyzeProject(
 ): Promise<Report>;
 export function formatReport(
   report: Report,
-  format?: 'json' | 'text' | 'sarif'
+  format?: 'json' | 'text' | 'sarif' | 'lino'
 ): string;
 export function createBaseline(report: Report): Baseline;
 export function checkBaseline(
@@ -324,6 +324,12 @@ export interface ReportManifest {
   passed: boolean;
   files: string[];
 }
+/** Media type used for Links Notation HTTP bodies and responses. */
+export const linoMediaType: 'text/x-lino';
+/** Lossless, readable Links Notation encoding (lino-objects-codec). */
+export function formatLino(value: unknown): string;
+/** Decode Links Notation, refusing non-canonical input such as repeated keys. */
+export function parseCanonicalLino(text: string): unknown;
 export function saveReport(
   report: Report | null | undefined,
   directory: string,

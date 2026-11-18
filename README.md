@@ -59,6 +59,20 @@ configured at startup; mount it read-only at `/workspace` for the container. Set
 loopback; container port examples bind the host to loopback too. HTTP analysis
 never executes configured command adapters.
 
+### Links Notation
+
+Reports, JSON-like command output, configuration and HTTP bodies also use
+[Links Notation](https://github.com/link-foundation/links-notation), the
+interchange format of the associative stack. Add `--format lino`, pass
+`--config quality.lino`, or send `text/x-lino` to the API. Every saved report
+bundle includes `report.lino`. Configuration must be canonical, so repeated keys
+fail closed. See [docs/associative-stack.md](docs/associative-stack.md).
+
+```sh
+node bin/code-quality.js check examples/code-quality/taint \
+  --config examples/code-quality/taint/quality.lino --format lino
+```
+
 ## Configuration
 
 Pass a strict JSON config with `--config quality.json`:
