@@ -372,7 +372,8 @@ export function finalizeReport(files, findings, config, metadata = {}) {
         customRules: config.customRules,
         ...(config.taintRules.length && {
           taint: {
-            method: 'straight-line-call-models-v1',
+            method: config.taintRules.some((rule) => rule.controlFlow === 'branch-joins')
+              ? 'branch-join-call-models-v1' : 'straight-line-call-models-v1',
             rules: config.taintRules,
           },
         }),

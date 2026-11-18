@@ -170,6 +170,8 @@ export interface TaintRule {
   sinks: { call: string; argument: number }[];
   sanitizers?: string[];
   propagators?: string[];
+  /** Both possible arms join conservatively; loops and path feasibility are unsupported. */
+  controlFlow?: 'straight-line' | 'branch-joins';
 }
 export interface Plugin {
   version: string;
