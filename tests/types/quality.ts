@@ -12,6 +12,7 @@ import {
   importQualityBashBaseline,
   parseKcov,
   shellQuality,
+  shellMutants,
   type Config,
   type Plugin,
 } from '@link-foundation/code-quality/quality';
@@ -111,12 +112,18 @@ const importAudit: string | undefined = imported.migrations?.[0].previous;
 void importAudit;
 const rounding: NonNullable<Parameters<typeof shellQuality>[1]> = {
   rounding: 'half-up',
+  mutationPolicy: 'expanded',
   excludedPaths: ['generated-evidence'],
 };
 const roundedCoverage = parseKcov({}, { rounding: 'half-up' });
 // @ts-expect-error Rounding policies are explicit finite choices.
 parseKcov({}, { rounding: 'nearest' });
 void [rounding, roundedCoverage];
+void shellMutants({ path: 'typed.sh', content: '((7 < 3))\n' }, 10, {
+  policy: 'expanded',
+});
+// @ts-expect-error unsupported mutation policy
+void shellMutants({ path: 'typed.sh', content: '' }, 10, { policy: 'unknown' });
 
 // @ts-expect-error Unsupported languages must be rejected by consumers' compiler.
 const unsupported: Language = 'brainfuck';

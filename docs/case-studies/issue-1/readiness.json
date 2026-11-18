@@ -173,9 +173,13 @@
         "docs/shell-inputs.md",
         "tests/quality-bash-grammar.test.js",
         "docs/bash-parser.md",
-        "docs/case-studies/issue-1/data/bash-parser-contract.json"
+        "docs/case-studies/issue-1/data/bash-parser-contract.json",
+        "tests/quality-shell-operators.test.js",
+        "experiments/code-quality/expanded-shell.mjs",
+        "docs/shell-mutations.md",
+        "docs/case-studies/issue-1/data/shell-operator-contract.json"
       ],
-      "description": "Native amd64/arm64 private-library QA, consumer Action and independent baseline import pass at a764ae6; command-specific help, original real 3/5 coverage and 2/3 arithmetic mutants plus explicit half-up import verified; numeric-condition policies differ and exhaustive operator/diagnostic cases remain unfinished"
+      "description": "Native amd64/arm64 private-library QA, consumer Action and independent baseline import verified; original real 3/5 coverage and 2/3 arithmetic mutants plus explicit half-up import; exact grammar operator boundaries, opt-in arithmetic ordering and second multiplication model verified with real Bats; finite numeric policies differ and exhaustive operator/diagnostic cases remain unfinished"
     }
   ]
 }

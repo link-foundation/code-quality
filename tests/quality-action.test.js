@@ -217,3 +217,41 @@ describe('consumer Action contract', () => {
       );
     }));
 });
+
+describe('consumer Action mutation policy', () => {
+  it('passes expanded mutations and refuses unknown policies before installation', async () =>
+    fixture(async (root) => {
+      const env = {
+        GITHUB_WORKSPACE: root,
+        QUALITY_COMMAND: 'qa',
+        QUALITY_INSTALL_TOOLS: 'false',
+        QUALITY_MUTATION_POLICY: 'expanded',
+      };
+      assert.equal(
+        await qualityAction(env, {
+          cli: async (args) => {
+            assert.equal(
+              args[args.indexOf('--mutation-policy') + 1],
+              'expanded'
+            );
+            return 0;
+          },
+        }),
+        0
+      );
+      await assert.rejects(
+        qualityAction(
+          { ...env, QUALITY_MUTATION_POLICY: 'unknown' },
+          {
+            install: () => {
+              throw new Error('Unexpected installation');
+            },
+            cli: () => {
+              throw new Error('Unexpected project execution');
+            },
+          }
+        ),
+        /mutation policy/
+      );
+    }));
+});

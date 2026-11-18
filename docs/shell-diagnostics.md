@@ -51,3 +51,7 @@ the managed-library fingerprint. Tool checks detect changes between the two
 observations; trusted project code is not sandboxed against deliberate races.
 The [workspace input contract](shell-inputs.md) records bounded helper/data
 fingerprints and their exclusions, including files outside the observed tree.
+
+Exact operator boundaries, selected mutation policies, expanded candidate overflow
+and policy-aware baseline incompatibility have original regressions in
+`tests/quality-shell-operators.test.js`. See [the finite operator contract](shell-mutations.md).

@@ -87,11 +87,15 @@ belongs inline in this PR, and the subsequent repository move is explicitly late
 - [x] Verify/review structural candidate 37bbe25 locally: 251 Node and 235 Bun/frozen-Deno checks, static/types/package/release, 419-file guard and sixteen source hashes; combine its next push with candidate-local filters.
 - [x] Draft original candidate-local all/any/not filters, inherited isolated capture scopes, bounded visits/copies and explicit method versioning; preserve original structural rules.
 - [x] Verify/review combined candidate ac3a370: 273 Node and 257 Bun/frozen-Deno checks, static/types/package/release, 423-file guard and seventeen source hashes; push both structural/filter commits once after every 76a904f workflow. All 194 PR file blob identities match.
-- [ ] Collect every same-revision CI result for ac3a370; five workflows pass and the runtime matrix is queued.
+- [x] Collect every same-revision CI result for ac3a370; all six workflows and nine runtime legs pass on attempt one before the next push.
 - [x] Reproduce valid Bash literal/pattern crashes from the bundled grammar's absent isalpha import; probe isolated runtimes and the official 0.23.3 WASM asset without native compilation.
 - [x] Draft a checksum-verified Bash-specific grammar/runtime pair, version Bash method identities and preserve other languages; add original parser/refusal/corruption/consumer regressions and a real Bats example.
 - [x] Reproduce seven of eight valid-syntax regressions against isolated preceding source; fourteen new cases pass on Node/Bun/frozen Deno, installed tarball and real Bats pass, and real QA retains existing acceptance metrics. Retain the finite released/native operator observation and fixture hashes.
-- [ ] Verify/review the exact Bash candidate, collect every ac3a370 workflow, push once and collect every new result.
+- [x] Verify/review Bash candidate 2ed6798: 287 Node and 271 Bun/frozen-Deno cases, static/types/package/release, 430-file guard and eighteen source hashes; push once after every ac3a370 result.
+- [x] Collect all six 2ed6798 workflows and preserve the complete failed workflow plus all nine runtime and status-job logs. All runtime legs reproduce one npm-alias expectation bug in the dependency guard; five other workflows pass. See bash-alias-ci.md.
+- [x] Reproduce quoted logical text and comparison operands incorrectly selected as mutants; draft exact operator boundaries, opt-in expanded arithmetic ordering/multiplication, method-aware policy and consumer settings.
+- [x] Preserve failing-before regressions and execute the original two-test real Bats fixture: standard 0/1, expanded 5/6 with exact CLI policy selection. Retain different-denominator limits.
+- [ ] Verify/review the combined operator/alias-guard candidate on all three runtimes, static/types/package/release and real shell CI; push once and collect every same-revision result.
 - [ ] Complete remaining language semantics and competitor/proprietary documented cases.
 - [ ] Update PR title/body, preserve Fixes #1, mark ready after verification.
 

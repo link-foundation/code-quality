@@ -28,6 +28,9 @@ inputs:
   rounding:
     description: Shell percentage rounding, floor or half-up; changing it requires baseline migration
     default: floor
+  mutation-policy:
+    description: Shell mutation operators, standard or expanded; changing it requires baseline migration
+    default: standard
 outputs:
   reports:
     description: Absolute report directory, also available for failed runs
@@ -61,4 +64,5 @@ runs:
         QUALITY_JOBS: ${{ inputs.jobs }}
         QUALITY_TIMEOUT_MS: ${{ inputs.timeout-ms }}
         QUALITY_ROUNDING: ${{ inputs.rounding }}
+        QUALITY_MUTATION_POLICY: ${{ inputs.mutation-policy }}
       run: node "$QUALITY_ACTION_PATH/scripts/quality-action.mjs"

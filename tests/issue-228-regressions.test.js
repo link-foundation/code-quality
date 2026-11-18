@@ -14,6 +14,11 @@ import { HANG_GUARD_MS } from './helpers/bounded-run.js';
 
 const read = (file) => readFileSync(file, 'utf8').replaceAll('\r\n', '\n');
 const workflow = read('.github/workflows/workflows.yml');
+const denoSpecifier = (name, range) =>
+  (range.startsWith('npm:') ? range : `npm:${name}@${range}`).replace(
+    /@\^(0\.[1-9]\d*\.\d+)/,
+    '@~$1'
+  );
 
 describe('repository-wide workflow audit coverage', () => {
   it('triggers on all GitHub configs/actions and every script the jobs execute', () => {
@@ -66,6 +71,16 @@ describe('link checker input selection', () => {
 });
 
 describe('Deno lock and npm install script policies', () => {
+  it('normalizes direct and aliased npm ranges without losing the target package', () => {
+    expect(denoSpecifier('example', '^0.8.48')).toBe('npm:example@~0.8.48');
+    expect(denoSpecifier('example', '^1.2.3')).toBe('npm:example@^1.2.3');
+    expect(denoSpecifier('parser-alias', 'npm:web-tree-sitter@0.24.7')).toBe(
+      'npm:web-tree-sitter@0.24.7'
+    );
+    expect(denoSpecifier('scoped-alias', 'npm:@scope/example@^0.8.48')).toBe(
+      'npm:@scope/example@~0.8.48'
+    );
+  });
   it('keeps Deno workspace dependency ranges synchronized with package.json', () => {
     const lock = JSON.parse(read('deno.lock'));
     const pkg = JSON.parse(read('package.json'));
@@ -73,10 +88,7 @@ describe('Deno lock and npm install script policies', () => {
       ...pkg.dependencies,
       ...pkg.devDependencies,
     })
-      .map(
-        ([name, range]) =>
-          `npm:${name}@${range.replace(/^\^(0\.[1-9]\d*\.\d+)/, '~$1')}`
-      )
+      .map(([name, range]) => denoSpecifier(name, range))
       .sort();
     expect([...lock.workspace.packageJson.dependencies].sort()).toEqual(
       expected

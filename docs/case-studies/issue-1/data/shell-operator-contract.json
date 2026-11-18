@@ -1,0 +1,395 @@
+{
+  "observedAt": "2026-11-17",
+  "provenance": "Original finite source/test fixtures and independently implemented native behavior; no competitor implementation/tests inspected or copied",
+  "motivation": {
+    "path": "docs/case-studies/issue-1/data/bash-parser-contract.json",
+    "sha256": "c7129c16a4415b5f53b9b59ea1df5496c432286c48a2dd62e8eed90f0f273d26",
+    "note": "Prior checksum-verified released CLI observation includes arithmetic ordering complements and multiplication-to-addition; complete operator or diagnostic parity is not established"
+  },
+  "beforeRevision": "2ed679803f0e5bb42fcb243bf81d44f023cf6c5e",
+  "policies": {
+    "standard": "Exact grammar operator fields and anonymous list operators; existing arithmetic/comparison/logical/0/1 replacements",
+    "expanded": "Standard plus arithmetic ordering complements and a second multiplication-to-addition candidate"
+  },
+  "observations": [
+    {
+      "source": "printf \"%s\" \"$((7 < 3))\" \"$((7 <= 3))\" \"$((7 > 3))\" \"$((7 >= 3))\"\n",
+      "sourceSha256": "d71cd04892021ef4b9d65e303524a3585f97bb28543552aedf831d2c4d769ccd",
+      "before": [],
+      "standard": [],
+      "expanded": [
+        [
+          "<",
+          ">="
+        ],
+        [
+          "<=",
+          ">"
+        ],
+        [
+          ">",
+          "<="
+        ],
+        [
+          ">=",
+          "<"
+        ]
+      ]
+    },
+    {
+      "source": "((7 < 3))\n",
+      "sourceSha256": "a5424586fb0c9df56afbda776bcd7c4d60b455040c8a02ab8e495a9745b37181",
+      "before": [],
+      "standard": [],
+      "expanded": [
+        [
+          "<",
+          ">="
+        ]
+      ]
+    },
+    {
+      "source": "for ((count=2; count < 7; count++)); do printf tick; done\n",
+      "sourceSha256": "2f3227764fc5c6bfd689e45d047879122afe4a67ac942554ccf257c0d709c44f",
+      "before": [],
+      "standard": [],
+      "expanded": [
+        [
+          "<",
+          ">="
+        ]
+      ]
+    },
+    {
+      "source": "[[ left < right ]]\n",
+      "sourceSha256": "3ffea0674def125853e2cb1502eb3407898171d14813f219f4261a3dae7bc110",
+      "before": [],
+      "standard": [],
+      "expanded": []
+    },
+    {
+      "source": "[[ / == / ]]\n",
+      "sourceSha256": "6d4a8ae754ae5035bb2e015db180c63836d45a572d8a4c1d868b791b095dd0ac",
+      "before": [
+        [
+          "/",
+          "*"
+        ],
+        [
+          "==",
+          "!="
+        ],
+        [
+          "/",
+          "*"
+        ]
+      ],
+      "standard": [
+        [
+          "==",
+          "!="
+        ]
+      ],
+      "expanded": [
+        [
+          "==",
+          "!="
+        ]
+      ]
+    },
+    {
+      "source": "first && second || third\n",
+      "sourceSha256": "419399a1ba40d8930f40e27456188547ecc9c14e9e923a570916c13d609e93e5",
+      "before": [
+        [
+          "&&",
+          "||"
+        ],
+        [
+          "||",
+          "&&"
+        ]
+      ],
+      "standard": [
+        [
+          "&&",
+          "||"
+        ],
+        [
+          "||",
+          "&&"
+        ]
+      ],
+      "expanded": [
+        [
+          "&&",
+          "||"
+        ],
+        [
+          "||",
+          "&&"
+        ]
+      ]
+    },
+    {
+      "source": "printf \"%s\" \"&&\" \"||\"\n",
+      "sourceSha256": "983bd99a09ba51207825202473b1c21ba94952d74d97d7823510cb69f4c5bffd",
+      "before": [
+        [
+          "&&",
+          "||"
+        ],
+        [
+          "||",
+          "&&"
+        ]
+      ],
+      "standard": [],
+      "expanded": []
+    },
+    {
+      "source": "[[ \"$1\" == \"&&\" ]]\n",
+      "sourceSha256": "37968873fe9bca7943df2206efc6555648ed2a105634543ff72e7f6ac5e44404",
+      "before": [
+        [
+          "==",
+          "!="
+        ],
+        [
+          "&&",
+          "||"
+        ]
+      ],
+      "standard": [
+        [
+          "==",
+          "!="
+        ]
+      ],
+      "expanded": [
+        [
+          "==",
+          "!="
+        ]
+      ]
+    },
+    {
+      "source": "[[ \"*\" == \"*\" ]]\n",
+      "sourceSha256": "7786a7f2ec7ec1ad507d1e7b0f76a36e3d714de5eaa04c0612aa97d5d58aaddb",
+      "before": [
+        [
+          "==",
+          "!="
+        ]
+      ],
+      "standard": [
+        [
+          "==",
+          "!="
+        ]
+      ],
+      "expanded": [
+        [
+          "==",
+          "!="
+        ]
+      ]
+    },
+    {
+      "source": "printf \"%s\" \"$((5 * 2))\"\n",
+      "sourceSha256": "082ae6a19c08a7a52ffaf8b49a812e6351f4cdc6f4f0c317d5ac1040b85e029a",
+      "before": [
+        [
+          "*",
+          "/"
+        ]
+      ],
+      "standard": [
+        [
+          "*",
+          "/"
+        ]
+      ],
+      "expanded": [
+        [
+          "*",
+          "/"
+        ],
+        [
+          "*",
+          "+"
+        ]
+      ]
+    },
+    {
+      "source": "printf \"%s\" \"$(((7 < 3) + 2))\" \"$((-(7 < 3)))\" \"$((4 ? 7 < 3 : 2))\"\n",
+      "sourceSha256": "cdbd4bfb171c85154e5df516e8fac7930d3a70d89410d988eb0126fb8b68912c",
+      "standard": [
+        [
+          "+",
+          "-"
+        ]
+      ],
+      "expanded": [
+        [
+          "<",
+          ">="
+        ],
+        [
+          "+",
+          "-"
+        ],
+        [
+          "<",
+          ">="
+        ],
+        [
+          "<",
+          ">="
+        ]
+      ]
+    },
+    {
+      "source": "[[ -n word && -n other ]]\n",
+      "sourceSha256": "17bb8bb1e8969b8d5da0cf6edd9dc1f30cc750302ff1bed56ab9e42c6048cc61",
+      "standard": [
+        [
+          "&&",
+          "||"
+        ]
+      ],
+      "expanded": [
+        [
+          "&&",
+          "||"
+        ]
+      ]
+    },
+    {
+      "source": "printf \"%s\" \"$((7 && 3 || 2))\"\n",
+      "sourceSha256": "088a575ef53cdf2d473ddb98f00adb56774ae2afe838beb2d9e0e0d2abdc1c66",
+      "standard": [
+        [
+          "&&",
+          "||"
+        ],
+        [
+          "||",
+          "&&"
+        ]
+      ],
+      "expanded": [
+        [
+          "&&",
+          "||"
+        ],
+        [
+          "||",
+          "&&"
+        ]
+      ]
+    }
+  ],
+  "realFixture": {
+    "hashes": {
+      "examples/code-quality/shell-expanded/operators.sh": "c6bf7509d3b2ca16b171a7dd6f36286d901708ee7360548e7290e6ba78068e8b",
+      "examples/code-quality/shell-expanded/operators.bats": "619d5a3a028145893da4cbad9b009c6e4a217bc4e184eb9cca50106f9a3a860d"
+    },
+    "controlTests": 2,
+    "measurement": {
+      "standard": {
+        "metrics": {
+          "mutationScore": 0
+        },
+        "mutants": [
+          {
+            "path": "operators.sh",
+            "line": 7,
+            "start": 139,
+            "end": 140,
+            "original": "*",
+            "replacement": "/",
+            "status": "survived"
+          }
+        ]
+      },
+      "expanded": {
+        "metrics": {
+          "mutationScore": 83.33
+        },
+        "mutants": [
+          {
+            "path": "operators.sh",
+            "line": 3,
+            "start": 54,
+            "end": 55,
+            "original": "<",
+            "replacement": ">=",
+            "status": "killed"
+          },
+          {
+            "path": "operators.sh",
+            "line": 3,
+            "start": 67,
+            "end": 69,
+            "original": "<=",
+            "replacement": ">",
+            "status": "killed"
+          },
+          {
+            "path": "operators.sh",
+            "line": 3,
+            "start": 81,
+            "end": 82,
+            "original": ">",
+            "replacement": "<=",
+            "status": "killed"
+          },
+          {
+            "path": "operators.sh",
+            "line": 3,
+            "start": 94,
+            "end": 96,
+            "original": ">=",
+            "replacement": "<",
+            "status": "killed"
+          },
+          {
+            "path": "operators.sh",
+            "line": 7,
+            "start": 139,
+            "end": 140,
+            "original": "*",
+            "replacement": "/",
+            "status": "survived"
+          },
+          {
+            "path": "operators.sh",
+            "line": 7,
+            "start": 139,
+            "end": 140,
+            "original": "*",
+            "replacement": "+",
+            "status": "killed"
+          }
+        ]
+      }
+    },
+    "runner": "Actual Bats 1.14.0 with GNU Bash 5.2.21, one native mutation worker; expanded policy selected through the actual CLI",
+    "limits": "Different denominators; no accuracy or universal superiority claim"
+  },
+  "verification": {
+    "regression": "tests/quality-shell-operators.test.js",
+    "consumer": "tests/quality-action.test.js",
+    "types": "tests/types/quality.ts",
+    "distribution": "experiments/code-quality/package-smoke.mjs",
+    "realCi": "experiments/code-quality/expanded-shell.mjs, called by real-shell.mjs",
+    "before": "All five initial regression cases fail against preceding source; a sixth budget case and nested-context case extend the new contract"
+  },
+  "limits": [
+    "Finite operator inventory; dynamically generated shell and associative array semantics are not evaluated",
+    "String ordering is retained because its direct arithmetic complements are not valid string-test operators",
+    "512-parent arithmetic-context bound, bounded candidate inventory and existing work/timeout refusals",
+    "Full quality-bash diagnostics and exhaustive competitor/proprietary parity remain incomplete"
+  ]
+}

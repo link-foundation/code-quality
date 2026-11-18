@@ -80,3 +80,11 @@ Literal/variable/Unicode patterns, case labels, heredocs and consumers now have
 original regression coverage; syntax refusals stay active. Bash method identities
 change and require reviewed baseline migration. This correction does not establish
 operator or exhaustive diagnostic parity.
+
+The [expanded operator policy](../../shell-mutations.md) adds the observed four
+arithmetic ordering complements and a second multiplication replacement. Standard
+valid arithmetic contracts remain; exact operator fields exclude ordinary quoted
+logical text and comparison operands. Real original Bats controls give standard
+0/1 killed versus expanded 5/6 on a deliberately weak parity assertion. Different
+denominators preclude an accuracy ranking. These finite observations and method
+migration tests do not complete the operator/diagnostic inventory.

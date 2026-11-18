@@ -146,6 +146,9 @@ selects the released quality-bash rounding policy. The new arithmetic/rounding
 method requires reviewed migration for earlier shell baselines. See the
 [original real-tool measurements](docs/shell-measurements.md) for raw counts,
 observed operator differences and a released-baseline import.
+The opt-in [expanded mutation policy](docs/shell-mutations.md) adds arithmetic
+ordering complements and a second multiplication fault model; policies are
+fingerprinted and require reviewed baseline migration.
 Helper data and unselected workspace inputs are also checked between stages;
 changed inputs refuse a score. See [workspace input consistency](docs/shell-inputs.md)
 for exclusions, bounds and migration requirements.

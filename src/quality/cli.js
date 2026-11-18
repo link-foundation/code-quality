@@ -57,6 +57,7 @@ Options:
   --from <ref> --to <ref> --max-commits <N>  Evolution history bounds
   --max-mutants <N> --timeout-ms <N>        Shell execution bounds
   --rounding <floor|half-up>                Shell percentage rounding (default floor)
+  --mutation-policy <standard|expanded>     Shell mutation operators (default standard)
   --host <address> --port <N>              API binding; token from CODE_QUALITY_TOKEN
   --help | --version
 Exit status: 0 passed, 1 findings/gate failed, 2 invalid input or incomplete check.
@@ -101,6 +102,7 @@ function parseArgs(argv) {
     'max-commits',
     'max-mutants',
     'rounding',
+    'mutation-policy',
     'timeout-ms',
     'host',
     'port',
@@ -333,6 +335,7 @@ async function measuredCommand(context, measured) {
     onCoverage: context.onCoverage,
     excludedPaths: context.excludedPaths,
     rounding: options.rounding,
+    mutationPolicy: options['mutation-policy'],
   };
   let report =
     command === 'check'
@@ -503,6 +506,12 @@ export async function runQualityCli(
 }
 
 function validateBaselineOptions(options, command) {
+  if (
+    options['mutation-policy'] !== undefined &&
+    !['qa', 'mutation', 'baseline-check', 'baseline-update'].includes(command)
+  ) {
+    throw new Error('--mutation-policy requires a shell mutation command');
+  }
   if (
     options.rounding !== undefined &&
     ![

@@ -597,3 +597,12 @@ fixture. The real-shell CI experiment also runs the new Bats assertions. The
 finite released-CLI operator observation and original fixture hashes are retained
 in the artifact contract: eleven released candidates versus fourteen native
 candidates, with arithmetic ordering and multiplication-policy gaps explicit.
+
+The [expanded mutation policy](../../shell-mutations.md) preserves valid default
+operator contracts while adding arithmetic ordering complements and another
+multiplication fault model. Exact grammar fields exclude ordinary logical strings
+and comparison operands. Original before/after observations and real Bats results
+are retained in [the operator contract](data/shell-operator-contract.json).
+All nine 2ed6798 runtime failures came from one npm-alias expectation in the strict
+dependency guard; [the investigation](bash-alias-ci.md) preserves each job/error
+reference and the correction retains dependency equality and lock assertions.

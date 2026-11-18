@@ -12,40 +12,14 @@ import { withSyntax, walk, hash } from './syntax.js';
 import { percentage, validateRounding } from './percentage.js';
 import { bashParserMethod } from './bash-syntax.js';
 import {
+  operatorReplacements,
+  validateMutationPolicy,
+} from './shell-operators.js';
+import {
   captureWorkspace,
   assertWorkspaceUnchanged,
   workspaceExcluded,
 } from './shell-workspace.js';
-
-const arithmeticOperators = new Map([
-  ['+', '-'],
-  ['-', '+'],
-  ['*', '/'],
-  ['/', '*'],
-]);
-const comparisonOperators = new Map([
-  ['-eq', '-ne'],
-  ['-ne', '-eq'],
-  ['-gt', '-le'],
-  ['-ge', '-lt'],
-  ['-lt', '-ge'],
-  ['-le', '-gt'],
-  ['=', '!='],
-  ['==', '!='],
-  ['!=', '=='],
-]);
-
-function comparisonReplacement(node) {
-  if (
-    node.type === 'test_operator' ||
-    (node.childCount === 0 &&
-      node.parent?.type === 'binary_expression' &&
-      node.parent.childForFieldName('operator')?.id === node.id)
-  ) {
-    return comparisonOperators.get(node.text);
-  }
-  return undefined;
-}
 
 function tapLines(source) {
   if (Buffer.byteLength(source) > 16_777_216) {
@@ -112,26 +86,23 @@ export function parseTap(source, { allowAbort = false, expectedTotal } = {}) {
   };
 }
 
-export async function shellMutants(file, max = 100) {
+export async function shellMutants(
+  file,
+  max = 100,
+  { policy = 'standard' } = {}
+) {
   positiveInteger(max, 'max', 1001);
+  validateMutationPolicy(policy);
   return await withSyntax('bash', file.content, ({ root }) => {
     const mutants = [];
     for (const node of walk(root)) {
       if (mutants.length >= max) {
         break;
       }
-      let replacement;
-      if (node.childCount === 0 && node.parent?.type === 'binary_expression') {
-        replacement = arithmeticOperators.get(node.text);
-      }
-      if (node.childCount === 0 && ['&&', '||'].includes(node.text)) {
-        replacement = node.text === '&&' ? '||' : '&&';
-      }
-      replacement = comparisonReplacement(node) ?? replacement;
-      if (node.type === 'number' && /^[01]$/.test(node.text)) {
-        replacement = node.text === '0' ? '1' : '0';
-      }
-      if (replacement !== undefined) {
+      for (const replacement of operatorReplacements(node, policy)) {
+        if (mutants.length >= max) {
+          break;
+        }
         mutants.push({
           path: file.path,
           line: node.startPosition.row + 1,
@@ -270,11 +241,22 @@ async function measureMutants(
   sources,
   tests,
   workspace,
-  { timeoutMs, totalTests, maxMutants, run, jobs, abort, excludedPaths }
+  {
+    timeoutMs,
+    totalTests,
+    maxMutants,
+    run,
+    jobs,
+    abort,
+    excludedPaths,
+    mutationPolicy,
+  }
 ) {
   const mutants = [];
   for (const file of sources) {
-    mutants.push(...(await shellMutants(file, maxMutants + 1)));
+    mutants.push(
+      ...(await shellMutants(file, maxMutants + 1, { policy: mutationPolicy }))
+    );
     if (mutants.length > maxMutants) {
       throw new Error(
         `Mutation budget exceeded (${mutants.length} > ${maxMutants}); no partial score is accepted`
@@ -447,6 +429,7 @@ function shellReport(
     controlTests,
     lint,
     rounding,
+    mutationPolicy,
     workspace,
   }
 ) {
@@ -461,7 +444,8 @@ function shellReport(
         tests,
         mutantRunner: abort ? 'bats-abort-prefix-v1' : 'bats-full-tap-v1',
         coverage: 'kcov-codecov-json-no-binary-dir-v2',
-        operators: 'bash-boolean-comparison-binary-arithmetic-v2',
+        operators: 'bash-operator-fields-arithmetic-context-v3',
+        mutationPolicy,
         rounding,
         workspace: 'bounded-input-tree-sha256-v1',
         grammar: bashParserMethod,
@@ -482,6 +466,7 @@ function shellReport(
       coverage,
       mutants: mutants?.results,
       rounding,
+      mutationPolicy,
       workspace,
     },
     incomplete: false,
@@ -501,11 +486,13 @@ export async function shellQuality(
     excludedPaths = [],
     onCoverage,
     rounding,
+    mutationPolicy,
     run = runProcess,
   } = {}
 ) {
   const config = validateConfig(inputConfig);
   rounding = validateRounding(rounding);
+  mutationPolicy = validateMutationPolicy(mutationPolicy);
   positiveInteger(maxMutants, 'maxMutants', 1000);
   positiveInteger(timeoutMs, 'timeoutMs', 300_000);
   const workers = workerCount(jobs);
@@ -579,6 +566,7 @@ export async function shellQuality(
           jobs: workers,
           abort,
           excludedPaths,
+          mutationPolicy,
         })
       : undefined;
     await assertUnchanged(absolute, measuredFiles);
@@ -597,6 +585,7 @@ export async function shellQuality(
       controlTests,
       lint,
       rounding,
+      mutationPolicy,
       workspace: {
         sha256: snapshot.sha256,
         files: snapshot.files,

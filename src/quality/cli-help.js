@@ -23,6 +23,8 @@ const options = {
     '--timeout-ms <N>        Per-process budget in milliseconds, 1..300000; default 30000',
   rounding:
     '--rounding <floor|half-up>  Percentage rounding; default floor, fingerprinted',
+  'mutation-policy':
+    '--mutation-policy <standard|expanded>  Operator policy; default standard, fingerprinted',
   create:
     '--create                Explicitly create a missing baseline after fresh QA',
   migrate:
@@ -46,7 +48,13 @@ const shell = [
   'timeout-ms',
   'reports',
 ];
-const measurement = [...shell, 'jobs', 'max-mutants', 'rounding'];
+const measurement = [
+  ...shell,
+  'jobs',
+  'max-mutants',
+  'rounding',
+  'mutation-policy',
+];
 const baseline = ['baseline', 'baseline-path', 'baseline-ref'];
 const definitions = {
   check: [

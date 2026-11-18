@@ -49,6 +49,7 @@ try {
   );
   assert.equal(help.code, 0, help.stderr);
   assert.match(help.stdout, /--rounding <floor\|half-up>/);
+  assert.match(help.stdout, /--mutation-policy <standard\|expanded>/);
   await writeFile(
     join(root, 'smoke.mjs'),
     `import { add } from '@link-foundation/code-quality';
@@ -88,6 +89,8 @@ assert.equal(bash.incomplete, false);
 assert.deepEqual(bash.findings, []);
 assert.equal(bash.files[0].abstractions[0].name, 'choose');
 assert.deepEqual((await shellMutants({path:'literal.sh',content:'[[ word == word ]]\\n'})).map(({original,replacement}) => [original,replacement]), [['==','!=']]);
+assert.deepEqual((await shellMutants({path:'expanded.sh',content:'printf "%s" "$((5 * 2))" "$((7 < 3))"\\n'}, 100, {policy:'expanded'})).map(({original,replacement}) => [original,replacement]), [['*','/'],['*','+'],['<','>=']]);
+assert.deepEqual(await shellMutants({path:'quoted.sh',content:'printf "%s" "&&" "||"\\n'}), []);
 console.log('Installed library and CLI passed');\n`
   );
   const smoke = await runProcess('node', ['smoke.mjs'], { cwd: root });

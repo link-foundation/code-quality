@@ -77,3 +77,12 @@ Correct valid Bash literal/pattern parsing with the pinned official Bash 0.23.3
 WASM grammar and a compatible isolated runtime. Verify shipped artifact integrity,
 retain licenses and preserve non-Bash method identities. Handle both grammar API
 forms and anonymous comparison operators; require reviewed Bash baseline migration.
+
+Restrict shell mutants to actual grammar operator fields and command-list
+operators, preserving quoted logical text and comparison operands. Add an explicit
+expanded policy with arithmetic ordering complements and a second multiplication
+fault model through the library, CLI and consumer Action. Record the policy and
+version the corrected method for reviewed baseline migrations.
+
+Normalize npm aliases by their target specifier in the strict Deno dependency
+guard, retaining lock inventory equality and resolution assertions.

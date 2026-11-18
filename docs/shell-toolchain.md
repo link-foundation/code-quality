@@ -98,8 +98,9 @@ fails. `enforce-base: 'false'` explicitly disables this additional comparison.
 
 Inputs include root-relative `root`, `baseline` and `reports`, `jobs` (auto
 or 1–4), `timeout-ms` (1–300000), and `rounding` (`floor` by default or explicit
-`half-up`). Rounding is fingerprinted; changing it requires a reviewed baseline
-migration. See [measurement policies and original comparisons](shell-measurements.md).
+`half-up`), and `mutation-policy` (`standard` by default or `expanded`). Both
+policies are fingerprinted; changing either requires a reviewed baseline migration.
+See [shell mutation operators](shell-mutations.md) for the finite operator inventory. See [measurement policies and original comparisons](shell-measurements.md).
 A symlinked root resolving outside the
 workspace is refused. Arguments are passed directly to JavaScript and
 subprocess argv, without interpolating input into a shell command. Outputs

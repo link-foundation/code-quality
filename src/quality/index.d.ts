@@ -357,7 +357,8 @@ export interface ShellMutant {
 }
 export function shellMutants(
   file: SourceFile,
-  max?: number
+  max?: number,
+  options?: { policy?: 'standard' | 'expanded' }
 ): Promise<ShellMutant[]>;
 export function shellQuality(
   root: string,
@@ -370,6 +371,7 @@ export function shellQuality(
     tests?: string[];
     jobs?: 'auto' | number;
     rounding?: 'floor' | 'half-up';
+    mutationPolicy?: 'standard' | 'expanded';
     excludedPaths?: string[];
     onCoverage?: (directory: string) => Promise<void> | void;
   }
