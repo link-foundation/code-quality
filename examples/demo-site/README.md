@@ -50,4 +50,12 @@ npm run smoke
 The `Demo site in a real browser` job in `.github/workflows/quality-engine.yml`
 runs the same build and smoke test.
 
+## Publishing
+
+On `main`, the `Build web app` job in `.github/workflows/example-app.yml` builds
+this site into the GitHub Pages artifact under `demo/`. The demo is then served at
+`https://link-foundation.github.io/code-quality/demo/`. Publishing needs a
+one-time maintainer setting, Settings → Pages → Source = GitHub Actions;
+`scripts/check-pages.sh` fails on `main` with that instruction until it is set.
+
 ![English demo with a taint finding](../../docs/screenshots/demo-site-en.png)
