@@ -97,3 +97,8 @@ Use Links Notation from the associative tech stack: `--format lino` reports and
 JSON-like command output, `report.lino` in saved bundles, canonical `.lino`
 configuration files that refuse repeated keys, and `text/x-lino` HTTP request
 and response negotiation.
+
+Add a browser demo site built with `@link-foundation/ui`, the `material3` theme
+and `lino-i18n` catalogues; it runs the real engine in the page. Count UTF-8 bytes
+without the Node `Buffer` global and keep the report formatters free of
+filesystem imports, so the analysis engine is portable to browsers.

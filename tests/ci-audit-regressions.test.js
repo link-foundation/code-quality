@@ -18,6 +18,7 @@ const readText = (path) => readFileSync(path, 'utf8').replaceAll('\r\n', '\n');
 const roots = [
   '.',
   'examples/universal-app',
+  'examples/demo-site',
   '.github/actions/artifact-transport',
 ];
 

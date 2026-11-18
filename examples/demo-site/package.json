@@ -1,0 +1,31 @@
+{
+  "name": "code-quality-demo-site",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Code Quality demo website built with @link-foundation/ui and Links Notation",
+  "type": "module",
+  "allowScripts": {
+    "esbuild@0.25.12": true,
+    "fsevents@2.3.3": true
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "overrides": {
+    "picomatch": "npm:@ryotsu/picomatch@4.0.7-a"
+  },
+  "dependencies": {
+    "@link-foundation/ui-dom": "0.0.0",
+    "@link-foundation/ui-react": "0.0.0",
+    "@link-foundation/ui-themes": "0.0.0",
+    "lino-i18n": "0.6.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "vite": "6.4.6"
+  }
+}

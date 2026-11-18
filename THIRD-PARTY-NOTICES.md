@@ -8,6 +8,12 @@ No quality-bash implementation or tests are incorporated.
 are Unlicense (public domain); they encode and decode Links Notation reports and
 configuration.
 
+The browser demo in `examples/demo-site` is not part of the published package.
+Its built site bundles `@link-foundation/ui-dom`, `ui-react`, `ui-themes` and
+`lino-i18n` 0.6.0 (Unlicense, public domain), and React and React DOM 18.3.1 with
+`scheduler` 0.23.2 (MIT, copyright Meta Platforms, Inc. and affiliates). The
+installed packages supply their complete license texts.
+
 `web-tree-sitter` 0.20.8 is MIT, copyright 2018–2021 Max Brunsfeld. Its complete
 notice is supplied by the installed package at `web-tree-sitter/LICENSE`:
 

@@ -73,6 +73,17 @@ node bin/code-quality.js check examples/code-quality/taint \
   --config examples/code-quality/taint/quality.lino --format lino
 ```
 
+### Live demo
+
+[`examples/demo-site`](examples/demo-site/README.md) runs the same engine in the
+browser, with no server. The page is a Links Notation document rendered by
+[`@link-foundation/ui`](https://github.com/link-foundation/ui) with the
+`material3` theme and `lino-i18n` English and Russian catalogues. Pick a sample or
+edit the files, optionally add a `quality.lino` configuration, and read the report
+as text, JSON, SARIF or Links Notation.
+
+![Code Quality demo running in the browser](docs/screenshots/demo-site-en.png)
+
 ## Configuration
 
 Pass a strict JSON config with `--config quality.json`:

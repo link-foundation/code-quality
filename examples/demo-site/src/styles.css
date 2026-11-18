@@ -1,0 +1,163 @@
+:root {
+  color-scheme: light dark;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+}
+body {
+  margin: 0;
+  background: var(--color-surface, #fff);
+  color: var(--color-on-surface, #1b1b1f);
+}
+[data-link-id='page'] {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+[data-link-id='brand'] {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-right: auto;
+}
+[data-link-id='tagline'] {
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+[data-link-id='footer'] {
+  opacity: 0.75;
+  font-size: 0.9rem;
+}
+.cq-card {
+  border: 1px solid var(--color-outline, #727278);
+  border-radius: 16px;
+  padding: 16px 20px;
+}
+.cq-card h2 {
+  margin-top: 0;
+}
+.cq-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 12px 0;
+}
+.cq-editors {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+.cq-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+textarea,
+pre,
+code {
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+}
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 8px;
+  border: 1px solid var(--color-outline, #727278);
+  padding: 8px;
+  background: transparent;
+  color: inherit;
+  resize: vertical;
+}
+select,
+.cq-row button {
+  font: inherit;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--color-outline, #727278);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.cq-row button[aria-pressed='true'],
+.cq-primary {
+  background: var(--color-primary, #3a5ba0) !important;
+  color: var(--color-on-primary, #fff) !important;
+  border-color: transparent !important;
+}
+.cq-primary:disabled {
+  opacity: 0.6;
+}
+.cq-scroll {
+  overflow-x: auto;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+th,
+td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--color-outline, #727278) 40%, transparent);
+  vertical-align: top;
+}
+.cq-output {
+  max-height: 360px;
+  overflow: auto;
+  padding: 12px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--color-primary, #3a5ba0) 8%, transparent);
+}
+.cq-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.cq-error,
+.cq-fail {
+  background: #b3261e;
+  color: #fff;
+}
+.cq-warning {
+  background: #f9a825;
+  color: #1b1b1f;
+}
+.cq-note,
+.cq-pass {
+  background: #2e7d32;
+  color: #fff;
+}
+div.cq-error {
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+.cq-muted {
+  opacity: 0.7;
+  font-size: 0.85rem;
+  word-break: break-all;
+}
+ui-react-host,
+ui-react-slot {
+  display: block;
+  align-self: stretch;
+}
+[data-link-id='header'] ui-button > button {
+  font: inherit;
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--color-outline, #727278);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+[data-link-id='header'] ui-button[variant='filled'] > button {
+  background: var(--color-primary, #3a5ba0);
+  color: var(--color-on-primary, #fff);
+  border-color: transparent;
+}

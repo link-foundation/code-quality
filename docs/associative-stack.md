@@ -46,6 +46,15 @@ key, a dropped line or an alternative spelling fails with an error that shows th
 expected canonical text. Generate canonical files with `formatLino` or
 `--format lino`.
 
+## Demo site
+
+The [browser demo](../examples/demo-site/README.md) uses the stack's UI layer.
+The page is a Links Notation document rendered by `@link-foundation/ui`
+(`ui-react` over `ui-dom`) with the `material3` Links Notation theme from
+`@link-foundation/ui-themes`. Its strings are `lino-i18n` catalogues
+(`src/locales/en.lino`, `src/locales/ru.lino`). It accepts the same canonical
+`quality.lino` configuration as the CLI and can show reports as Links Notation.
+
 ## Defaults and compatibility
 
 Human-readable text remains the default `check` output. JSON remains the default

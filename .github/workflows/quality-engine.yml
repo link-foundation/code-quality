@@ -91,3 +91,27 @@ jobs:
           curl --fail --silent -H 'content-type: application/json' \
             --data '{}' http://127.0.0.1:3000/v1/evolution > /tmp/quality-evolution.json
           node -e "const r=require('/tmp/quality-evolution.json'); if(r.commits.length!==1 || !r.current.some(e=>e.kind==='function')) process.exit(1)"
+
+  demo-site:
+    name: Demo site in a real browser
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    concurrency:
+      group: check-${{ github.workflow }}-${{ github.ref }}-demo-site
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+      - run: npm ci
+      - run: npm ci --prefix examples/demo-site --no-audit --no-fund
+      - run: npm run build --prefix examples/demo-site
+      - name: Install a pinned headless Chromium
+        working-directory: examples/demo-site
+        run: |
+          npm install --no-save --package-lock=false --no-audit --no-fund playwright@1.64.1
+          npx playwright install --with-deps chromium
+      - run: npm run smoke --prefix examples/demo-site
