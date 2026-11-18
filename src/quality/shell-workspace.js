@@ -1,3 +1,4 @@
+import { utf8ByteLength } from './bytes.js';
 import { createHash } from 'node:crypto';
 import { createReadStream } from 'node:fs';
 import { readdir, lstat } from 'node:fs/promises';
@@ -87,7 +88,7 @@ export async function captureWorkspace(
       if (record.kind === 'directory') {
         pending.push(path);
       }
-      metadataBytes += Buffer.byteLength(JSON.stringify(record));
+      metadataBytes += utf8ByteLength(JSON.stringify(record));
       if (metadataBytes > 4_194_304) {
         throw new Error('Shell workspace metadata budget exceeded');
       }

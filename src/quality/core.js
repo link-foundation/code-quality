@@ -1,3 +1,4 @@
+import { utf8ByteLength } from './bytes.js';
 import { detectLanguage, getLanguage } from './languages.js';
 import { validateConfig, severities, safePath } from './config.js';
 import { withSyntax, extractSyntax, walk, hash, position } from './syntax.js';
@@ -229,7 +230,7 @@ export async function analyzeSource(file, options = {}, cloneInputs) {
   if (typeof file.content !== 'string' || file.content.includes('\0')) {
     throw new Error(`${path}: expected UTF-8 text without NUL bytes`);
   }
-  if (Buffer.byteLength(file.content) > config.limits.maxFileBytes) {
+  if (utf8ByteLength(file.content) > config.limits.maxFileBytes) {
     throw new Error(`${path}: file byte budget exceeded`);
   }
   const language = file.language || detectLanguage(path, file.content);
@@ -503,7 +504,7 @@ export async function analyzeFiles(input, options = {}) {
     if (typeof file.content !== 'string') {
       throw new Error('File content must be a string');
     }
-    bytes += Buffer.byteLength(file.content);
+    bytes += utf8ByteLength(file.content);
     if (bytes > config.limits.maxTotalBytes) {
       throw new Error('Total byte budget exceeded');
     }

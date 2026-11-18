@@ -1,3 +1,4 @@
+import { utf8ByteLength } from './bytes.js';
 import { createHash } from 'node:crypto';
 import { walk, isNamed } from './syntax.js';
 
@@ -7,7 +8,7 @@ function validateFields(node, inventory) {
       if (typeof node[key] !== 'string' || node[key].length > 4096) {
         throw new Error(`Tree pattern ${key} must be a bounded string`);
       }
-      inventory.bytes += Buffer.byteLength(node[key]);
+      inventory.bytes += utf8ByteLength(node[key]);
     }
   }
   if (inventory.bytes > 65_536) {
@@ -130,7 +131,7 @@ function validateFieldsMap(fields, inventory, visit) {
     if (!/^[A-Za-z_][\w]{0,63}$/.test(name)) {
       throw new Error('Tree pattern field must name a grammar field');
     }
-    inventory.bytes += Buffer.byteLength(name);
+    inventory.bytes += utf8ByteLength(name);
     visit(child);
   }
 }
@@ -163,7 +164,7 @@ function structure(node, budget) {
       children.length,
       children.length ? null : child.childCount ? '' : child.text,
     ]);
-    spend(budget, Buffer.byteLength(encoded));
+    spend(budget, utf8ByteLength(encoded));
     digest.update(encoded);
   }
   return digest.digest('hex');

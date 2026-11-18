@@ -1,3 +1,4 @@
+import { utf8ByteLength } from './bytes.js';
 import { constants } from 'node:fs';
 import { readdir, lstat, open, readlink } from 'node:fs/promises';
 import { basename, dirname, join, resolve } from 'node:path';
@@ -21,7 +22,7 @@ export function validateArtifacts(artifacts) {
     }
     const size =
       typeof content === 'string'
-        ? Buffer.byteLength(content)
+        ? utf8ByteLength(content)
         : content.byteLength;
     bytes += size;
     if (size > 16_777_216 || bytes > 33_554_432) {

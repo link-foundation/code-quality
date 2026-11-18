@@ -1,3 +1,4 @@
+import { utf8ByteLength } from './bytes.js';
 import { mkdtemp, rm, cp, readFile, lstat, writeFile } from 'node:fs/promises';
 import { tmpdir, availableParallelism } from 'node:os';
 import { join, relative, resolve, sep } from 'node:path';
@@ -22,7 +23,7 @@ import {
 } from './shell-workspace.js';
 
 function tapLines(source) {
-  if (Buffer.byteLength(source) > 16_777_216) {
+  if (utf8ByteLength(source) > 16_777_216) {
     throw new Error('TAP report exceeds byte budget');
   }
   const lines = source.split(/\r?\n/);

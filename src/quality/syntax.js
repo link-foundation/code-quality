@@ -1,3 +1,4 @@
+import { utf8ByteLength } from './bytes.js';
 import Parser from 'web-tree-sitter';
 import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
@@ -279,7 +280,7 @@ export function extractSyntax(syntax, source) {
             source.slice(entry.start, entry.end).replace(/\b\w+\b/g, '$id')
           ),
         };
-        descriptorBytes += Buffer.byteLength(JSON.stringify(abstraction));
+        descriptorBytes += utf8ByteLength(JSON.stringify(abstraction));
         if (descriptorBytes > 4_194_304) {
           throw new Error('Abstraction metadata budget exceeded');
         }
@@ -303,7 +304,7 @@ export function extractSyntax(syntax, source) {
     }
     const entry = abstraction(node, source, budget);
     if (entry) {
-      descriptorBytes += Buffer.byteLength(JSON.stringify(entry));
+      descriptorBytes += utf8ByteLength(JSON.stringify(entry));
       if (descriptorBytes > 4_194_304) {
         throw new Error('Abstraction metadata budget exceeded');
       }

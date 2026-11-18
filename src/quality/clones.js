@@ -1,3 +1,4 @@
+import { utf8ByteLength } from './bytes.js';
 import { walk, hash } from './syntax.js';
 import { lineLocator } from './lines.js';
 import { cloneFile } from './clone-suppressions.js';
@@ -85,7 +86,7 @@ function tokenValue(
         : [node.type, node.text]
   );
   if (!context.dictionary.has(key)) {
-    context.bytes += Buffer.byteLength(key);
+    context.bytes += utf8ByteLength(key);
     if (context.bytes > 16_777_216) {
       throw new Error('Clone token metadata budget exceeded');
     }

@@ -1,3 +1,4 @@
+import { utf8ByteLength } from './bytes.js';
 import { resolve } from 'node:path';
 import { gitOutput as git, resolveCommit as commitRef } from './git.js';
 import { detectLanguage } from './languages.js';
@@ -5,7 +6,7 @@ import { safePath, positiveInteger } from './config.js';
 import { hash, withSyntax, extractSyntax } from './syntax.js';
 
 function cacheSnapshot(cache, key, parsed) {
-  const metadataBytes = Buffer.byteLength(JSON.stringify(parsed));
+  const metadataBytes = utf8ByteLength(JSON.stringify(parsed));
   if ((cache.metadataBytes || 0) + metadataBytes > 33_554_432) {
     cache.clear();
     cache.metadataBytes = 0;
