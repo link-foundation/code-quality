@@ -38,12 +38,11 @@ npm run preview  # serve dist/
 
 `npm run smoke` serves `dist/` under `/code-quality/demo/` and drives headless
 Chromium through every sample, every output format and the Russian catalogue.
-It fails on any browser error. Playwright is not a dependency; CI installs a
-pinned copy without saving it:
+It fails on any browser error. Playwright is a locked development dependency;
+download its Chromium once:
 
 ```sh
-npm install --no-save --package-lock=false playwright@1.64.1
-npx playwright install chromium
+npx --no-install playwright install chromium
 npm run smoke
 ```
 

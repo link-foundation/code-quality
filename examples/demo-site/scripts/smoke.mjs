@@ -3,8 +3,8 @@
 // subpath, run every playground sample in headless Chromium and check the
 // findings, the output formats and the Russian catalogue.
 //
-// Playwright is not a dependency of the demo; CI installs a pinned copy with
-// --no-save. Usage: npm run build && node scripts/smoke.mjs
+// Usage: npm run build && npx --no-install playwright install chromium &&
+// node scripts/smoke.mjs
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';

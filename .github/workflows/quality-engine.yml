@@ -109,9 +109,7 @@ jobs:
       - run: npm ci
       - run: npm ci --prefix examples/demo-site --no-audit --no-fund
       - run: npm run build --prefix examples/demo-site
-      - name: Install a pinned headless Chromium
+      - name: Install the locked Playwright's headless Chromium
         working-directory: examples/demo-site
-        run: |
-          npm install --no-save --package-lock=false --no-audit --no-fund playwright@1.64.1
-          npx playwright install --with-deps chromium
+        run: npx --no-install playwright install --with-deps chromium
       - run: npm run smoke --prefix examples/demo-site

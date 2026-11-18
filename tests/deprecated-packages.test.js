@@ -13,6 +13,7 @@ const LOCKFILES = [
   'package-lock.json',
   '.github/actions/artifact-transport/package-lock.json',
   'examples/universal-app/package-lock.json',
+  'examples/demo-site/package-lock.json',
 ];
 
 function deprecatedPackages(lockfile) {
