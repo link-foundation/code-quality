@@ -1,0 +1,55 @@
+ru
+  app
+    title "Code Quality"
+    tagline "Единый анализатор с чистой реализацией для JavaScript, TypeScript, Python, Rust, Go, C#, Java, C, C++, PHP, Bash и CMake. Эта страница запускает настоящий движок в вашем браузере: без сервера и без загрузки кода."
+    footer "Общественное достояние (Unlicense). CLI, HTTP API, Docker-образ и библиотека: github.com/link-foundation/code-quality"
+    language "Язык"
+  playground
+    title "Песочница"
+    sample "Пример"
+    file "Файл"
+    config "Конфигурация (Links Notation)"
+    configHint "Необязательно. Тот же канонический .lino, что принимает --config quality.lino."
+    analyze "Анализировать"
+    running "Анализ…"
+    output "Формат вывода"
+    findings "Замечания"
+    none "Замечаний нет: проверка качества пройдена."
+    passed "пройдено"
+    failed "не пройдено"
+    summary "файлов: {{files}}, ошибок: {{errors}}, предупреждений: {{warnings}}"
+    method "Отпечаток метода"
+    error "Анализ отклонён"
+    column
+      severity "Уровень"
+      rule "Правило"
+      location "Место"
+      message "Сообщение"
+    samples
+      taint "Поток taint в JavaScript (правила в .lino)"
+      python "Секрет и eval в Python"
+      shell "Дублирующиеся функции Bash"
+      polyglot "Сложность Go, Rust и C#"
+  comparison
+    title "Сравнение"
+    intro "Честный статус из исследования задачи #1. «Нативно» означает реализовано и протестировано здесь; пробелы перечислены, пока не проверены."
+    product "Продукт"
+    area "Область"
+    status "Статус этой реализации"
+    more "Полный перечень и критерии готовности"
+    rows
+      sonarqube
+        area "Структурные правила, quality gates, taint"
+        status "Структурные правила и пороги нативно; глубокого межфайлового taint нет"
+      semgrep
+        area "Структурные шаблоны, правила taint"
+        status "Нативные шаблоны деревьев и taint для JS/TS с учётом ветвлений; полной семантики нет"
+      codeql
+        area "Базы запросов, оповещения SARIF"
+        status "Импорт и экспорт SARIF нативно; движка запросов нет"
+      pmd
+        area "Дублирование токенов (CPD)"
+        status "Клоны целых функций и блоков токенов нативно; полный паритет опций не проверен"
+      qualitybash
+        area "Синтаксис shell, линт, Bats, kcov, мутации"
+        status "Конвейер нативно на JavaScript; полный паритет явно не завершён"

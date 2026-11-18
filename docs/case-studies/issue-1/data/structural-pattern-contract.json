@@ -1,0 +1,28 @@
+{
+  "source": "https://docs.semgrep.dev/writing-rules/pattern-syntax",
+  "reviewedAt": "2026-11-17",
+  "scope": "Public feature concepts only; no implementation or test-suite files opened, no documentation examples copied",
+  "publicConcepts": [
+    "Patterns can match nested syntax",
+    "Named metavariables bind syntax and repeated names constrain equality",
+    "An ellipsis can represent variable-length sequences in a syntactic scope"
+  ],
+  "nativePolicy": {
+    "format": "Original pattern.tree objects with kind, exact text, capture, ordered named children and exact grammar fields; separate from legacy substring predicates",
+    "languages": "Twelve bundled grammar-backed modes; applicable CMake tree rules explicitly refuse incomplete analysis",
+    "capture": "One subtree or explicit grammar-field token per capture; exact structural and leaf-text equality ignoring comments/formatting; scope is one candidate and rule; no message substitution or source output",
+    "sequence": "At most one standalone rest:true child per list; anchored prefix/suffix, zero or more named nodes, no backtracking or crossing tree boundaries",
+    "configurationLimits": "512 nodes/32 levels/128 child-list entries per rule; 4096 UTF-16 units per string; shared 10000 nodes/65536 string bytes",
+    "executionLimits": "Shared five-million-unit budget per source file for candidates, child/field inventories, capture traversal and UTF-8 metadata bytes hashed, plus existing parser/traversal/input/finding budgets; refusal cannot become complete baseline evidence",
+    "compatibility": "Legacy predicates and default methods unchanged; enabled tree rules record named-tree-patterns-v1 and require reviewed baseline migration",
+    "remaining": "No Semgrep syntax/CLI compatibility, exhaustive cases, typed/list captures, constant/type/import equivalences, dataflow, taint, Boolean combinations or autofix parity",
+    "fields": "Exact grammar-field constraints, including unnamed operator tokens; missing fields fail, captures share the child-list scope; max32 fields/node and 64 ASCII name characters/field"
+  },
+  "evidence": [
+    "tests/quality-tree-patterns.test.js",
+    "tests/types/quality.ts",
+    "experiments/code-quality/tree-pattern-budget.mjs",
+    "experiments/code-quality/package-smoke.mjs",
+    "examples/code-quality/tree-patterns/README.md"
+  ]
+}

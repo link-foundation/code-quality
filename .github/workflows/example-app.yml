@@ -5,6 +5,7 @@ on:
     types: [opened, synchronize, reopened]
     paths:
       - 'examples/universal-app/**'
+      - 'examples/demo-site/**'
       - 'src/**'
       - 'package.json'
       - 'package-lock.json'
@@ -30,6 +31,7 @@ on:
       - main
     paths:
       - 'examples/universal-app/**'
+      - 'examples/demo-site/**'
       - 'src/**'
       - 'package.json'
       - 'package-lock.json'
@@ -112,6 +114,16 @@ jobs:
         env:
           GITHUB_PAGES: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
           VITE_REPOSITORY_URL: https://github.com/${{ github.repository }}
+
+      # The Code Quality browser demo imports the engine from the root
+      # package, so it needs the root dependencies too. It is published at
+      # <pages>/demo/; its relative base works under any subpath.
+      - name: Build Code Quality demo
+        run: |
+          npm ci --no-audit --no-fund
+          npm ci --prefix examples/demo-site --no-audit --no-fund
+          npm run build --prefix examples/demo-site
+          cp -R examples/demo-site/dist examples/universal-app/dist/demo
 
       - name: Upload web build artifact
         uses: ./.github/actions/artifact-transport

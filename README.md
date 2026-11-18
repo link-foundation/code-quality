@@ -1,4 +1,248 @@
-# js-ai-driven-development-pipeline-template
+# Code Quality
+
+Public-domain multi-language structural analysis and Git code evolution, available
+as a CLI, typed JavaScript library, and HTTP server with a Docker image.
+
+Native JavaScript orchestrates pinned WASM parsers for JavaScript/TypeScript/TSX,
+Rust, Python, Go, C#, Java, C/C++, PHP and Bash. An original CMake adapter covers
+command/bracket/block syntax and literal function metrics. Checks cover syntax,
+size, complexity, parameters, structural duplicates, whitespace, risky dynamic
+execution and literal credentials.
+These are structural heuristics, not full compiler or security analysis.
+See the [Bash grammar/runtime contract](docs/bash-parser.md) and original regressions.
+
+## Quick Start
+
+From a checkout, use Node 24 and install the locked dependencies:
+
+```sh
+npm ci
+node bin/code-quality.js check ./src --format json
+node bin/code-quality.js languages
+node bin/code-quality.js evolution . --max-commits 100 --output evolution.json
+node bin/code-quality.js serve . --port 3000
+```
+
+The package is prepared as `@link-foundation/code-quality` with the `code-quality`
+bin. Publishing is a separate repository release action. A quality finding exits 1;
+invalid input, a tool failure or incomplete measurement exits 2. Passing exits 0.
+
+```js
+import {
+  analyzeFiles,
+  formatReport,
+} from '@link-foundation/code-quality/quality';
+
+const report = await analyzeFiles([
+  {
+    path: 'greet.py',
+    content: 'def greet(name):\n    return "Hello " + name\n',
+  },
+]);
+console.log(formatReport(report, 'sarif'));
+```
+
+Run the API locally, or build its non-root container:
+
+```sh
+docker build -t code-quality .
+docker run --rm --memory=512m --cpus=1 -p 127.0.0.1:3000:3000 code-quality
+curl -H 'content-type: application/json' \
+  --data '{"files":[{"path":"a.js","content":"const answer = 42;\n"}]}' \
+  http://127.0.0.1:3000/v1/analyze
+```
+
+API routes: `GET /health`, `GET /v1/languages`, `GET /openapi.json`,
+`POST /v1/analyze` and `POST /v1/evolution`. Evolution uses only the repository
+configured at startup; mount it read-only at `/workspace` for the container. Set
+`CODE_QUALITY_TOKEN` to require bearer auth except on health. CLI defaults to
+loopback; container port examples bind the host to loopback too. HTTP analysis
+never executes configured command adapters.
+
+### Links Notation
+
+Reports, JSON-like command output, configuration and HTTP bodies also use
+[Links Notation](https://github.com/link-foundation/links-notation), the
+interchange format of the associative stack. Add `--format lino`, pass
+`--config quality.lino`, or send `text/x-lino` to the API. Every saved report
+bundle includes `report.lino`. Configuration must be canonical, so repeated keys
+fail closed. See [docs/associative-stack.md](docs/associative-stack.md).
+
+```sh
+node bin/code-quality.js check examples/code-quality/taint \
+  --config examples/code-quality/taint/quality.lino --format lino
+```
+
+### Live demo
+
+[`examples/demo-site`](examples/demo-site/README.md) runs the same engine in the
+browser, with no server. The page is a Links Notation document rendered by
+[`@link-foundation/ui`](https://github.com/link-foundation/ui) with the
+`material3` theme and `lino-i18n` English and Russian catalogues. Pick a sample or
+edit the files, optionally add a `quality.lino` configuration, and read the report
+as text, JSON, SARIF or Links Notation.
+
+![Code Quality demo running in the browser](docs/screenshots/demo-site-en.png)
+
+## Configuration
+
+Pass a strict JSON config with `--config quality.json`:
+
+```json
+{
+  "rules": { "complexity": 12, "function-lines": 80 },
+  "failOn": "warning",
+  "exclude": ["generated/"],
+  "customRules": [
+    {
+      "id": "no-console",
+      "message": "Use the project logger",
+      "languages": ["javascript", "typescript"],
+      "pattern": { "kind": "call_expression", "text": "console.log" }
+    }
+  ]
+}
+```
+
+Unknown keys and rules are errors. Limits can only lower the defaults of 1000
+files, 1 MiB per file and 16 MiB total. Exclusions are relative path prefixes.
+Generated/build/dependency directories are excluded by default. Project scanning
+uses known extensions; direct source analysis also accepts an explicit language
+or a Bash shebang. Empty inventories fail. Symlink and special source files fail.
+
+Library plugins supply an `id`, immutable `version`, and `analyze(context)` that
+returns findings; syntax nodes are valid only during that callback. Declarative
+rules match node kinds/literal text or [structural tree patterns](docs/tree-patterns.md)
+with repeated captures and a bounded named-child wildcard.
+Opt-in [straight-line dataflow rules](docs/dataflow.md) track modeled call returns
+and simple function parameters through assignments to sinks in JavaScript,
+TypeScript and TSX, with ordered text/SARIF traces and explicit scope refusals.
+An optional conservative branch-join policy handles conditionals and lexical
+blocks within finite budgets; it does not prove path feasibility.
+External tools are separately installed, explicitly trusted commands. Inspect
+`toolRecipes`, provide adapter argv in config, then opt in with `check --tools`.
+JSON, SARIF, ESLint, Ruff, Cargo, golangci-lint, PHPStan and ShellCheck output
+adapters refuse malformed reports and failed execution. Executables retain their
+own analysis semantics and licenses.
+
+For trusted shell projects with Bash, ShellCheck, Bats and kcov installed
+(real-tool CI downloads checksum-pinned Bats 1.14, ShellCheck 0.11 and kcov 43):
+
+```sh
+node bin/code-quality.js doctor --tools
+node bin/code-quality.js baseline-update ./examples/code-quality/shell --create
+node bin/code-quality.js qa ./examples/code-quality/shell --format json
+```
+
+`tools install <new-directory>` downloads the pinned Linux x64/arm64 shell
+executables and private kcov libraries without sudo. The host supplies GNU Bash
+5.2 or newer, glibc 2.36 or newer and Python 3. `help`, `version` and each command's
+`--help` work without a project or external tools. The repository also provides
+a consumer GitHub Action with automatic PR-base baseline enforcement.
+See [tool installation and Action usage](docs/shell-toolchain.md).
+
+Shell QA measures syntax, lint, a complete passing control suite, kcov Codecov JSON and every
+eligible original Boolean/comparison/binary-literal/arithmetic mutant. It refuses partial
+budgets, missing coverage files, skipped tests, changed source and tool timeouts.
+Tests and tools execute as the current user. Baselines preserve file inventory,
+methodology and nondecreasing coverage/mutation floors. Use identical options on
+measurement and update. Plain `check --baseline <file>` also accepts a native
+report baseline created through the library. `--baseline-ref <commit-or-ref>` also
+enforces the baseline committed at that revision, in addition to the working
+baseline. Fetch the revision first; the command never checks out or fetches code.
+This prevents a PR from accepting a new finding or lowering a floor locally and
+bypassing the target baseline. With this option, the baseline path must be inside
+the project root; the default is `quality-baseline.json` there. An explicit
+`--baseline <file>` keeps its existing working-directory-relative meaning.
+`--baseline-path <file>` explicitly selects a root-relative path.
+
+`lint`, `test`, `coverage` and `mutation` run independent shell stages with only
+their required tools; these partial measurements cannot establish a QA baseline.
+`baseline check` performs fresh complete QA and checks both baseline gates.
+Repeat `--script <path>` and `--test <path>` to select known project files.
+`--jobs 1` is the resource-conscious default; `--jobs auto` uses at most two
+workers and explicit counts are bounded to four. Results retain source order,
+and scheduling does not change the methodology fingerprint. Bats 1.14 or newer
+stops mutants at the first assertion/setup/teardown failure; older Bats runs the
+complete suite. Controls and coverage always require every planned test.
+
+For a reviewed incompatible method or file inventory, use
+`baseline-update --migrate "explanation"`. The baseline retains an audit record
+with the explanation and previous baseline digest. Comparable working and
+committed floors cannot decrease, even with `--migrate`. Selected test paths,
+tool versions/digests and execution settings are part of the fingerprint.
+Percentages default to exact-count floor rounding; `--rounding half-up` explicitly
+selects the released quality-bash rounding policy. The new arithmetic/rounding
+method requires reviewed migration for earlier shell baselines. See the
+[original real-tool measurements](docs/shell-measurements.md) for raw counts,
+observed operator differences and a released-baseline import.
+The opt-in [expanded mutation policy](docs/shell-mutations.md) adds arithmetic
+ordering complements and a second multiplication fault model; policies are
+fingerprinted and require reviewed baseline migration.
+Helper data and unselected workspace inputs are also checked between stages;
+changed inputs refuse a score. See [workspace input consistency](docs/shell-inputs.md)
+for exclusions, bounds and migration requirements.
+
+Optional [token-block duplication](docs/token-clones.md) finds repeated partial
+functions and local blocks, with both source ranges, threshold gates and explicit
+identifier/literal normalization. All thirteen language modes, including native
+CMake argument tokens, run through the library, CLI and HTTP API.
+Reports retain pair findings and collect their distinct locations into occurrence
+groups for reviewing a block repeated across several files.
+Opt-in comment regions can exclude generated duplication while retaining audited
+ranges in JSON/SARIF. Syntax validation and other rules still inspect those regions.
+Optional Java/C# annotation and C# using-directive filters compare retained tokens
+while preserving syntax validation and other rules.
+
+Shell QA and baseline updates save fresh evidence under `<root>/quality-reports/`,
+including failures before measurement completes. `--reports <directory>` chooses
+a root-relative directory and also enables persistence for `check`. Each run has
+its own directory with JSON, text, SARIF when analysis completed, diagnostic JSON
+and a manifest. `latest.json` points to the last saved run and states `complete`
+and `passed`. Incomplete checks publish a failed manifest; report-write errors
+return status 2. Check the command status as well as the manifest. Runs
+are retained for review; consumers can archive them. Raw kcov HTML, Cobertura,
+JSON and supporting resources are preserved under each run's `coverage/`
+directory (128 files, 16 MiB per file, 32 MiB total). Baseline writes use atomic replacement, and `--create` never
+overwrites a concurrently created baseline. Baseline JSON is bounded to 1 MiB. Repeated
+JSON property names and nesting beyond 128 levels are refused. An explicit
+[quality-bash baseline import](docs/baseline-interchange.md) requires fresh passing
+QA, preserves source floors and records an explained independent methodology.
+The source is preserved and the destination must be new.
+Console reports still go to stdout or `--output`.
+Set `CODE_QUALITY_DEBUG=1` to trace subprocess argv, duration and bounded output
+when investigating external tools. Tracing is off by default.
+
+Evolution reads a bounded first-parent Git history without checking out source.
+It tracks syntax identities across unique content/name/structure matches, counts
+repeated normalized edits and attaches commit/path evidence to suggestions.
+Ambiguous matches become additions/deletions. Frequency and complexity changes
+are observational evidence; suggestions require review.
+
+CMake metrics count literal formal parameters and one decision for each `if`,
+`elseif`, `foreach` and `while` in that definition, excluding nested definitions.
+Unquoted variable expansion can change arity: those parameters are `null` and the
+report is incomplete, so baseline creation and evolution refuse them. Dynamic
+definition names also require unsupported evaluation. See [the CMake contract](docs/cmake-analysis.md)
+for source grammar, methodology changes and semantic limits.
+
+See the [case study](docs/case-studies/issue-1/README.md),
+[competitor matrix](docs/case-studies/issue-1/competitors.md), and
+[quality-bash comparison](docs/case-studies/issue-1/quality-bash.md) for measured
+scope and explicit unfinished parity. `npm run quality:readiness` intentionally
+fails while required competitor/semantic capabilities remain missing. Current
+unit tests do not certify the issue's “beat every competitor” acceptance criterion.
+
+## Development and compatibility
+
+Run `npm run test:quality`, `npm test`, `npm run lint`, and `npm run format:check`.
+The native suite also runs under Bun and Deno. Separate CI exercises real shell
+tools, the installed package and Docker API. The original arithmetic library,
+`example-package-name` CLI, universal-app examples and CI template features remain
+available; their reference follows below. Repository source is Unlicense;
+[third-party notices](THIRD-PARTY-NOTICES.md) cover separately licensed dependencies.
+
+# Pipeline template reference
 
 A comprehensive template for AI-driven JavaScript/TypeScript development with full CI/CD pipeline support.
 
@@ -17,7 +261,7 @@ validated end to end with npm trusted publishing.
 - **Package manager agnostic**: Works with bun, npm, yarn, pnpm, and deno
 - **Broken link checks**: Automated link validation with [lychee](https://github.com/lycheeverse/lychee-action) and Web Archive fallback suggestions
 
-## Quick Start
+## Template Quick Start
 
 ### Using This Template
 
@@ -288,7 +532,7 @@ The link checker workflow (`.github/workflows/links.yml`) validates all links in
 
 Add regex patterns to `.lycheeignore` to exclude URLs from checks (e.g., local dev URLs, example.com, known rate-limited sites).
 
-## Configuration
+## Template Configuration
 
 ### Updating Package Name
 

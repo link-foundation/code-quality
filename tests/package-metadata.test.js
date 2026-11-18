@@ -37,18 +37,17 @@ function windowsSymlinkSkipReason() {
 const symlinkSkipReason = windowsSymlinkSkipReason();
 
 describe('publishable package metadata', () => {
-  it('uses the real link-foundation example package name', () => {
-    expect(packageJson.name).toBe('@link-foundation/example-package-name');
+  it('uses the product package name and matching lock metadata', () => {
+    expect(packageJson.name).toBe('@link-foundation/code-quality');
     expect(packageJson.publishConfig).toEqual({ access: 'public' });
-    expect(lockJson.name).toBe('@link-foundation/example-package-name');
-    expect(lockJson.packages[''].name).toBe(
-      '@link-foundation/example-package-name'
-    );
+    expect(lockJson.name).toBe('@link-foundation/code-quality');
+    expect(lockJson.packages[''].name).toBe('@link-foundation/code-quality');
   });
 
   it('defines a globally installable CLI command', () => {
     expect(packageJson.bin).toEqual({
       'example-package-name': './bin/example-package-name.js',
+      'code-quality': './bin/code-quality.js',
     });
     expect(existsSync('bin/example-package-name.js')).toBe(true);
   });
@@ -106,6 +105,7 @@ describe('publishable package metadata', () => {
       'CHANGELOG.md',
       'LICENSE',
       'README.md',
+      'THIRD-PARTY-NOTICES.md',
     ]);
   });
 });

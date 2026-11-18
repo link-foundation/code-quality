@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "source": "https://github.com/link-foundation/code-quality/issues/1",
+  "translation": {
+    "productionRust": false,
+    "carriedBehavior": [],
+    "unsupported": [
+      "Compiler/type semantics",
+      "CMake project evaluation, expansion-derived metrics and tree-rule compatibility",
+      "Exhaustive competitor documented cases"
+    ]
+  },
+  "nativeAdapters": [
+    {
+      "id": "cmake-native-v2",
+      "status": "partial",
+      "evidence": "tests/quality-cmake.test.js",
+      "limits": "Literal arity, structural decisions and opt-in lexical command/argument clone tokens; expanded headers and applicable custom tree rules refuse incomplete analysis; no project evaluation or Tree-sitter node API"
+    },
+    {
+      "id": "external-command-v1",
+      "status": "native",
+      "evidence": "tests/quality-integration.test.js",
+      "limits": "Explicit executable argv; external tool licenses and semantics retained"
+    },
+    {
+      "id": "shell-toolchain-v1",
+      "status": "native",
+      "evidence": "tests/quality-shell.test.js",
+      "limits": "Trusted installed Bash/ShellCheck/Bats/kcov, not native reimplementations"
+    },
+    {
+      "id": "shell-download-v1",
+      "status": "native",
+      "evidence": "tests/quality-toolchain.test.js",
+      "limits": "Pinned external Bats/ShellCheck/kcov with private Debian libraries; host GNU Bash >=5.2, glibc >=2.36 and Python 3 remain prerequisites, not native reimplementations"
+    },
+    {
+      "id": "shell-private-runtime-v1",
+      "status": "native",
+      "evidence": "tests/quality-runtime.test.js",
+      "limits": "Downloaded Debian libraries, relocatable loader launcher and managed-tree fingerprints; host glibc, plugins and system configuration are not hermetic"
+    },
+    {
+      "id": "bash-grammar-v0233",
+      "status": "native",
+      "evidence": "tests/quality-bash-grammar.test.js",
+      "limits": "Pinned official MIT grammar binary and separate compatible JS/WASM runtime; original interface adaptation, not native reimplementation of the grammar or full Bash semantics"
+    },
+    {
+      "id": "taint-straight-line-v1",
+      "status": "partial",
+      "evidence": "tests/quality-taint.test.js",
+      "limits": "Native JS/TS/TSX exact return-value models and simple parameter sources; straight-line isolated scopes only. Branches, closures, unknown calls and budgets refuse incomplete analysis. No interprocedural, framework, type or full language semantics."
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "language-structure",
+      "required": true,
+      "status": "native",
+      "evidence": ["tests/quality-core.test.js"],
+      "description": "Common syntax/abstractions for target language inventory"
+    },
+    {
+      "id": "cli-library",
+      "required": true,
+      "status": "native",
+      "evidence": ["tests/quality-integration.test.js"],
+      "description": "CLI, typed APIs and report contracts"
+    },
+    {
+      "id": "http-container",
+      "required": true,
+      "status": "native",
+      "evidence": ["tests/quality-integration.test.js"],
+      "description": "Bounded HTTP; container smoke in CI"
+    },
+    {
+      "id": "extensions",
+      "required": true,
+      "status": "native",
+      "evidence": [
+        "tests/quality-core.test.js",
+        "tests/quality-tree-patterns.test.js",
+        "tests/quality-tree-predicates.test.js",
+        "tests/quality-taint.test.js",
+        "tests/quality-taint-consumers.test.js"
+      ],
+      "description": "Legacy predicates, bounded structural tree/capture/sequence patterns and isolated candidate-local all/any/not filters, versioned plugins and trusted external adapters; opt-in bounded JS/TS/TSX call-model dataflow with ordered traces and explicit unsupported-scope refusals"
+    },
+    {
+      "id": "evolution",
+      "required": true,
+      "status": "native",
+      "evidence": ["tests/quality-evolution.test.js"],
+      "description": "Bounded first-parent structural identities and repeated edits"
+    },
+    {
+      "id": "shell-pipeline",
+      "required": true,
+      "status": "native",
+      "evidence": ["tests/quality-shell.test.js"],
+      "description": "Original orchestration; tools are external native adapters"
+    },
+    {
+      "id": "language-semantics",
+      "required": true,
+      "status": "partial",
+      "evidence": [
+        "tests/quality-core.test.js",
+        "tests/quality-cmake.test.js",
+        "docs/cmake-analysis.md"
+      ],
+      "description": "No full compiler/type/preprocessor or CMake project semantics; literal CMake metrics verified, expansion-derived metrics refuse incomplete analysis"
+    },
+    {
+      "id": "competitor-parity",
+      "required": true,
+      "status": "missing",
+      "evidence": [
+        "docs/case-studies/issue-1/competitors.md",
+        "docs/case-studies/issue-1/data/pmd-cpd-contract.json",
+        "tests/quality-clones.test.js",
+        "tests/quality-clones-integration.test.js",
+        "tests/quality-clones-cmake.test.js",
+        "experiments/code-quality/cmake-token-budget.mjs",
+        "experiments/code-quality/clone-oracle.mjs",
+        "docs/token-clones.md",
+        "tests/quality-clone-suppressions.test.js",
+        "docs/case-studies/issue-1/data/pmd-suppression-contract.json",
+        "experiments/code-quality/clone-suppression-budget.mjs",
+        "tests/quality-clone-groups.test.js",
+        "docs/case-studies/issue-1/data/pmd-group-contract.json",
+        "tests/quality-clone-filters.test.js",
+        "docs/case-studies/issue-1/data/pmd-syntax-filter-contract.json",
+        "experiments/code-quality/clone-filter-syntax.mjs",
+        "tests/quality-tree-patterns.test.js",
+        "docs/case-studies/issue-1/data/structural-pattern-contract.json",
+        "docs/tree-patterns.md",
+        "experiments/code-quality/tree-pattern-budget.mjs",
+        "tests/quality-tree-predicates.test.js",
+        "docs/case-studies/issue-1/data/tree-predicate-contract.json",
+        "experiments/code-quality/tree-predicate-budget.mjs",
+        "tests/quality-taint.test.js",
+        "tests/quality-taint-consumers.test.js",
+        "docs/dataflow.md",
+        "docs/case-studies/issue-1/data/taint-contract.json"
+      ],
+      "description": "Original token-block minimums, normalization, pair locations, derived occurrence groups and opt-in audited comment regions verified in thirteen modes, including native CMake argument tokens; optional Java/C# annotations, C# using directives and Java numeric families covered by original cases; complete product/rule/case inventory, legacy annotations, lexer/options/equivalent grouping and native parity remain unverified; original bounded tree patterns/captures/sequence cases are native, while Semgrep syntax/equivalences/full taint semantics and exhaustive parity remain missing; isolated same-candidate Boolean filters verified independently, without Semgrep range/binding or complete rule parity; original straight-line source/sink/sanitizer/assignment/parameter cases and ordered evidence verified, without interprocedural/framework or exhaustive product parity"
+    },
+    {
+      "id": "closed-source-cases",
+      "required": true,
+      "status": "missing",
+      "evidence": [
+        "docs/case-studies/issue-1/competitors.md",
+        "docs/case-studies/issue-1/data/taint-contract.json"
+      ],
+      "description": "Public proprietary cases not exhaustively implemented/tested; native original ordered source-to-sink evidence addresses a public Snyk concept family only, without proprietary engine/hosted workflow parity"
+    },
+    {
+      "id": "quality-bash-parity",
+      "required": true,
+      "status": "partial",
+      "evidence": [
+        "docs/case-studies/issue-1/quality-bash.md",
+        "tests/quality-shell-options.test.js",
+        "tests/quality-baseline-io.test.js",
+        "experiments/code-quality/bats-abort.mjs",
+        "experiments/code-quality/real-shell.mjs",
+        "tests/quality-toolchain.test.js",
+        "tests/quality-action.test.js",
+        "docs/shell-toolchain.md",
+        "tests/quality-baseline-import.test.js",
+        "tests/quality-json.test.js",
+        "docs/baseline-interchange.md",
+        "tests/quality-runtime.test.js",
+        "tests/quality-shell-version.test.js",
+        "tests/quality-shell-diagnostics.test.js",
+        "docs/shell-diagnostics.md",
+        "tests/quality-cli-help.test.js",
+        "tests/quality-shell-arithmetic.test.js",
+        "experiments/code-quality/shell-comparison.mjs",
+        "docs/shell-measurements.md",
+        "tests/quality-shell-workspace.test.js",
+        "experiments/code-quality/workspace-freshness.mjs",
+        "docs/shell-inputs.md",
+        "tests/quality-bash-grammar.test.js",
+        "docs/bash-parser.md",
+        "docs/case-studies/issue-1/data/bash-parser-contract.json",
+        "tests/quality-shell-operators.test.js",
+        "experiments/code-quality/expanded-shell.mjs",
+        "docs/shell-mutations.md",
+        "docs/case-studies/issue-1/data/shell-operator-contract.json"
+      ],
+      "description": "Native amd64/arm64 private-library QA, consumer Action and independent baseline import verified; original real 3/5 coverage and 2/3 arithmetic mutants plus explicit half-up import; exact grammar operator boundaries, opt-in arithmetic ordering and second multiplication model verified with real Bats; finite numeric policies differ and exhaustive operator/diagnostic cases remain unfinished"
+    }
+  ]
+}

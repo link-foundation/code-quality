@@ -330,9 +330,15 @@ async function main() {
   const finalFailures = failures.filter(
     (failure) => !failure.retryable || !/^https?:\/\//i.test(failure.url)
   );
-  const unanswered = failures
-    .filter((failure) => failure.retryable && /^https?:\/\//i.test(failure.url))
-    .map((failure) => failure.url);
+  const unanswered = [
+    ...new Set(
+      failures
+        .filter(
+          (failure) => failure.retryable && /^https?:\/\//i.test(failure.url)
+        )
+        .map((failure) => failure.url)
+    ),
+  ];
 
   console.log(
     `Re-check: ${failures.length} lychee failure(s), ${finalFailures.length} final, ${unanswered.length} transient or unanswered`

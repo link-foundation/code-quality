@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'test-anywhere';
-import { readFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 
 import { evaluateDockerBuildConfig } from '../scripts/check-docker-build.mjs';
 
@@ -82,12 +84,25 @@ describe('pull-request Docker build check', () => {
 
 describe('Docker build configuration', () => {
   it('stays disabled when the repository ships no Dockerfile', () => {
-    const config = evaluateDockerBuildConfig({ cwd: '.', env: {} });
+    const cwd = mkdtempSync(join(tmpdir(), 'docker-build-config-'));
+    try {
+      const config = evaluateDockerBuildConfig({ cwd, env: {} });
+      expect(config.enabled).toBe(false);
+      expect(config.errors).toEqual([]);
+      expect(config.dockerfile).toBe('./Dockerfile');
+      expect(config.context).toBe('.');
+    } finally {
+      rmSync(cwd, { recursive: true, force: true });
+    }
+  });
 
-    expect(config.enabled).toBe(false);
-    expect(config.errors).toEqual([]);
-    expect(config.dockerfile).toBe('./Dockerfile');
-    expect(config.context).toBe('.');
+  it('enables the default build for the shipped API Dockerfile', () => {
+    expect(evaluateDockerBuildConfig({ cwd: '.', env: {} })).toEqual({
+      context: '.',
+      dockerfile: './Dockerfile',
+      enabled: true,
+      errors: [],
+    });
   });
 
   it('enables the build when a Dockerfile exists', () => {

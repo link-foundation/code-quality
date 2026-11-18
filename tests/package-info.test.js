@@ -5,6 +5,10 @@
  */
 
 import { describe, it, expect } from 'test-anywhere';
+import assert from 'node:assert/strict';
+import { readFile, readdir } from 'node:fs/promises';
+import { parse } from 'yaml';
+import { URL } from 'node:url';
 import {
   formatChangesetHeader,
   formatNpmPackageVersion,
@@ -13,6 +17,28 @@ import {
 } from '../scripts/package-info.mjs';
 
 describe('package info helpers', () => {
+  it('keeps every pending release fragment attached to the current package', async () => {
+    const { name } = JSON.parse(
+      await readFile(new URL('../package.json', import.meta.url), 'utf8')
+    );
+    const directory = new URL('../.changeset/', import.meta.url);
+    for (const file of await readdir(directory)) {
+      if (!file.endsWith('.md')) {
+        continue;
+      }
+      const content = await readFile(new URL(file, directory), 'utf8');
+      const header = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+      if (!header) {
+        continue;
+      }
+      for (const [packageName, bump] of Object.entries(
+        parse(header[1]) || {}
+      )) {
+        assert.equal(packageName, name, `${file}: unknown release package`);
+        assert.ok(['patch', 'minor', 'major'].includes(bump), file);
+      }
+    }
+  });
   it('reads scoped package names and versions from package.json content', () => {
     const packageInfo = parsePackageInfo(
       JSON.stringify({

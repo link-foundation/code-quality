@@ -1,0 +1,4 @@
+{
+  "clones": { "minTokens": 17, "ignoreAnnotations": true },
+  "rules": { "duplicate-function": false }
+}

@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import { itUnless, sandboxed } from './helpers/skip.js';
 
 const SCRIPT = 'scripts/preflight-credentials.sh';
+const packageName = JSON.parse(readFileSync('package.json', 'utf8')).name;
 // PATH entries are directories, so the stub lives at
 // tests/fixtures/preflight-stub/curl and the directory goes on PATH.
 const STUB_DIR = 'tests/fixtures/preflight-stub';
@@ -175,7 +176,7 @@ describe('release-preflight probe behaviour (offline, curl stub)', () => {
         'audience=npm%3Aregistry.npmjs.org'
       );
       expect(readFileSync(join(fixtures, 'requests'), 'utf8')).toContain(
-        '/exchange/package/%40link-foundation%2Fexample-package-name'
+        `/exchange/package/${encodeURIComponent(packageName)}`
       );
       expect(stdout).not.toContain('private-fixture');
     }
@@ -422,16 +423,16 @@ describe('npm OIDC package exchange regression', () => {
     [
       404,
       [
-        'npm has no package @link-foundation/example-package-name yet',
+        `npm has no package ${packageName} yet`,
         'Add an NPM_TOKEN repository secret',
         'https://github.com/acme/widget/settings/secrets/actions',
-        'add a trusted publisher for acme/widget, workflow release.yml, at https://www.npmjs.com/package/@link-foundation/example-package-name/access',
+        `add a trusted publisher for acme/widget, workflow release.yml, at https://www.npmjs.com/package/${packageName}/access`,
       ],
     ],
     [
       200,
       [
-        'npm rejected the OIDC exchange for @link-foundation/example-package-name (404): add a trusted publisher for acme/widget',
+        `npm rejected the OIDC exchange for ${packageName} (404): add a trusted publisher for acme/widget`,
       ],
     ],
     ['000', ['the package lookup answered 000']],
@@ -455,7 +456,7 @@ describe('npm OIDC package exchange regression', () => {
         }
         expect(stdout).toContain('::error::release-preflight: npm ');
         expect(readFileSync(join(fixtures, 'requests'), 'utf8')).toContain(
-          'https://registry.npmjs.org/%40link-foundation%2Fexample-package-name'
+          `https://registry.npmjs.org/${encodeURIComponent(packageName)}`
         );
       }
     );

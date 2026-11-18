@@ -1,0 +1,55 @@
+en
+  app
+    title "Code Quality"
+    tagline "One clean-room analyzer for JavaScript, TypeScript, Python, Rust, Go, C#, Java, C, C++, PHP, Bash and CMake. This page runs the real engine in your browser: no server, no upload."
+    footer "Public domain (Unlicense). CLI, HTTP API, Docker image and library: github.com/link-foundation/code-quality"
+    language "Language"
+  playground
+    title "Playground"
+    sample "Sample"
+    file "File"
+    config "Configuration (Links Notation)"
+    configHint "Optional. The same canonical .lino accepted by --config quality.lino."
+    analyze "Analyze"
+    running "Analyzing…"
+    output "Output format"
+    findings "Findings"
+    none "No findings: the quality gate passes."
+    passed "passed"
+    failed "failed"
+    summary "{{files}} files, {{errors}} errors, {{warnings}} warnings"
+    method "Method fingerprint"
+    error "Analysis refused"
+    column
+      severity "Severity"
+      rule "Rule"
+      location "Location"
+      message "Message"
+    samples
+      taint "JavaScript taint flow (rules in .lino)"
+      python "Python secret and eval"
+      shell "Bash duplicate functions"
+      polyglot "Go, Rust and C# complexity"
+  comparison
+    title "How it compares"
+    intro "Honest status from the issue #1 case study. Native means implemented and tested here; gaps stay listed until verified."
+    product "Product"
+    area "Area"
+    status "Status of this implementation"
+    more "Full inventory and readiness criteria"
+    rows
+      sonarqube
+        area "Structural rules, quality gates, taint"
+        status "Structural rules and gates native; deep interfile taint missing"
+      semgrep
+        area "Structural patterns, taint rules"
+        status "Native tree patterns and branch-aware JS/TS taint; full semantics missing"
+      codeql
+        area "Query databases, SARIF alerts"
+        status "SARIF import/export native; query engine missing"
+      pmd
+        area "Token duplication (CPD)"
+        status "Whole-function and token-block clones native; full option parity unverified"
+      qualitybash
+        area "Shell syntax, lint, Bats, kcov, mutation"
+        status "Pipeline native in JavaScript; full parity explicitly unfinished"

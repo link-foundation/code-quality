@@ -1,0 +1,462 @@
+import type { Server } from 'node:http';
+
+export type Severity = 'note' | 'warning' | 'error';
+export type Language =
+  | 'javascript'
+  | 'typescript'
+  | 'tsx'
+  | 'rust'
+  | 'python'
+  | 'go'
+  | 'csharp'
+  | 'java'
+  | 'c'
+  | 'cpp'
+  | 'php'
+  | 'bash'
+  | 'cmake';
+export interface SourceFile {
+  path: string;
+  content: string;
+  language?: Language;
+}
+export interface Finding {
+  path: string;
+  ruleId: string;
+  message: string;
+  severity: Severity;
+  line: number;
+  column: number;
+  fingerprint: string;
+  endLine?: number;
+  endColumn?: number;
+  relatedLocations?: CloneLocation[];
+  dataFlow?: DataFlowStep[];
+}
+export interface DataFlowStep extends CloneLocation {
+  kind: 'source' | 'parameter' | 'assignment' | 'propagator' | 'sink';
+  name: string;
+}
+export interface Abstraction {
+  kind: 'function' | 'class' | 'macro';
+  syntaxKind?: string;
+  name: string;
+  qualifiedName: string;
+  start: number;
+  end: number;
+  startLine: number;
+  endLine: number;
+  /** Null when CMake formal arity needs unevaluated variable expansion. */
+  parameters: number | null;
+  complexity: number;
+  hash: string;
+  shape: string;
+  editHash?: string;
+}
+export interface FileAnalysis {
+  path: string;
+  language: Language;
+  hash: string;
+  lineCount: number;
+  abstractions: Abstraction[];
+}
+export interface Report {
+  schemaVersion: 1;
+  tool: 'code-quality';
+  method: string;
+  files: FileAnalysis[];
+  findings: Finding[];
+  summary: { files: number; errors: number; warnings: number };
+  passed: boolean;
+  metrics?: Record<string, number>;
+  incomplete?: boolean;
+  baseline?: { passed: boolean; failures: string[] };
+  clones?: TokenClone[];
+  cloneGroups?: TokenCloneGroup[];
+  cloneSuppressions?: CloneLocation[];
+}
+export interface CloneLocation {
+  path: string;
+  start: number;
+  end: number;
+  line: number;
+  column: number;
+  endLine: number;
+  endColumn: number;
+}
+export interface TokenClone {
+  language: Language;
+  tokens: number;
+  /** SHA-256 of normalized token identities, stable across input ordering. */
+  signature: string;
+  first: CloneLocation;
+  second: CloneLocation;
+}
+export interface TokenCloneGroup {
+  language: Language;
+  tokens: number;
+  signature: string;
+  occurrences: CloneLocation[];
+}
+export type TreePatternChild = TreePattern | { rest: true };
+export interface TreePattern {
+  kind?: string;
+  /** Exact raw node text, including internal whitespace. */
+  text?: string;
+  capture?: string;
+  /** Ordered named children, excluding comments. */
+  children?: TreePatternChild[];
+  /** Exact grammar fields; their nodes may be named or punctuation. */
+  fields?: Record<string, TreePattern>;
+  /** Candidate-local filters; each clause inherits a copy of parent captures. */
+  all?: TreePattern[];
+  any?: TreePattern[];
+  /** Reject a matching candidate; temporary captures never escape the filter. */
+  not?: TreePattern;
+}
+export interface CustomRule {
+  id: string;
+  message: string;
+  severity?: Severity;
+  languages?: Language[];
+  pattern:
+    | { kind?: string; text?: string; tree?: never }
+    | { tree: TreePattern; kind?: never; text?: never };
+}
+export interface Adapter {
+  id: string;
+  command: string;
+  args: string[];
+  format:
+    | 'json'
+    | 'sarif'
+    | 'eslint'
+    | 'shellcheck'
+    | 'ruff'
+    | 'phpstan'
+    | 'cargo'
+    | 'golangci'
+    | 'exit';
+  timeoutMs?: number;
+  versionArgs?: string[];
+}
+export interface Config {
+  rules?: Record<string, number | boolean>;
+  limits?: { maxFiles?: number; maxFileBytes?: number; maxTotalBytes?: number };
+  exclude?: string[];
+  customRules?: CustomRule[];
+  taintRules?: TaintRule[];
+  failOn?: Severity;
+  adapters?: Adapter[];
+  clones?:
+    | false
+    | {
+        minTokens?: number;
+        ignoreIdentifiers?: boolean;
+        ignoreLiterals?: boolean;
+        suppressionComments?: boolean;
+        ignoreAnnotations?: boolean;
+        ignoreUsings?: boolean;
+      };
+}
+export interface TaintRule {
+  id: string;
+  message: string;
+  severity?: Severity;
+  /** Explicit scope: other languages are not analyzed by this rule. */
+  languages: ('javascript' | 'typescript' | 'tsx')[];
+  /** Exact modeled call returns; simple formal parameters are also sources. */
+  sources: string[];
+  sinks: { call: string; argument: number }[];
+  sanitizers?: string[];
+  propagators?: string[];
+  /** Both possible arms join conservatively; loops and path feasibility are unsupported. */
+  controlFlow?: 'straight-line' | 'branch-joins';
+}
+export interface Plugin {
+  version: string;
+  id: string;
+  analyze(
+    context: SourceFile & {
+      language: Language;
+      abstractions: Abstraction[];
+      root: unknown;
+    }
+  ): Promise<Partial<Finding>[]> | Partial<Finding>[];
+}
+export interface AnalysisOptions {
+  config?: Config;
+  plugins?: Plugin[];
+}
+export interface Baseline {
+  schemaVersion: 1;
+  method: string;
+  files: string[];
+  findings: string[];
+  metrics: Record<string, number>;
+  migrations?: { reason: string; previous: string }[];
+}
+export interface QualityBashBaseline {
+  $schema: string;
+  files: string[];
+  method: {
+    coverage: { algorithm: string };
+    mutation: {
+      algorithm: string;
+      operators: string[];
+      parser: { name: string; version: string };
+    };
+    tools: Record<'bash' | 'bats' | 'shellcheck' | 'kcov', string>;
+  };
+  coverage: { linePercent: number };
+  mutation: { score: number };
+}
+export function validateQualityBashBaseline(
+  value: unknown
+): QualityBashBaseline;
+export function importQualityBashBaseline(
+  report: Report,
+  source: QualityBashBaseline,
+  options: { reason: string }
+): Baseline;
+export interface ToolStatus {
+  id: string;
+  available: boolean;
+  version?: string;
+  sha256?: string;
+  installation?: string;
+  reason?: string;
+}
+export interface EvolutionIdentity extends Partial<Omit<Abstraction, 'kind'>> {
+  id: string;
+  path: string;
+  kind: string;
+  qualifiedName: string;
+  hash: string;
+  shape: string;
+  editHash?: string;
+  language: Language;
+  startLine: number;
+  complexity: number;
+}
+export interface EvolutionEvent {
+  commit: string;
+  id: string;
+  kind: string;
+  action: 'added' | 'modified' | 'renamed' | 'deleted';
+  matchedBy?: string;
+  before?: EvolutionIdentity;
+  after?: EvolutionIdentity;
+}
+export interface EvolutionPattern {
+  id: string;
+  kind: string;
+  beforeShape: string;
+  afterShape: string;
+  count: number;
+  complexityDelta: number;
+  evidence: { commit: string; path: string; id: string }[];
+}
+export interface EvolutionReport {
+  schemaVersion: 1;
+  algorithm: string;
+  from: string;
+  to: string;
+  truncated: boolean;
+  commits: { sha: string; date: string; subject: string }[];
+  events: EvolutionEvent[];
+  current: EvolutionIdentity[];
+  hotspots: { path: string; changes: number }[];
+  coupling: { files: string[]; commits: number }[];
+  repeatedPatterns: EvolutionPattern[];
+  suggestions: {
+    patternId: string;
+    confidence: 'observational';
+    message: string;
+    evidence: EvolutionPattern['evidence'];
+  }[];
+  limitations: string[];
+}
+export const languages: ReadonlyArray<{
+  id: Language;
+  extensions: readonly string[];
+  grammar: string | null;
+}>;
+export function detectLanguage(path: string, content?: string): Language | null;
+export function analyzeSource(
+  file: SourceFile,
+  options?: AnalysisOptions
+): Promise<FileAnalysis & { findings: Omit<Finding, 'fingerprint'>[] }>;
+export function analyzeFiles(
+  files: SourceFile[],
+  options?: AnalysisOptions
+): Promise<Report>;
+export function readProject(
+  root: string,
+  options?: AnalysisOptions
+): Promise<SourceFile[]>;
+export function analyzeProject(
+  root: string,
+  options?: AnalysisOptions
+): Promise<Report>;
+export function formatReport(
+  report: Report,
+  format?: 'json' | 'text' | 'sarif' | 'lino'
+): string;
+export function createBaseline(report: Report): Baseline;
+export function checkBaseline(
+  report: Report,
+  baseline: Baseline
+): { passed: boolean; failures: string[] };
+export function updateBaseline(
+  report: Report,
+  previous: Baseline,
+  options?: { migrate?: string; committed?: Baseline }
+): Baseline;
+export function readGitBaseline(
+  root: string,
+  options: { ref: string; path?: string }
+): Promise<Baseline>;
+export interface ReportManifest {
+  schemaVersion: 1;
+  run: string;
+  complete: boolean;
+  passed: boolean;
+  files: string[];
+}
+/** Media type used for Links Notation HTTP bodies and responses. */
+export const linoMediaType: 'text/x-lino';
+/** Lossless, readable Links Notation encoding (lino-objects-codec). */
+export function formatLino(value: unknown): string;
+/** Decode Links Notation, refusing non-canonical input such as repeated keys. */
+export function parseCanonicalLino(text: string): unknown;
+export function saveReport(
+  report: Report | null | undefined,
+  directory: string,
+  options?: { error?: Error; artifacts?: Record<string, string | Uint8Array> }
+): Promise<ReportManifest>;
+export function measurementFingerprint(
+  files: FileAnalysis[],
+  methodology: unknown
+): string;
+export function importFindings(
+  data: unknown,
+  options?: { id?: string; format?: Adapter['format']; root?: string }
+): Omit<Finding, 'fingerprint'>[];
+export function runAdapter(
+  adapter: Adapter,
+  options?: { cwd?: string }
+): Promise<Omit<Finding, 'fingerprint'>[]>;
+export function doctor(
+  adapters: Pick<Adapter, 'id' | 'command' | 'versionArgs'>[],
+  options?: { cwd?: string }
+): Promise<{ passed: boolean; tools: ToolStatus[] }>;
+export const toolRecipes: Readonly<
+  Record<string, readonly [string, string[], string]>
+>;
+export function parseLcov(source: string): {
+  total: number;
+  covered: number;
+  linePercent: number;
+  files: string[];
+};
+export function parseTap(
+  source: string,
+  options?: { allowAbort?: boolean; expectedTotal?: number }
+): { total: number; failed: number; aborted?: true; executed?: number };
+export function parseKcov(
+  source: unknown,
+  options?: { rounding?: 'floor' | 'half-up' }
+): {
+  total: number;
+  covered: number;
+  linePercent: number;
+  files: string[];
+};
+export interface ShellMutant {
+  path: string;
+  line: number;
+  start: number;
+  end: number;
+  original: string;
+  replacement: string;
+}
+export function shellMutants(
+  file: SourceFile,
+  max?: number,
+  options?: { policy?: 'standard' | 'expanded' }
+): Promise<ShellMutant[]>;
+export function shellQuality(
+  root: string,
+  options?: {
+    config?: Config;
+    timeoutMs?: number;
+    maxMutants?: number;
+    stage?: 'qa' | 'lint' | 'test' | 'coverage' | 'mutation';
+    scripts?: string[];
+    tests?: string[];
+    jobs?: 'auto' | number;
+    rounding?: 'floor' | 'half-up';
+    mutationPolicy?: 'standard' | 'expanded';
+    excludedPaths?: string[];
+    onCoverage?: (directory: string) => Promise<void> | void;
+  }
+): Promise<Report & { measurement: unknown; metrics: Record<string, number> }>;
+export function extractEvolution(
+  root: string,
+  options?: {
+    from?: string;
+    to?: string;
+    maxCommits?: number;
+    maxFiles?: number;
+    maxFileBytes?: number;
+    maxTotalBytes?: number;
+  }
+): Promise<EvolutionReport>;
+export function createQualityServer(options?: {
+  token?: string;
+  root?: string;
+  maxBodyBytes?: number;
+  maxConcurrent?: number;
+}): Server;
+export const apiDescription: Record<string, unknown>;
+export interface ShellRuntimePackage {
+  name: string;
+  version: string;
+  url: string;
+  sha256: string;
+}
+export interface ShellToolPin {
+  version: string;
+  url: string;
+  sha256: string;
+  executable: string;
+  dependencies?: ShellRuntimePackage[];
+}
+export type ShellToolManifest = Record<
+  'bats' | 'shellcheck' | 'kcov',
+  ShellToolPin
+>;
+export function shellToolManifest(
+  platform?: string,
+  arch?: string
+): ShellToolManifest;
+export function installShellTools(
+  directory: string,
+  options?: { platform?: string; arch?: string }
+): Promise<{
+  schemaVersion: 1;
+  directory: string;
+  platform: string;
+  arch: string;
+  manifest: ShellToolManifest;
+  files: { path: string; sha256: string }[];
+  executables: Record<'bats' | 'shellcheck' | 'kcov', string>;
+  runtime: {
+    launcher: string;
+    loader: string;
+    libraries: string[];
+    dependencies: { name: string; path: string }[];
+  };
+  fingerprint: string;
+}>;

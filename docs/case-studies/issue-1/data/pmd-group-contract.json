@@ -1,0 +1,25 @@
+{
+  "source": "https://docs.pmd-code.org/pmd-doc-7.29.0/pmd_userdocs_cpd_report_formats.html",
+  "documentationVersion": "7.29.0",
+  "retrievedAt": "2026-11-17",
+  "provenance": "Original concise public overview notes. The documentation contains illustrative source excerpts; none were copied or used as fixtures. No upstream implementation or test-suite files were opened. No execution parity claim.",
+  "publicBehavior": [
+    "Duplicate reports can identify multiple source locations for a repeated block"
+  ],
+  "nativePolicy": {
+    "identity": "Group already verified pairs by exact language, token count and normalized signature; do not infer additional matches or merge distinct signatures transitively",
+    "occurrences": "Deduplicate exact path/start/end locations within each group; retain UTF-16 offsets and one-based line/column positions with exclusive ends",
+    "ordering": "Groups by decreasing token count, language and signature; occurrences by path, start and end",
+    "overlap": "Different groups may overlap; collected locations from different nonoverlapping pairs need not all be mutually nonoverlapping",
+    "reports": "cloneGroups in JSON and SARIF run properties; group and summed occurrence counts in text; no source text",
+    "compatibility": "Preserve pair findings, gates, baseline identities and method fingerprints; omit metadata when disabled and return an empty array when enabled without matches",
+    "bounds": "Derived from at most 10,000 verified pairs: at most 10,000 groups and 20,000 location entries",
+    "limits": "Original view across thirteen modes; no CPD grouping or complete lexer/options equivalence claim"
+  },
+  "evidence": [
+    "tests/quality-clone-groups.test.js",
+    "tests/quality-clones-integration.test.js",
+    "experiments/code-quality/package-smoke.mjs",
+    "examples/code-quality/token-clones/README.md"
+  ]
+}

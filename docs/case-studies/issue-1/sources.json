@@ -1,0 +1,215 @@
+{
+  "retrievedAt": "2026-11-18",
+  "snapshots": [
+    {
+      "path": "docs/case-studies/issue-1/data/ci-cd-best-practices.md",
+      "sha256": "1f0a7fd5c85ef52b916a624e84b16ca2c172fe517c22c579c9f764025918a371",
+      "upstreamRevision": "c90e4c1806fa36748aafb7f002024536def16df5"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/issue.json",
+      "sha256": "33baa71d6b8d695540149efc4fdaa9c9e953d2593aa550946184d481130ce1e0"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/quality-bash-baseline.schema.json",
+      "sha256": "f702bac7ef814e1dc3cdadddfd8c1948d138c6744ab300277222f56260d08f75",
+      "upstreamRevision": "8dc30669aa4255dfc6f84fb0f935b8036081fab4"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/quality-bash-readme.md",
+      "sha256": "065834589a4e95f5e802b33d86bbdfda0e396465d4e7f75058b13e28f8800ca0",
+      "upstreamRevision": "8dc30669aa4255dfc6f84fb0f935b8036081fab4"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/grammar-provenance.json",
+      "sha256": "983a228fc5e8092dadec427dfc1999126790bc6784f39bce8aef1be5909456e7"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/quality-bash-develop.md",
+      "sha256": "f16ec88b9638254340a02aea896399da0f537ef3e2fcf6dfd5e550e9aaa36e08",
+      "upstreamRevision": "8dc30669aa4255dfc6f84fb0f935b8036081fab4"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/quality-bash-cli-contract.json",
+      "sha256": "dbd2a4050a273e1ecc6f649b86a073c00848af8f098fdcdbb64d0eb794e6212e",
+      "upstreamRelease": "v1.0.0-alpha.5"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/shell-runtime-pins.json",
+      "sha256": "8131edcba8023c982ba7bcef5c1f2dd44fb8f75f38efc2ed92f60abc23899912",
+      "provenance": "Independent Debian HTTPS package indexes; unsigned local metadata research, not competitor code"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/cmake-contract-observations.json",
+      "sha256": "e525cdf286b86d848160ccd12458195c8ebf39c46bc8348c0cffa6d1b846705c",
+      "provenance": "Original finite scripts executed with CMake 3.28.3 using 3.20 policies; twenty syntax cases and ten paired minimum-arity cases; no project build or upstream source inspection"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/shell-comparison-observations.json",
+      "sha256": "50205699a3be0e9766a978c41a06b8479c450bd438449834b6ff94d19c7a13f8",
+      "upstreamRelease": "v1.0.0-alpha.5",
+      "provenance": "Two original finite shell fixtures executed by the checksum-verified released CLI and native JavaScript using the same installed tool cache; real QA counts, bounded workspace fingerprints, baseline freshness refusals and native floor-preserving import; no upstream implementation or tests inspected"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/pmd-cpd-contract.json",
+      "sha256": "a8c929461ed8e8d487a962583de1bdd3ce29a230d240760ee1d7a47a79ce9f8b",
+      "upstreamRelease": "7.29.0",
+      "provenance": "Original concise public-documentation contract notes; no upstream implementation/tests or copied examples; no execution parity claim"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/cmake-token-contract.json",
+      "sha256": "822c3b4ea853fde2b5108418d67037c15e1bed0b9e86f7811ff810e3fce5c7aa",
+      "provenance": "Original finite CMake lexical-token contract notes from versioned official documentation; no implementation/tests inspected; no execution parity claim"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/pmd-suppression-contract.json",
+      "sha256": "76a2dcebad2a628b6c8065f957652d8fa92bdfd5f3374c2f9120d71aae2e0753",
+      "upstreamRelease": "7.29.0",
+      "provenance": "Original concise public comment-suppression contract notes; no upstream implementation/tests/examples copied; strict opt-in, malformed-marker and segment policies are native choices, not a parity claim"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/pmd-group-contract.json",
+      "sha256": "0fd3a9cc38a36ccf3112a01f3616397f61ec72ffe29bda6d360ac91e4b7673bb",
+      "upstreamRelease": "7.29.0",
+      "provenance": "Original concise public report-format overview notes; documentation illustrative excerpts were not copied or used as fixtures; no upstream implementation/test-suite files opened; native grouping policy is not a parity claim"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/pmd-syntax-filter-contract.json",
+      "sha256": "195070cbea2e3381576bc110b7fc101fc47ebd9aef792e974ee88c457b7fc10e",
+      "upstreamRelease": "7.29.0",
+      "provenance": "Original concise public option-table notes; no upstream implementation or test-suite files opened or copied; grammar observations and fixtures are original; no execution parity claim"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/structural-pattern-contract.json",
+      "sha256": "064794a11422dab41b71774ac466abd1b80cc31e1450f6c6641c5f106c069a16",
+      "provenance": "Original concise public feature-concept notes; no upstream implementation/tests or documentation examples copied; native grammar object/capture/wildcard policy is not a compatibility or execution-parity claim"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/tree-predicate-contract.json",
+      "sha256": "9db535ce05a43ee0eaf261e7267d753b6687fc7451dfe0fceb8633dbacc197a1",
+      "provenance": "Original concise public Boolean-operator concept notes; no upstream implementation/tests or documentation examples copied; native isolated-clause semantics are not Semgrep compatibility or execution parity"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/bash-parser-contract.json",
+      "sha256": "c7129c16a4415b5f53b9b59ea1df5496c432286c48a2dd62e8eed90f0f273d26",
+      "provenance": "Original parser/runtime failure, artifact metadata and finite regression contract; official release binary and license only; no competitor implementation/test-suite files read"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/shell-operator-contract.json",
+      "sha256": "073b05b4d6ffbbae48aed67b5296144a79153124b2cff3b99aac6626d6d7f0ec",
+      "provenance": "Original finite grammar-boundary and mutation-policy observations, source hashes and actual Bats results; preceding release observations motivate independently implemented policies; no competitor implementation or test-suite files read"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/taint-contract.json",
+      "sha256": "9a9cd651af9f301b9517315ab60bcec82acc64b456e77555b0b744f100e5d928",
+      "provenance": "Original concise public Semgrep/Snyk dataflow concept notes and finite native source-hashed observations; no implementation/tests or documentation examples copied; no compatibility, accuracy or parity claim"
+    }
+  ],
+  "primarySources": [
+    {
+      "title": "SonarQube Cloud/Server",
+      "url": "https://www.sonarsource.com/products/sonarqube/"
+    },
+    {
+      "title": "JetBrains Qodana",
+      "url": "https://www.jetbrains.com/help/qodana/features.html"
+    },
+    {
+      "title": "Semgrep",
+      "url": "https://docs.semgrep.dev/writing-rules/rule-syntax"
+    },
+    {
+      "title": "GitHub CodeQL/code scanning",
+      "url": "https://docs.github.com/en/code-security/concepts/code-scanning/code-scanning"
+    },
+    {
+      "title": "Snyk Code",
+      "url": "https://docs.snyk.io/scan-fix-and-prevent/scan-with-snyk/snyk-code"
+    },
+    {
+      "title": "CodeScene",
+      "url": "https://helpcenter.codescene.com/en/help/articles/1844075-how-to-assess-coupling-health-in-codescene"
+    },
+    {
+      "title": "Codacy",
+      "url": "https://docs.codacy.com/"
+    },
+    {
+      "title": "Qlty / Code Climate Quality",
+      "url": "https://docs.qlty.sh/what-is-qlty"
+    },
+    {
+      "title": "DeepSource",
+      "url": "https://docs.deepsource.com/docs/platform/getting-started"
+    },
+    {
+      "title": "Ruff",
+      "url": "https://docs.astral.sh/ruff/rules/"
+    },
+    {
+      "title": "PMD/CPD",
+      "url": "https://docs.pmd-code.org/pmd-doc-7.29.0/pmd_userdocs_cpd.html"
+    },
+    {
+      "title": "Stryker",
+      "url": "https://stryker-mutator.io/docs/stryker-js/configuration/"
+    },
+    {
+      "title": "quality-bash",
+      "url": "https://github.com/ever-guild/quality-bash"
+    },
+    {
+      "title": "quality-bash released CLI contracts",
+      "url": "https://github.com/ever-guild/quality-bash/releases/tag/v1.0.0-alpha.5"
+    },
+    {
+      "title": "Debian kcov runtime dependencies",
+      "url": "https://packages.debian.org/bookworm-backports/kcov"
+    },
+    {
+      "title": "Linux dynamic loader library-path contract",
+      "url": "https://manpages.debian.org/bookworm/manpages/ld.so.8.en.html"
+    },
+    {
+      "title": "CMake public language grammar",
+      "url": "https://cmake.org/cmake/help/latest/manual/cmake-language.7.html"
+    },
+    {
+      "title": "CMake function formal arguments",
+      "url": "https://cmake.org/cmake/help/latest/command/function.html"
+    },
+    {
+      "title": "CMake condition evaluation",
+      "url": "https://cmake.org/cmake/help/latest/command/if.html"
+    },
+    {
+      "title": "CMake 3.28 lexical command/argument categories",
+      "url": "https://cmake.org/cmake/help/v3.28/manual/cmake-language.7.html"
+    },
+    {
+      "title": "PMD 7.29.0 duplicate report-format overview",
+      "url": "https://docs.pmd-code.org/pmd-doc-7.29.0/pmd_userdocs_cpd_report_formats.html"
+    },
+    {
+      "title": "Semgrep public pattern concepts",
+      "url": "https://docs.semgrep.dev/writing-rules/pattern-syntax"
+    },
+    {
+      "title": "Semgrep public rule-operator concepts",
+      "url": "https://docs.semgrep.dev/writing-rules/rule-syntax"
+    },
+    {
+      "title": "Official Tree-sitter Bash 0.23.3 release asset",
+      "url": "https://github.com/tree-sitter/tree-sitter-bash/releases/tag/v0.23.3"
+    },
+    {
+      "title": "Native taint concept research",
+      "url": "https://docs.semgrep.dev/writing-rules/data-flow/taint-mode/overview"
+    },
+    {
+      "title": "Native taint concept research",
+      "url": "https://docs.snyk.io/scan-fix-and-prevent/scan-with-snyk/snyk-code/manage-code-vulnerabilities/breakdown-of-code-analysis"
+    }
+  ],
+  "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version and black-box QA/report/baseline observations, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. CMake probes use public official language/function/condition documentation and original finite scripts. Tests and engine source are original. External dependencies retain upstream licenses. PMD CPD research uses the stable 7.29.0 public behavior documentation only; token fixtures, index and finite oracle are original. CMake token analysis uses the versioned 3.28.6 public language categories and original lexical/refusal fixtures. Comment suppression uses the same stable public CPD documentation; fixtures, region bookkeeping and bounded probes are original. The stable report-format overview informs multi-location reporting; it contains illustrative source excerpts, none copied or used as fixtures. No upstream implementation or test-suite files were opened; native group policy and all group fixtures are original. Optional annotation/directive filters use the stable CPD option table and original finite grammar observations. Java numeric-kind regression and correction are independently derived from original inputs. Structural pattern research uses the public Semgrep overview for nested matching, capture equality and sequence concepts; the native tree object API, matcher, finite work policies and fixtures are original. No upstream implementation/test-suite files or examples were copied. Candidate-local Boolean filters use public operator concepts only; the isolated-clause capture policy, work limits and original cases do not implement Semgrep range/binding semantics. Bash grammar correction inspects official release metadata/binary, runtime public APIs and licenses; independent finite cases reproduce a missing scanner import. No competitor implementation or test-suite files were read. Native expanded shell operator policies use independently derived finite grammar boundaries and original Bats assertions; prior released-binary observations motivate arithmetic fault models without copying competitor implementation or tests. Native straight-line taint research uses public Semgrep source/sink/sanitizer concepts and Snyk ordered-path reporting concepts only. The object models, scope/refusal policies, original sources and tests are independent; no documentation examples or upstream implementation/tests copied. Exhaustive product and proprietary-case parity remains missing."
+}

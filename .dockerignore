@@ -1,0 +1,10 @@
+*
+!Dockerfile
+!package.json
+!package-lock.json
+!bin/
+!bin/**
+!src/
+!src/**
+!LICENSE
+!THIRD-PARTY-NOTICES.md

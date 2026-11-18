@@ -1,0 +1,68 @@
+name: Code quality
+description: Analyze source or measure trusted shell QA with committed baseline floors.
+inputs:
+  command:
+    description: check for source analysis, or qa to execute trusted shell tests
+    default: check
+  root:
+    description: Project directory relative to the checked out workspace
+    default: .
+  baseline:
+    description: Root-relative shell QA baseline
+    default: quality-baseline.json
+  enforce-base:
+    description: Also enforce the PR base commit's baseline during shell QA
+    default: 'true'
+  install-tools:
+    description: Download pinned Linux shell tools for QA (requires documented host libraries)
+    default: 'true'
+  reports:
+    description: Root-relative directory for persistent fresh report bundles
+    default: quality-reports
+  jobs:
+    description: Mutation workers, auto or an integer from 1 to 4
+    default: '1'
+  timeout-ms:
+    description: Per-process shell deadline, from 1 to 300000 milliseconds
+    default: '30000'
+  rounding:
+    description: Shell percentage rounding, floor or half-up; changing it requires baseline migration
+    default: floor
+  mutation-policy:
+    description: Shell mutation operators, standard or expanded; changing it requires baseline migration
+    default: standard
+outputs:
+  reports:
+    description: Absolute report directory, also available for failed runs
+    value: ${{ steps.quality.outputs.reports }}
+  manifest:
+    description: Absolute latest-run manifest path
+    value: ${{ steps.quality.outputs.manifest }}
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v7
+      with:
+        node-version: '24'
+        package-manager-cache: false
+    - name: Install the action's locked dependencies
+      shell: bash
+      env:
+        QUALITY_ACTION_PATH: ${{ github.action_path }}
+      run: npm ci --prefix "$QUALITY_ACTION_PATH" --ignore-scripts --no-audit --no-fund
+    - name: Analyze or measure quality
+      id: quality
+      shell: bash
+      env:
+        QUALITY_ACTION_PATH: ${{ github.action_path }}
+        QUALITY_COMMAND: ${{ inputs.command }}
+        QUALITY_ROOT: ${{ inputs.root }}
+        QUALITY_BASELINE: ${{ inputs.baseline }}
+        QUALITY_ENFORCE_BASE: ${{ inputs.enforce-base }}
+        QUALITY_INSTALL_TOOLS: ${{ inputs.install-tools }}
+        QUALITY_REPORTS: ${{ inputs.reports }}
+        QUALITY_JOBS: ${{ inputs.jobs }}
+        QUALITY_TIMEOUT_MS: ${{ inputs.timeout-ms }}
+        QUALITY_ROUNDING: ${{ inputs.rounding }}
+        QUALITY_MUTATION_POLICY: ${{ inputs.mutation-policy }}
+      run: node "$QUALITY_ACTION_PATH/scripts/quality-action.mjs"

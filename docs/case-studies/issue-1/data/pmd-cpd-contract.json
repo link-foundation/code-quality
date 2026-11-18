@@ -1,0 +1,16 @@
+{
+  "product": "PMD CPD",
+  "version": "7.29.0",
+  "releasedAt": "2026-10-30",
+  "retrievedAt": "2026-11-17",
+  "source": "https://docs.pmd-code.org/pmd-doc-7.29.0/pmd_userdocs_cpd.html",
+  "observationType": "Original paraphrase of public behavior documentation; no implementation or test inspection",
+  "contracts": [
+    "A configurable minimum token length determines reported repeated blocks.",
+    "Identical-token comparison is the default; selected languages can optionally normalize identifiers or literals.",
+    "Language-specific controls also cover annotations, literal sequences, using directives and skipped blocks.",
+    "Lexical errors and detected duplicates affect exit status unless explicitly disabled.",
+    "Text and structured reports are available; file collection and integration interfaces are documented separately."
+  ],
+  "nativeScope": "Original bounded token pairs in twelve grammar-backed language domains, exact defaults and explicit normalization; complete CPD lexical and option equivalence remains unverified"
+}

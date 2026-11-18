@@ -1,0 +1,4 @@
+{
+  "clones": { "minTokens": 7 },
+  "rules": { "duplicate-function": false }
+}

@@ -1,0 +1,26 @@
+{
+  "source": "https://docs.pmd-code.org/pmd-doc-7.29.0/pmd_userdocs_cpd.html#suppression",
+  "documentationVersion": "7.29.0",
+  "retrievedAt": "2026-11-17",
+  "provenance": "Original concise public-documentation notes; no upstream implementation, tests or examples inspected or copied; no execution parity claim",
+  "publicBehavior": [
+    "CPD-OFF and CPD-ON in comments delimit omitted duplication regions in documented language families",
+    "Legacy Java annotation suppression is a separate mechanism"
+  ],
+  "nativePolicy": {
+    "id": "cpd-comment-regions-v1",
+    "optIn": "clones.suppressionComments must be true; explicit false preserves the previous method and report",
+    "markers": "Case-sensitive words in actual parser/reader comments, never string/argument literals",
+    "boundaries": "Retained segments cannot match across omitted regions; all other rules and syntax validation inspect original source",
+    "audit": "Sorted UTF-16 ranges from end of OFF to start of ON in JSON and SARIF; text count; no source text",
+    "refusals": "Unmatched ON, nested OFF, unterminated OFF and more than 10,000 total markers",
+    "work": "Suppressed tokens still consume existing token/source/parser budgets; CMake comment/token entries share its 100,000-entry limit",
+    "limits": "Original policy across thirteen language modes; no legacy Java annotations, full lexer equivalence or competitor parity claim"
+  },
+  "evidence": [
+    "tests/quality-clone-suppressions.test.js",
+    "tests/quality-clones-integration.test.js",
+    "experiments/code-quality/clone-suppression-budget.mjs",
+    "examples/code-quality/clone-suppression/README.md"
+  ]
+}

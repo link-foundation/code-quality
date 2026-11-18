@@ -1,0 +1,28 @@
+(
+  taintRules (
+    (
+      id "example/command-flow"
+      message "Untrusted command text"
+      languages (
+        "javascript"
+        "typescript"
+        "tsx"
+      )
+      sources (
+        "input.read"
+      )
+      sinks (
+        (
+          call "execute"
+          argument 0
+        )
+      )
+      sanitizers (
+        "validateCommand"
+      )
+      propagators (
+        "decorate"
+      )
+    )
+  )
+)
