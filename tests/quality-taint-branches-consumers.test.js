@@ -1,5 +1,6 @@
 import { describe, it } from 'test-anywhere';
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { URL, fileURLToPath } from 'node:url';
 import { createQualityServer } from '../src/quality/index.js';
@@ -66,6 +67,29 @@ describe('native branch-join consumers', () => {
       assert.equal(http.method, cli.method);
     } finally {
       await new Promise((resolve) => server.close(resolve));
+    }
+  });
+  it('keeps the linked contract ledger in step with the example files', async () => {
+    const ledger = JSON.parse(
+      await readFile(
+        new URL(
+          '../docs/case-studies/issue-1/data/taint-branch-contract.json',
+          import.meta.url
+        ),
+        'utf8'
+      )
+    );
+    assert.equal(ledger.nativePolicy.method, 'branch-join-call-models-v1');
+    for (const name of ['safe.js', 'unsafe.js']) {
+      const content = await readFile(new URL(name, root), 'utf8');
+      const observation = ledger.observations.find(({ path }) => path === name);
+      assert.equal(
+        observation.sha256,
+        createHash('sha256').update(content).digest('hex')
+      );
+    }
+    for (const evidence of ledger.evidence) {
+      await readFile(new URL(`../${evidence}`, import.meta.url));
     }
   });
 });

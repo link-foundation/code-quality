@@ -1,0 +1,179 @@
+{
+  "sources": [
+    {
+      "url": "https://docs.semgrep.dev/writing-rules/data-flow/taint-mode/overview",
+      "reviewedAt": "2026-11-18",
+      "publicConcepts": "Untrusted data can flow from sources to sinks through assignments and calls. Configurable sanitizers affect flow. Exact source and sanitizer models distinguish call results from nested expressions; richer side-effect, control and cross-function analyses have separate contracts."
+    }
+  ],
+  "provenance": "Public documentation concepts only. No upstream implementation or test-suite files opened, and no documentation source examples copied. All native API policies, fixtures and tests are original; these observations do not establish product compatibility, execution parity or security accuracy.",
+  "nativePolicy": {
+    "method": "branch-join-call-models-v1",
+    "optIn": "A rule sets controlFlow to \"branch-joins\". Omitted or \"straight-line\" keeps straight-line-call-models-v1; switching methods requires a reviewed baseline migration.",
+    "languages": [
+      "javascript",
+      "typescript",
+      "tsx"
+    ],
+    "joins": "if/else, standalone lexical blocks, conditional expressions and &&/||/?? evaluate the condition once, then trace both possible arms with independent bindings; the join keeps the union of possible origins. A sanitizer clears taint only if every continuing arm clears it. Returning arms report inside the arm and do not reach later statements.",
+    "limits": "256 conditional forks per file shared across rules and at most 32 nested control/lexical scopes. Forks charge binding and trace copies to the existing work budget.",
+    "refusals": "Loops, local function declarations, nested var, binding shadowing, reads before declaration, unknown or dynamic calls and exhausted budgets refuse analysis, discard partial findings and mark the report incomplete.",
+    "remaining": "Feasibility proofs, predicate correlation, constant-branch pruning, implicit control taint, loops, exceptions, closures, heap/type/framework semantics, interprocedural analysis, documented competitor cases and comparative precision/recall remain unsupported."
+  },
+  "evidence": [
+    "tests/quality-taint-branches.test.js",
+    "tests/quality-taint-branches-consumers.test.js",
+    "experiments/code-quality/taint-branch-contract.mjs",
+    "experiments/code-quality/taint-branch-shapes.mjs",
+    "examples/code-quality/taint-branches/README.md",
+    "docs/dataflow.md"
+  ],
+  "observations": [
+    {
+      "path": "safe.js",
+      "sha256": "32cef03dd29cec642ee09699f9fe967e260841d810e9362d227786d8582fb8f5",
+      "expected": "clean",
+      "incomplete": false,
+      "paths": [],
+      "refusals": []
+    },
+    {
+      "path": "unsafe.js",
+      "sha256": "653ca89ab00b4078acb409507342270cf6f092de25dc1b6d67e51ed680e6f216",
+      "expected": "flow",
+      "incomplete": false,
+      "paths": [
+        [
+          {
+            "kind": "source",
+            "name": "input.read",
+            "path": "unsafe.js",
+            "start": 94,
+            "end": 106,
+            "line": 3,
+            "column": 17,
+            "endLine": 3,
+            "endColumn": 29
+          },
+          {
+            "kind": "assignment",
+            "name": "command",
+            "path": "unsafe.js",
+            "start": 84,
+            "end": 91,
+            "line": 3,
+            "column": 7,
+            "endLine": 3,
+            "endColumn": 14
+          },
+          {
+            "kind": "sink",
+            "name": "execute",
+            "path": "unsafe.js",
+            "start": 168,
+            "end": 184,
+            "line": 7,
+            "column": 3,
+            "endLine": 7,
+            "endColumn": 19
+          }
+        ]
+      ],
+      "refusals": []
+    },
+    {
+      "path": "return.js",
+      "sha256": "2b4a6ead7eea2355e309e871119600e801d9427aaf44172f85775512848e6fbe",
+      "expected": "clean",
+      "incomplete": false,
+      "paths": [],
+      "refusals": []
+    },
+    {
+      "path": "ternary.js",
+      "sha256": "bacc98b2d5c648b7376027bf1dcfd06173ebfb5dd180d08c2474889fbba74507",
+      "expected": "flow",
+      "incomplete": false,
+      "paths": [
+        [
+          {
+            "kind": "source",
+            "name": "input.read",
+            "path": "ternary.js",
+            "start": 15,
+            "end": 27,
+            "line": 1,
+            "column": 16,
+            "endLine": 1,
+            "endColumn": 28
+          },
+          {
+            "kind": "sink",
+            "name": "execute",
+            "path": "ternary.js",
+            "start": 0,
+            "end": 37,
+            "line": 1,
+            "column": 1,
+            "endLine": 1,
+            "endColumn": 38
+          }
+        ]
+      ],
+      "refusals": []
+    },
+    {
+      "path": "unreachable.js",
+      "sha256": "4c0f901db5f0de448d24c0daf0961e19f1739b27946a8eaaf3c8a61a76a21cfa",
+      "expected": "flow",
+      "incomplete": false,
+      "paths": [
+        [
+          {
+            "kind": "source",
+            "name": "input.read",
+            "path": "unreachable.js",
+            "start": 19,
+            "end": 31,
+            "line": 1,
+            "column": 20,
+            "endLine": 1,
+            "endColumn": 32
+          },
+          {
+            "kind": "sink",
+            "name": "execute",
+            "path": "unreachable.js",
+            "start": 11,
+            "end": 32,
+            "line": 1,
+            "column": 12,
+            "endLine": 1,
+            "endColumn": 33
+          }
+        ]
+      ],
+      "refusals": []
+    },
+    {
+      "path": "unknown.js",
+      "sha256": "9d9b4a492db149b8a831376a675c2461ca0b9f2ee88db42953e18a27d271d2ec",
+      "expected": "incomplete",
+      "incomplete": true,
+      "paths": [],
+      "refusals": [
+        "example/branch-flow: Taint analysis: unsupported unmodeled or dynamic call"
+      ]
+    },
+    {
+      "path": "hoisted.js",
+      "sha256": "dc20c73a960ca5db90945401b6fecf7dec088855793082deb08a249cc460b8c1",
+      "expected": "incomplete",
+      "incomplete": true,
+      "paths": [],
+      "refusals": [
+        "example/branch-flow: Taint analysis: var in a nested block"
+      ]
+    }
+  ]
+}
