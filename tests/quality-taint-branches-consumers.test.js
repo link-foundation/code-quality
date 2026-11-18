@@ -81,7 +81,11 @@ describe('native branch-join consumers', () => {
     );
     assert.equal(ledger.nativePolicy.method, 'branch-join-call-models-v1');
     for (const name of ['safe.js', 'unsafe.js']) {
-      const content = await readFile(new URL(name, root), 'utf8');
+      // The ledger hashes the LF form; Windows checkouts may use CRLF.
+      const content = (await readFile(new URL(name, root), 'utf8')).replaceAll(
+        '\r\n',
+        '\n'
+      );
       const observation = ledger.observations.find(({ path }) => path === name);
       assert.equal(
         observation.sha256,

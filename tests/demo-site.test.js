@@ -16,7 +16,7 @@ const demo = new URL('../examples/demo-site/', import.meta.url);
 function catalogKeys(text) {
   const path = [];
   const keys = [];
-  for (const line of text.split('\n').slice(1)) {
+  for (const line of text.split(/\r?\n/).slice(1)) {
     const match = /^( +)(\S+)( .*)?$/.exec(line);
     if (!match) {
       continue;
