@@ -1,0 +1,197 @@
+{
+  "sources": [
+    {
+      "url": "https://docs.semgrep.dev/writing-rules/data-flow/taint-mode/overview",
+      "reviewedAt": "2026-11-18",
+      "publicConcepts": "Untrusted data can flow from sources to sinks through assignments and calls. Configurable sanitizers affect flow. Exact source and sanitizer models distinguish call results from nested expressions; richer side-effect, control and cross-function analyses have separate contracts."
+    },
+    {
+      "url": "https://docs.snyk.io/scan-fix-and-prevent/scan-with-snyk/snyk-code/manage-code-vulnerabilities/breakdown-of-code-analysis",
+      "reviewedAt": "2026-11-18",
+      "publicConcepts": "A vulnerability report can expose an ordered source-to-sink path with source locations. Product workflows also provide issue context and remediation guidance; those hosted workflows are not implemented here."
+    }
+  ],
+  "provenance": "Public documentation concepts only. No upstream implementation or test-suite files opened, and no documentation source examples copied. All native API policies, fixtures and tests are original; these observations do not establish product compatibility, execution parity or security accuracy.",
+  "nativePolicy": {
+    "method": "straight-line-call-models-v1",
+    "languages": [
+      "javascript",
+      "typescript",
+      "tsx"
+    ],
+    "models": "Explicit disjoint exact static call names for source returns, sanitizer returns, conservative argument-to-return propagators and zero-based sink arguments. Every simple function parameter is untrusted. Calls do not mutate caller bindings in these opaque models.",
+    "scopes": "Synchronous named top-level function declarations, optionally exported, are analyzed independently as possible entry points. Straight-line declarations, assignment and eager expressions only. Scope inventory precedes tracing, including after return; execution tracing stops at return. No closure or local-call resolution. Bindings require simple ASCII names; escaped/Unicode spellings refuse analysis to prevent model shadowing.",
+    "paths": "One deterministic immutable trace per origin/value, preserving copies, overwrites, assignment-expression steps and ordered sink locations. Nested arguments evaluate before sanitizers/sources; sanitizers only clear returned values. Type assertions preserve taint; void evaluates its operand but returns clean.",
+    "evidence": "JSON dataFlow with UTF-16 ranges, text steps and SARIF codeFlows/threadFlows. Discard a rule's prior findings on unsupported analysis; emit incomplete evidence and refuse a passing baseline.",
+    "limits": "25 rules, 32 call names per role and sinks per rule, argument indexes 0..31; 100,000 shared per-file work units, 128 expression levels and trace locations, 64 origins/value, 512 bindings/scope, 1000 paths/rule; existing source/parser/report bounds also apply.",
+    "remaining": "Branches, loops, short-circuit control flow, dynamic/unknown calls, imports, classes, heap/objects/arrays, closures, async, interprocedural/cross-file/framework/type semantics, built-in vulnerability catalog, full documented cases and comparative precision/recall remain unsupported."
+  },
+  "evidence": [
+    "tests/quality-taint.test.js",
+    "tests/quality-taint-consumers.test.js",
+    "tests/types/quality.ts",
+    "experiments/code-quality/taint-contract.mjs",
+    "experiments/code-quality/taint-shapes.mjs",
+    "experiments/code-quality/package-smoke.mjs",
+    "examples/code-quality/taint/README.md",
+    "docs/dataflow.md"
+  ],
+  "observations": [
+    {
+      "path": "safe.js",
+      "sha256": "f996bf7c2d23286064f6d20fb5d3491119cdd9dfb86dfb075f80d1c8a9034867",
+      "expected": "clean",
+      "incomplete": false,
+      "paths": [],
+      "refusals": []
+    },
+    {
+      "path": "unsafe.js",
+      "sha256": "0686e05436f928d16d57b6135ddd51e4570f13e99dd71d4332ecf993aad10610",
+      "expected": "flow",
+      "incomplete": false,
+      "paths": [
+        [
+          {
+            "kind": "source",
+            "name": "input.read",
+            "path": "unsafe.js",
+            "start": 155,
+            "end": 167,
+            "line": 4,
+            "column": 15,
+            "endLine": 4,
+            "endColumn": 27
+          },
+          {
+            "kind": "assignment",
+            "name": "raw",
+            "path": "unsafe.js",
+            "start": 149,
+            "end": 152,
+            "line": 4,
+            "column": 9,
+            "endLine": 4,
+            "endColumn": 12
+          },
+          {
+            "kind": "propagator",
+            "name": "decorate",
+            "path": "unsafe.js",
+            "start": 187,
+            "end": 209,
+            "line": 5,
+            "column": 19,
+            "endLine": 5,
+            "endColumn": 41
+          },
+          {
+            "kind": "assignment",
+            "name": "command",
+            "path": "unsafe.js",
+            "start": 177,
+            "end": 184,
+            "line": 5,
+            "column": 9,
+            "endLine": 5,
+            "endColumn": 16
+          },
+          {
+            "kind": "sink",
+            "name": "execute",
+            "path": "unsafe.js",
+            "start": 213,
+            "end": 229,
+            "line": 6,
+            "column": 3,
+            "endLine": 6,
+            "endColumn": 19
+          }
+        ]
+      ],
+      "refusals": []
+    },
+    {
+      "path": "parameter.ts",
+      "sha256": "f0cd46cfbefe73b035878c73d1a523d8879653ff783610feda2f09659c82b369",
+      "expected": "flow",
+      "incomplete": false,
+      "paths": [
+        [
+          {
+            "kind": "parameter",
+            "name": "value",
+            "path": "parameter.ts",
+            "start": 15,
+            "end": 20,
+            "line": 1,
+            "column": 16,
+            "endLine": 1,
+            "endColumn": 21
+          },
+          {
+            "kind": "assignment",
+            "name": "value",
+            "path": "parameter.ts",
+            "start": 15,
+            "end": 20,
+            "line": 1,
+            "column": 16,
+            "endLine": 1,
+            "endColumn": 21
+          },
+          {
+            "kind": "sink",
+            "name": "execute",
+            "path": "parameter.ts",
+            "start": 32,
+            "end": 46,
+            "line": 1,
+            "column": 33,
+            "endLine": 1,
+            "endColumn": 47
+          }
+        ]
+      ],
+      "refusals": []
+    },
+    {
+      "path": "overwrite.js",
+      "sha256": "c06ef08b34a415808f604fd814cb65f8cd2e86c745cff5b5e098f5bbd5376836",
+      "expected": "clean",
+      "incomplete": false,
+      "paths": [],
+      "refusals": []
+    },
+    {
+      "path": "shadow.js",
+      "sha256": "6c0f42f64b9e1160d68c0f46ce42e2cec7a9abc8456b77bea77118d06de5eb3a",
+      "expected": "incomplete",
+      "incomplete": true,
+      "paths": [],
+      "refusals": [
+        "example/command-flow: Taint analysis: scope needs unique simple ASCII bindings without shadowing call models"
+      ]
+    },
+    {
+      "path": "branch.js",
+      "sha256": "8a6b5234fa1e39c05db338bb07774f47fba4e7f762a10a37aad3872e95c8201a",
+      "expected": "incomplete",
+      "incomplete": true,
+      "paths": [],
+      "refusals": [
+        "example/command-flow: Taint analysis: unsupported if_statement"
+      ]
+    },
+    {
+      "path": "escaped.js",
+      "sha256": "9f28fd4e1dbdadd97729e3cd47d322cb47a3aa098e42641b4e902c265cf60553",
+      "expected": "incomplete",
+      "incomplete": true,
+      "paths": [],
+      "refusals": [
+        "example/command-flow: Taint analysis: scope needs unique simple ASCII bindings without shadowing call models"
+      ]
+    }
+  ]
+}

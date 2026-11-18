@@ -89,6 +89,9 @@ Library plugins supply an `id`, immutable `version`, and `analyze(context)` that
 returns findings; syntax nodes are valid only during that callback. Declarative
 rules match node kinds/literal text or [structural tree patterns](docs/tree-patterns.md)
 with repeated captures and a bounded named-child wildcard.
+Opt-in [straight-line dataflow rules](docs/dataflow.md) track modeled call returns
+and simple function parameters through assignments to sinks in JavaScript,
+TypeScript and TSX, with ordered text/SARIF traces and explicit scope refusals.
 External tools are separately installed, explicitly trusted commands. Inspect
 `toolRecipes`, provide adapter argv in config, then opt in with `check --tools`.
 JSON, SARIF, ESLint, Ruff, Cargo, golangci-lint, PHPStan and ShellCheck output

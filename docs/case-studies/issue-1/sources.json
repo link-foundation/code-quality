@@ -1,5 +1,5 @@
 {
-  "retrievedAt": "2026-11-17",
+  "retrievedAt": "2026-11-18",
   "snapshots": [
     {
       "path": "docs/case-studies/issue-1/data/ci-cd-best-practices.md",
@@ -98,6 +98,11 @@
       "path": "docs/case-studies/issue-1/data/shell-operator-contract.json",
       "sha256": "073b05b4d6ffbbae48aed67b5296144a79153124b2cff3b99aac6626d6d7f0ec",
       "provenance": "Original finite grammar-boundary and mutation-policy observations, source hashes and actual Bats results; preceding release observations motivate independently implemented policies; no competitor implementation or test-suite files read"
+    },
+    {
+      "path": "docs/case-studies/issue-1/data/taint-contract.json",
+      "sha256": "9a9cd651af9f301b9517315ab60bcec82acc64b456e77555b0b744f100e5d928",
+      "provenance": "Original concise public Semgrep/Snyk dataflow concept notes and finite native source-hashed observations; no implementation/tests or documentation examples copied; no compatibility, accuracy or parity claim"
     }
   ],
   "primarySources": [
@@ -196,7 +201,15 @@
     {
       "title": "Official Tree-sitter Bash 0.23.3 release asset",
       "url": "https://github.com/tree-sitter/tree-sitter-bash/releases/tag/v0.23.3"
+    },
+    {
+      "title": "Native taint concept research",
+      "url": "https://docs.semgrep.dev/writing-rules/data-flow/taint-mode/overview"
+    },
+    {
+      "title": "Native taint concept research",
+      "url": "https://docs.snyk.io/scan-fix-and-prevent/scan-with-snyk/snyk-code/manage-code-vulnerabilities/breakdown-of-code-analysis"
     }
   ],
-  "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version and black-box QA/report/baseline observations, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. CMake probes use public official language/function/condition documentation and original finite scripts. Tests and engine source are original. External dependencies retain upstream licenses. PMD CPD research uses the stable 7.29.0 public behavior documentation only; token fixtures, index and finite oracle are original. CMake token analysis uses the versioned 3.28.6 public language categories and original lexical/refusal fixtures. Comment suppression uses the same stable public CPD documentation; fixtures, region bookkeeping and bounded probes are original. The stable report-format overview informs multi-location reporting; it contains illustrative source excerpts, none copied or used as fixtures. No upstream implementation or test-suite files were opened; native group policy and all group fixtures are original. Optional annotation/directive filters use the stable CPD option table and original finite grammar observations. Java numeric-kind regression and correction are independently derived from original inputs. Structural pattern research uses the public Semgrep overview for nested matching, capture equality and sequence concepts; the native tree object API, matcher, finite work policies and fixtures are original. No upstream implementation/test-suite files or examples were copied. Candidate-local Boolean filters use public operator concepts only; the isolated-clause capture policy, work limits and original cases do not implement Semgrep range/binding semantics. Bash grammar correction inspects official release metadata/binary, runtime public APIs and licenses; independent finite cases reproduce a missing scanner import. No competitor implementation or test-suite files were read. Native expanded shell operator policies use independently derived finite grammar boundaries and original Bats assertions; prior released-binary observations motivate arithmetic fault models without copying competitor implementation or tests."
+  "cleanRoom": "Public README/development/schema contracts, checksum-verified release CLI help/version and black-box QA/report/baseline observations, packaged license and public tool manifest of quality-bash were inspected; no implementation or test source was read. CMake probes use public official language/function/condition documentation and original finite scripts. Tests and engine source are original. External dependencies retain upstream licenses. PMD CPD research uses the stable 7.29.0 public behavior documentation only; token fixtures, index and finite oracle are original. CMake token analysis uses the versioned 3.28.6 public language categories and original lexical/refusal fixtures. Comment suppression uses the same stable public CPD documentation; fixtures, region bookkeeping and bounded probes are original. The stable report-format overview informs multi-location reporting; it contains illustrative source excerpts, none copied or used as fixtures. No upstream implementation or test-suite files were opened; native group policy and all group fixtures are original. Optional annotation/directive filters use the stable CPD option table and original finite grammar observations. Java numeric-kind regression and correction are independently derived from original inputs. Structural pattern research uses the public Semgrep overview for nested matching, capture equality and sequence concepts; the native tree object API, matcher, finite work policies and fixtures are original. No upstream implementation/test-suite files or examples were copied. Candidate-local Boolean filters use public operator concepts only; the isolated-clause capture policy, work limits and original cases do not implement Semgrep range/binding semantics. Bash grammar correction inspects official release metadata/binary, runtime public APIs and licenses; independent finite cases reproduce a missing scanner import. No competitor implementation or test-suite files were read. Native expanded shell operator policies use independently derived finite grammar boundaries and original Bats assertions; prior released-binary observations motivate arithmetic fault models without copying competitor implementation or tests. Native straight-line taint research uses public Semgrep source/sink/sanitizer concepts and Snyk ordered-path reporting concepts only. The object models, scope/refusal policies, original sources and tests are independent; no documentation examples or upstream implementation/tests copied. Exhaustive product and proprietary-case parity remains missing."
 }

@@ -10,6 +10,7 @@ import {
 } from './clones.js';
 import { groupTokenClones } from './clone-groups.js';
 import { matchTreePattern, usesTreePredicates } from './tree-patterns.js';
+import { analyzeTaint } from './taint.js';
 
 function finding(
   path,
@@ -267,6 +268,19 @@ export async function analyzeSource(file, options = {}, cloneInputs) {
       }
       checkAbstractions(abstractions, config.rules, add);
       checkTree(syntax, config, language, add);
+      if (!errors.length && syntax.root) {
+        for (const entry of analyzeTaint(
+          syntax.root,
+          path,
+          language,
+          config.taintRules
+        )) {
+          if (findings.length >= 10_000) {
+            throw new Error('Finding count budget exceeded');
+          }
+          findings.push({ path, ...entry });
+        }
+      }
       collectClones(
         syntax,
         { ...file, path, language },
@@ -356,6 +370,12 @@ export function finalizeReport(files, findings, config, metadata = {}) {
         }),
         rules: config.rules,
         customRules: config.customRules,
+        ...(config.taintRules.length && {
+          taint: {
+            method: 'straight-line-call-models-v1',
+            rules: config.taintRules,
+          },
+        }),
         ...(config.customRules.some((rule) => rule.pattern.tree) && {
           treeRules: 'named-tree-patterns-v1',
         }),

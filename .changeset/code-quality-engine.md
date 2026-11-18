@@ -86,3 +86,9 @@ version the corrected method for reviewed baseline migrations.
 
 Normalize npm aliases by their target specifier in the strict Deno dependency
 guard, retaining lock inventory equality and resolution assertions.
+
+Add opt-in native straight-line JavaScript/TypeScript/TSX taint models with exact
+call returns, simple parameter sources, assignments, sanitizers and sink argument
+traces. Refuse unsupported control flow, shadowed models and exhausted budgets;
+preserve default methods and version enabled models for baseline migration.
+Export ordered locations in JSON, text and SARIF through CLI/library/HTTP APIs.

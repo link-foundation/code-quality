@@ -31,6 +31,11 @@ export interface Finding {
   endLine?: number;
   endColumn?: number;
   relatedLocations?: CloneLocation[];
+  dataFlow?: DataFlowStep[];
+}
+export interface DataFlowStep extends CloneLocation {
+  kind: 'source' | 'parameter' | 'assignment' | 'propagator' | 'sink';
+  name: string;
 }
 export interface Abstraction {
   kind: 'function' | 'class' | 'macro';
@@ -140,6 +145,7 @@ export interface Config {
   limits?: { maxFiles?: number; maxFileBytes?: number; maxTotalBytes?: number };
   exclude?: string[];
   customRules?: CustomRule[];
+  taintRules?: TaintRule[];
   failOn?: Severity;
   adapters?: Adapter[];
   clones?:
@@ -152,6 +158,18 @@ export interface Config {
         ignoreAnnotations?: boolean;
         ignoreUsings?: boolean;
       };
+}
+export interface TaintRule {
+  id: string;
+  message: string;
+  severity?: Severity;
+  /** Explicit scope: other languages are not analyzed by this rule. */
+  languages: ('javascript' | 'typescript' | 'tsx')[];
+  /** Exact modeled call returns; simple formal parameters are also sources. */
+  sources: string[];
+  sinks: { call: string; argument: number }[];
+  sanitizers?: string[];
+  propagators?: string[];
 }
 export interface Plugin {
   version: string;

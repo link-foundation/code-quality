@@ -95,7 +95,10 @@ belongs inline in this PR, and the subsequent repository move is explicitly late
 - [x] Collect all six 2ed6798 workflows and preserve the complete failed workflow plus all nine runtime and status-job logs. All runtime legs reproduce one npm-alias expectation bug in the dependency guard; five other workflows pass. See bash-alias-ci.md.
 - [x] Reproduce quoted logical text and comparison operands incorrectly selected as mutants; draft exact operator boundaries, opt-in expanded arithmetic ordering/multiplication, method-aware policy and consumer settings.
 - [x] Preserve failing-before regressions and execute the original two-test real Bats fixture: standard 0/1, expanded 5/6 with exact CLI policy selection. Retain different-denominator limits.
-- [ ] Verify/review the combined operator/alias-guard candidate on all three runtimes, static/types/package/release and real shell CI; push once and collect every same-revision result.
+- [x] Verify/review operator/alias-guard candidate 8dc4a7d: 299 selected Node checks and 292 Bun/frozen-Deno cases, static/types/package/release, 437-file guard, nineteen snapshot hashes and actual shell QA pass; push once after all 2ed6798 results. All 206 preceding PR file blobs match.
+- [x] Collect every same-revision CI result for 8dc4a7d; all six workflows and all nine runtime legs pass on attempt one. Verify all 217 paginated PR file blob identities against that head before the next push.
+- [x] Draft native opt-in JavaScript/TypeScript/TSX straight-line source-to-sink flow models, exact call boundaries, assignment/return propagation and isolated function scopes. Keep unsupported control flow, closures, unmodeled calls and exhausted budgets explicit; record public Semgrep/Snyk concept sources without copying examples or tests.
+- [ ] Verify original positive/negative, overwrite, sanitizer, nested-sink, source-location, scope, malformed-model and finite refusal cases; cover CLI/HTTP/SARIF/types/package consumers and unchanged default methods. Review and publish a complete batch only after every preceding CI result.
 - [ ] Complete remaining language semantics and competitor/proprietary documented cases.
 - [ ] Update PR title/body, preserve Fixes #1, mark ready after verification.
 

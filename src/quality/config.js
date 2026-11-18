@@ -1,4 +1,5 @@
 import { validateTreePattern } from './tree-patterns.js';
+import { validateTaintRules } from './taint-config.js';
 
 export const defaultLimits = Object.freeze({
   maxFiles: 1000,
@@ -188,6 +189,7 @@ export function validateConfig(config = {}) {
         'failOn',
         'adapters',
         'clones',
+        'taintRules',
       ].includes(key)
     ) {
       throw new Error(`Unknown configuration key: ${key}`);
@@ -207,13 +209,22 @@ export function validateConfig(config = {}) {
   if (config.adapters && !Array.isArray(config.adapters)) {
     throw new Error('adapters must be an array');
   }
+  const customRules = customConfig(config.customRules);
+  const taintRules = validateTaintRules(config.taintRules, [
+    'syntax',
+    'unsupported-analysis',
+    'duplicate-tokens',
+    ...Object.keys(defaultRules),
+    ...customRules.map((rule) => rule.id),
+  ]);
   return {
     ...config,
     limits: limitsConfig(config.limits),
     rules: rulesConfig(config.rules),
     failOn,
     exclude,
-    customRules: customConfig(config.customRules),
+    customRules,
+    taintRules,
     clones: clonesConfig(config.clones),
   };
 }

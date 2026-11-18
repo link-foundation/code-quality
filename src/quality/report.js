@@ -57,6 +57,23 @@ function sarifReport(report) {
               ...sarifLocation(location),
             })),
           }),
+          ...(entry.dataFlow && {
+            codeFlows: [
+              {
+                threadFlows: [
+                  {
+                    locations: entry.dataFlow.map((location, index) => ({
+                      location: {
+                        ...sarifLocation(location),
+                        message: { text: `${location.kind}: ${location.name}` },
+                      },
+                      executionOrder: index + 1,
+                    })),
+                  },
+                ],
+              },
+            ],
+          }),
         })),
       },
     ],
@@ -70,10 +87,13 @@ export function formatReport(report, format = 'text') {
   if (format !== 'text') {
     throw new Error(`Unknown report format: ${format}`);
   }
-  const lines = report.findings.map(
-    (entry) =>
-      `${entry.path}:${entry.line}:${entry.column} ${entry.severity} ${entry.ruleId}: ${entry.message}`
-  );
+  const lines = report.findings.flatMap((entry) => [
+    `${entry.path}:${entry.line}:${entry.column} ${entry.severity} ${entry.ruleId}: ${entry.message}`,
+    ...(entry.dataFlow || []).map(
+      (location) =>
+        `  ${location.kind} ${location.name} at ${location.path}:${location.line}:${location.column}`
+    ),
+  ]);
   for (const failure of report.baseline?.failures || []) {
     lines.push(`baseline: ${failure}`);
   }

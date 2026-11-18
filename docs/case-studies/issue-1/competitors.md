@@ -1,6 +1,6 @@
 # Competitor and documented capability inventory
 
-Research date 2026-11-17. This is an extensible discovery inventory, not an exhaustive
+Research date 2026-11-18. This is an extensible discovery inventory, not an exhaustive
 list of every current product. Product claims below are concise paraphrases from
 primary documentation, not measured comparative accuracy or speed results.
 Open-core/commercial products are assessed by public contracts only. No proprietary
@@ -12,9 +12,9 @@ source, competitor implementation, or competitor test suite is incorporated.
 | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | [SonarQube Cloud/Server](https://www.sonarsource.com/products/sonarqube/)                                         | Structural/security rules, quality gates, taint, secrets, SCA, governance | Basic structural rules/gates native; deep taint, dependency intelligence and governance missing               |
 | [JetBrains Qodana](https://www.jetbrains.com/help/qodana/features.html)                                           | IDE inspections, baseline, coverage, quick fixes, taint, dashboards       | Baseline/import native; IDE semantic inspections, fixes and hosted services missing                           |
-| [Semgrep](https://docs.semgrep.dev/writing-rules/rule-syntax)                                                     | Structural patterns, metavariables, taint rules, matching operators       | Native tree patterns/captures/wildcards and isolated Boolean filters; Semgrep semantics/taint missing         |
+| [Semgrep](https://docs.semgrep.dev/writing-rules/rule-syntax)                                                     | Structural patterns, metavariables, taint rules, matching operators       | Native tree patterns/filters and straight-line JS/TS/TSX taint; full Semgrep semantics missing                |
 | [GitHub CodeQL/code scanning](https://docs.github.com/en/code-security/concepts/code-scanning/code-scanning)      | Database queries, security paths, SARIF alerts                            | SARIF import/export native; CodeQL query engine/database/alert hosting missing                                |
-| [Snyk Code](https://docs.snyk.io/scan-fix-and-prevent/scan-with-snyk/snyk-code)                                   | Interfile SAST and suggested fixes                                        | Heuristic risky eval detection only; dataflow and fix validation missing                                      |
+| [Snyk Code](https://docs.snyk.io/scan-fix-and-prevent/scan-with-snyk/snyk-code)                                   | Interfile SAST and suggested fixes                                        | Native straight-line JS/TS/TSX paths; interfile, framework, fix and hosted parity missing                     |
 | [CodeScene](https://helpcenter.codescene.com/en/help/articles/1844075-how-to-assess-coupling-health-in-codescene) | Hotspots, coupling, Code Health and prioritization                        | Observed file hotspots/coupling native; proprietary Code Health and organization analysis missing             |
 | [Codacy](https://docs.codacy.com/)                                                                                | Aggregated quality/security/coverage and organization policies            | Reports and thresholds native; hosted policies/workflows missing                                              |
 | [Qlty / Code Climate Quality](https://docs.qlty.sh/what-is-qlty)                                                  | Multi-tool lint, formatting, complexity, duplication, coverage            | Structural subset and adapters native; complete rule/fix/catalog parity missing                               |
@@ -151,3 +151,24 @@ isolation, nested negation, finite refusal and CLI/HTTP/package consumers. The
 [original filter contract](data/tree-predicate-contract.json) separates this
 native design from Semgrep's documented range-intersection and binding semantics.
 Full rule, documented-case, dataflow and fix parity remains missing.
+
+## Original straight-line dataflow contract
+
+The public [Semgrep taint overview](https://docs.semgrep.dev/writing-rules/data-flow/taint-mode/overview)
+describes source/sink/sanitizer and propagation concepts. The public
+[Snyk Code report overview](https://docs.snyk.io/scan-fix-and-prevent/scan-with-snyk/snyk-code/manage-code-vulnerabilities/breakdown-of-code-analysis)
+describes ordered source-to-sink locations. Original native JS/TS/TSX models now
+connect exact modeled call returns and simple function parameters through
+straight-line assignments and eager expressions to selected sink arguments.
+Sanitizers only clear returned values; nested sinks remain visible. Text and
+SARIF carry ordered native traces. Whole-scope declaration inventory rejects
+shadowed call models, including declarations after an early return.
+
+The [original contract](data/taint-contract.json) retains finite source hashes,
+positive/negative observations, model semantics, budgets and refusal policies.
+The engine discards a rule's findings and marks analysis incomplete on unsupported
+flow. Branches, closures, dynamic calls, heap/framework/type analysis and
+interprocedural/cross-file propagation remain unsupported. Sanitizers are explicit
+trust decisions. This does not establish Semgrep configuration or taint semantics,
+Snyk engine/hosted workflow parity, complete rule catalogs or comparative accuracy.
+Both exhaustive competitor and proprietary documented-case criteria remain unmet.

@@ -46,6 +46,12 @@
       "status": "native",
       "evidence": "tests/quality-bash-grammar.test.js",
       "limits": "Pinned official MIT grammar binary and separate compatible JS/WASM runtime; original interface adaptation, not native reimplementation of the grammar or full Bash semantics"
+    },
+    {
+      "id": "taint-straight-line-v1",
+      "status": "partial",
+      "evidence": "tests/quality-taint.test.js",
+      "limits": "Native JS/TS/TSX exact return-value models and simple parameter sources; straight-line isolated scopes only. Branches, closures, unknown calls and budgets refuse incomplete analysis. No interprocedural, framework, type or full language semantics."
     }
   ],
   "capabilities": [
@@ -77,9 +83,11 @@
       "evidence": [
         "tests/quality-core.test.js",
         "tests/quality-tree-patterns.test.js",
-        "tests/quality-tree-predicates.test.js"
+        "tests/quality-tree-predicates.test.js",
+        "tests/quality-taint.test.js",
+        "tests/quality-taint-consumers.test.js"
       ],
-      "description": "Legacy predicates, bounded structural tree/capture/sequence patterns and isolated candidate-local all/any/not filters, versioned plugins and trusted external adapters"
+      "description": "Legacy predicates, bounded structural tree/capture/sequence patterns and isolated candidate-local all/any/not filters, versioned plugins and trusted external adapters; opt-in bounded JS/TS/TSX call-model dataflow with ordered traces and explicit unsupported-scope refusals"
     },
     {
       "id": "evolution",
@@ -133,16 +141,23 @@
         "experiments/code-quality/tree-pattern-budget.mjs",
         "tests/quality-tree-predicates.test.js",
         "docs/case-studies/issue-1/data/tree-predicate-contract.json",
-        "experiments/code-quality/tree-predicate-budget.mjs"
+        "experiments/code-quality/tree-predicate-budget.mjs",
+        "tests/quality-taint.test.js",
+        "tests/quality-taint-consumers.test.js",
+        "docs/dataflow.md",
+        "docs/case-studies/issue-1/data/taint-contract.json"
       ],
-      "description": "Original token-block minimums, normalization, pair locations, derived occurrence groups and opt-in audited comment regions verified in thirteen modes, including native CMake argument tokens; optional Java/C# annotations, C# using directives and Java numeric families covered by original cases; complete product/rule/case inventory, legacy annotations, lexer/options/equivalent grouping and native parity remain unverified; original bounded tree patterns/captures/sequence cases are native, while Semgrep syntax/equivalences/taint and exhaustive parity remain missing; isolated same-candidate Boolean filters verified independently, without Semgrep range/binding or complete rule parity"
+      "description": "Original token-block minimums, normalization, pair locations, derived occurrence groups and opt-in audited comment regions verified in thirteen modes, including native CMake argument tokens; optional Java/C# annotations, C# using directives and Java numeric families covered by original cases; complete product/rule/case inventory, legacy annotations, lexer/options/equivalent grouping and native parity remain unverified; original bounded tree patterns/captures/sequence cases are native, while Semgrep syntax/equivalences/full taint semantics and exhaustive parity remain missing; isolated same-candidate Boolean filters verified independently, without Semgrep range/binding or complete rule parity; original straight-line source/sink/sanitizer/assignment/parameter cases and ordered evidence verified, without interprocedural/framework or exhaustive product parity"
     },
     {
       "id": "closed-source-cases",
       "required": true,
       "status": "missing",
-      "evidence": ["docs/case-studies/issue-1/competitors.md"],
-      "description": "Public proprietary cases not exhaustively implemented/tested"
+      "evidence": [
+        "docs/case-studies/issue-1/competitors.md",
+        "docs/case-studies/issue-1/data/taint-contract.json"
+      ],
+      "description": "Public proprietary cases not exhaustively implemented/tested; native original ordered source-to-sink evidence addresses a public Snyk concept family only, without proprietary engine/hosted workflow parity"
     },
     {
       "id": "quality-bash-parity",

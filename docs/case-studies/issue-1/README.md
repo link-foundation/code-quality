@@ -1,6 +1,6 @@
 # Issue 1: a public-domain quality and evolution engine
 
-Research date: 2026-11-17. Implementation: [PR 2](https://github.com/link-foundation/code-quality/pull/2).
+Research date: 2026-11-18. Implementation: [PR 2](https://github.com/link-foundation/code-quality/pull/2).
 The [original request](https://github.com/link-foundation/code-quality/issues/1) has no
 comments or required child issues at the time of investigation. The requested later
 extraction has its own [code-evolution issue](https://github.com/link-foundation/code-evolution/issues/1).
@@ -606,3 +606,39 @@ are retained in [the operator contract](data/shell-operator-contract.json).
 All nine 2ed6798 runtime failures came from one npm-alias expectation in the strict
 dependency guard; [the investigation](bash-alias-ci.md) preserves each job/error
 reference and the correction retains dependency equality and lock assertions.
+
+## Straight-line native flow models
+
+All six workflows and nine runtime legs pass on attempt one at `8dc4a7d`.
+The exact head includes the corrected strict dependency guard and expanded shell
+policy. All 217 paginated PR file blob identities match that reviewed revision.
+
+The next native draft addresses public source/sink/sanitizer concepts from
+Semgrep and ordered source-to-sink evidence from Snyk Code. The independently
+designed object models support JS/TS/TSX exact call returns, conservative simple
+parameter sources, assignments, eager expressions and explicit trusted sanitizer
+returns. Each named synchronous top-level function is an independent possible
+entry point. A whole-scope declaration inventory rejects shadowed models and
+unsupported control flow even after an early return. There is no local-call,
+cross-file, closure, heap, framework or compiler resolution.
+
+Original cases cover overwritten/copied values, nested sink evaluation, selected
+arguments, distinct origins, Unicode ranges, type assertions, early returns,
+invalid models, unchanged default methods and reviewed baseline boundaries.
+Finite depth/trace/origin/binding/shared-work probes run within bounded Node heap
+and stack settings. A refused rule discards its preceding findings, returns
+incomplete evidence and cannot pass a gate. CLI, HTTP, text, SARIF, types and the
+installed package consume the same native paths. The
+[original contract](data/taint-contract.json) retains source-hashed observations
+from the two-file example and finite positive/negative/refusal inputs.
+
+Public documentation examples and implementation/test-suite files were not
+copied. These limited concept families do not establish Semgrep semantics,
+Snyk engine/hosted workflow parity, comparative accuracy or exhaustive documented
+cases. The adapter is explicitly partial in readiness; all unfinished original
+acceptance criteria remain open.
+
+An original escaped-identifier probe reproduces a draft sanitizer-shadowing gap.
+The regression fails before the correction; simple ASCII binding validation now
+refuses escaped/Unicode spellings, including unreachable declarations, and retains
+incomplete evidence. The finite observation ledger includes that refusal.

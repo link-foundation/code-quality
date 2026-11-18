@@ -15,13 +15,29 @@ import {
   shellMutants,
   type Config,
   type Plugin,
+  type TaintRule,
+  type DataFlowStep,
 } from '@link-foundation/code-quality/quality';
+
 import {
   checkBaseline,
   formatReport,
   type EvolutionIdentity,
   type Language,
 } from '@link-foundation/code-quality/quality';
+
+const taintRule: TaintRule = {
+  id: 'typed/flow',
+  message: 'Untrusted value',
+  languages: ['typescript'],
+  sources: ['readInput'],
+  sinks: [{ call: 'execute', argument: 0 }],
+};
+const taintConfig: Config = { taintRules: [taintRule] };
+const taintStep: DataFlowStep | undefined = undefined;
+// @ts-expect-error Native flow models require an explicitly supported language.
+const wrongTaint: TaintRule = { ...taintRule, languages: ['python'] };
+void [taintConfig, taintStep, wrongTaint];
 
 const config: Config = {
   rules: { complexity: 5 },

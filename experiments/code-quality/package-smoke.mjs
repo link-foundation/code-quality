@@ -91,6 +91,10 @@ assert.equal(bash.files[0].abstractions[0].name, 'choose');
 assert.deepEqual((await shellMutants({path:'literal.sh',content:'[[ word == word ]]\\n'})).map(({original,replacement}) => [original,replacement]), [['==','!=']]);
 assert.deepEqual((await shellMutants({path:'expanded.sh',content:'printf "%s" "$((5 * 2))" "$((7 < 3))"\\n'}, 100, {policy:'expanded'})).map(({original,replacement}) => [original,replacement]), [['*','/'],['*','+'],['<','>=']]);
 assert.deepEqual(await shellMutants({path:'quoted.sh',content:'printf "%s" "&&" "||"\\n'}), []);
+const traced = await analyzeFiles([{path:'flow.js',content:'const raw = readInput(); execute(raw);\\n'}], {config:{taintRules:[{id:'local/flow',message:'Untrusted command',languages:['javascript'],sources:['readInput'],sinks:[{call:'execute',argument:0}]}]}});
+assert.equal(traced.incomplete, false);
+assert.equal(traced.findings[0].ruleId, 'local/flow');
+assert.deepEqual(traced.findings[0].dataFlow.map(({kind}) => kind), ['source','assignment','sink']);
 console.log('Installed library and CLI passed');\n`
   );
   const smoke = await runProcess('node', ['smoke.mjs'], { cwd: root });
