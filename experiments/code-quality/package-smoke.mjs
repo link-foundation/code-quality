@@ -95,6 +95,10 @@ const traced = await analyzeFiles([{path:'flow.js',content:'const raw = readInpu
 assert.equal(traced.incomplete, false);
 assert.equal(traced.findings[0].ruleId, 'local/flow');
 assert.deepEqual(traced.findings[0].dataFlow.map(({kind}) => kind), ['source','assignment','sink']);
+const branched = await analyzeFiles([{path:'branch.js',content:'let raw = "safe"; if (true) raw = readInput(); execute(raw);\\n'}], {config:{taintRules:[{id:'local/flow',message:'Untrusted command',languages:['javascript'],sources:['readInput'],sinks:[{call:'execute',argument:0}],controlFlow:'branch-joins'}]}});
+assert.equal(branched.incomplete, false);
+assert.equal(branched.findings[0].ruleId, 'local/flow');
+assert.notEqual(branched.method, traced.method);
 console.log('Installed library and CLI passed');\n`
   );
   const smoke = await runProcess('node', ['smoke.mjs'], { cwd: root });

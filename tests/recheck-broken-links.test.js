@@ -294,6 +294,49 @@ function runRecheck(env) {
 }
 
 itUnless(sandboxed)(
+  'releases duplicate transient occurrences only when every unique URL recovers',
+  async () => {
+    let requests = 0;
+    const server = createServer((request, response) => {
+      requests++;
+      response.writeHead(200);
+      response.end();
+    });
+    await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+    const dir = mkdtempSync(path.join(tmpdir(), 'recheck-duplicates-'));
+    try {
+      const url = `http://127.0.0.1:${server.address().port}/healthy`;
+      for (const finalFailure of [false, true]) {
+        const reportPath = writeReport(dir, [
+          `- [503] <${url}> | Service Unavailable`,
+          `- [ERROR] <${url}> | Connection reset`,
+          ...(finalFailure ? [`- [404] <${url}> | Not Found`] : []),
+        ]);
+        const outputPath = path.join(dir, `output-${finalFailure}`);
+        const recoveredPath = path.join(dir, 'recovered.txt');
+        const result = await runRecheck({
+          LYCHEE_OUTPUT: reportPath,
+          RECOVERED_OUTPUT: recoveredPath,
+          GITHUB_OUTPUT: outputPath,
+          RECHECK_WAIT_MS: '10',
+          RECHECK_BUDGET_SECONDS: '5',
+        });
+        assert.equal(result.code, 0);
+        assert.equal(existsSync(outputPath), !finalFailure);
+        if (!finalFailure) {
+          assert.match(readFileSync(outputPath, 'utf8'), /all_recovered=true/);
+        }
+        assert.equal(readFileSync(recoveredPath, 'utf8'), `${url}\n`);
+      }
+      assert.equal(requests, 2);
+    } finally {
+      await new Promise((resolve) => server.close(resolve));
+      rmSync(dir, { recursive: true, force: true });
+    }
+  }
+);
+
+itUnless(sandboxed)(
   'never releases malformed evidence even when its URL would recover',
   async () => {
     let requests = 0;

@@ -1,0 +1,13 @@
+{
+  "taintRules": [
+    {
+      "id": "example/branch-flow",
+      "message": "Untrusted command may reach execution",
+      "languages": ["javascript"],
+      "sources": ["input.read"],
+      "sinks": [{ "call": "execute", "argument": 0 }],
+      "sanitizers": ["validateCommand"],
+      "controlFlow": "branch-joins"
+    }
+  ]
+}

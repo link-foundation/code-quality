@@ -7,6 +7,11 @@ import {
   bind,
 } from './taint-values.js';
 import { inventoryScope } from './taint-scope.js';
+import {
+  hasBranches,
+  branchStatement,
+  branchExpression,
+} from './taint-branches.js';
 
 const literals = new Set([
   'string',
@@ -129,6 +134,14 @@ function callValue(context, node, depth) {
 }
 
 function compoundValue(context, node, depth) {
+  if (
+    hasBranches(context) &&
+    (node.type === 'ternary_expression' ||
+      (node.type === 'binary_expression' &&
+        ['&&', '||', '??'].includes(field(node, 'operator')?.text)))
+  ) {
+    return branchExpression(context, node, expression, depth);
+  }
   if (node.type === 'binary_expression') {
     if (!operators.has(field(node, 'operator')?.text)) {
       unsupported(node, 'conditional or unmodeled operator');
@@ -219,7 +232,12 @@ function functionScope(context, node) {
   ) {
     unsupported(node, 'anonymous, async or model-shadowing function');
   }
-  const scope = { ...context, env: new Map(), constants: new Set() };
+  const scope = {
+    ...context,
+    env: new Map(),
+    constants: new Set(),
+    controlDepth: 0,
+  };
   for (const parameter of children(field(node, 'parameters'))) {
     spend(context, parameter);
     let binding = parameter;
@@ -244,42 +262,98 @@ function functionScope(context, node) {
   statements(scope, field(node, 'body'), false);
 }
 
-function statements(context, node, topLevel) {
-  inventoryScope(context, node, topLevel);
+function executeBlock(context, node, topLevel) {
   for (const statement of children(node)) {
-    spend(context, statement);
-    if (
-      ['lexical_declaration', 'variable_declaration'].includes(statement.type)
-    ) {
-      declaration(context, statement);
-    } else if (statement.type === 'expression_statement') {
-      expression(context, children(statement)[0]);
-    } else if (statement.type === 'return_statement' && !topLevel) {
-      for (const value of children(statement)) {
-        expression(context, value);
-      }
-      return;
-    } else if (statement.type === 'function_declaration' && topLevel) {
-      functionScope(context, statement);
-    } else if (
-      statement.type === 'export_statement' &&
-      topLevel &&
-      children(statement).length === 1 &&
-      children(statement)[0].type === 'function_declaration'
-    ) {
-      functionScope(context, children(statement)[0]);
-    } else if (
-      statement.type !== 'empty_statement' &&
-      statement.type !== 'hash_bang_line'
-    ) {
-      unsupported(statement);
+    if (executeStatement(context, statement, topLevel)) {
+      return true;
     }
   }
+  return false;
+}
+
+function isExportedFunction(statement) {
+  return (
+    statement.type === 'export_statement' &&
+    children(statement).length === 1 &&
+    children(statement)[0].type === 'function_declaration'
+  );
+}
+
+// Execute a nested block, then drop bindings it introduced so the outer
+// environment only retains names declared in its own scope.
+function nestedBlock(context, statement, topLevel) {
+  const outerNames = new Set(context.env.keys());
+  const ended = executeBlock(context, statement, topLevel);
+  for (const name of context.env.keys()) {
+    if (!outerNames.has(name)) {
+      context.env.delete(name);
+      context.constants.delete(name);
+    }
+  }
+  return ended;
+}
+
+function topLevelFunction(statement, topLevel) {
+  if (!topLevel) {
+    return null;
+  }
+  if (statement.type === 'function_declaration') {
+    return statement;
+  }
+  return isExportedFunction(statement) ? children(statement)[0] : null;
+}
+
+// Returns true when the statement ends the current function body.
+function controlStatement(context, statement, topLevel) {
+  if (!hasBranches(context)) {
+    return null;
+  }
+  if (statement.type === 'if_statement') {
+    return branchStatement(context, statement, expression, executeStatement);
+  }
+  if (statement.type === 'statement_block') {
+    return nestedBlock(context, statement, topLevel);
+  }
+  return null;
+}
+
+function executeStatement(context, statement, topLevel = false) {
+  spend(context, statement);
+  const fn = topLevelFunction(statement, topLevel);
+  const control = controlStatement(context, statement, topLevel);
+  if (control !== null) {
+    return control;
+  }
+  if (
+    ['lexical_declaration', 'variable_declaration'].includes(statement.type)
+  ) {
+    declaration(context, statement);
+  } else if (statement.type === 'expression_statement') {
+    expression(context, children(statement)[0]);
+  } else if (statement.type === 'return_statement' && !topLevel) {
+    for (const value of children(statement)) {
+      expression(context, value);
+    }
+    return true;
+  } else if (fn) {
+    functionScope(context, fn);
+  } else if (
+    statement.type !== 'empty_statement' &&
+    statement.type !== 'hash_bang_line'
+  ) {
+    unsupported(statement);
+  }
+  return false;
+}
+
+function statements(context, node, topLevel) {
+  inventoryScope(context, node, topLevel);
+  return executeBlock(context, node, topLevel);
 }
 
 export function analyzeTaint(root, path, language, rules) {
   const findings = [];
-  const budget = { remaining: 100_000 };
+  const budget = { remaining: 100_000, branches: 256 };
   for (const rule of rules.filter((entry) =>
     entry.languages.includes(language)
   )) {
@@ -298,6 +372,7 @@ export function analyzeTaint(root, path, language, rules) {
       findings: [],
       env: new Map(),
       constants: new Set(),
+      controlDepth: 0,
       modelRoots: new Set([...calls].map((call) => call.split('.')[0])),
     };
     try {

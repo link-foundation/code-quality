@@ -34,10 +34,13 @@ const taintRule: TaintRule = {
   sinks: [{ call: 'execute', argument: 0 }],
 };
 const taintConfig: Config = { taintRules: [taintRule] };
+const branchTaint: TaintRule = { ...taintRule, controlFlow: 'branch-joins' };
+// @ts-expect-error Loops are outside the native branch-join control policy.
+const wrongControl: TaintRule = { ...taintRule, controlFlow: 'loops' };
 const taintStep: DataFlowStep | undefined = undefined;
 // @ts-expect-error Native flow models require an explicitly supported language.
 const wrongTaint: TaintRule = { ...taintRule, languages: ['python'] };
-void [taintConfig, taintStep, wrongTaint];
+void [taintConfig, taintStep, wrongTaint, branchTaint, wrongControl];
 
 const config: Config = {
   rules: { complexity: 5 },

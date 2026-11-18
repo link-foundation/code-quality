@@ -65,6 +65,7 @@ function metadata(rule, ids) {
           'sinks',
           'sanitizers',
           'propagators',
+          'controlFlow',
         ].includes(key)
     )
   ) {
@@ -94,6 +95,12 @@ function metadata(rule, ids) {
 
 function ruleConfig(rule, ids) {
   const description = metadata(rule, ids);
+  if (
+    rule.controlFlow !== undefined &&
+    !['straight-line', 'branch-joins'].includes(rule.controlFlow)
+  ) {
+    throw new Error('Taint controlFlow must be straight-line or branch-joins');
+  }
   if (
     !Array.isArray(rule.languages) ||
     !rule.languages.length ||
@@ -126,6 +133,9 @@ function ruleConfig(rule, ids) {
     sinks: sinkModels,
     sanitizers,
     propagators,
+    ...(rule.controlFlow === 'branch-joins' && {
+      controlFlow: rule.controlFlow,
+    }),
   };
 }
 

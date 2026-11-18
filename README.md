@@ -92,6 +92,8 @@ with repeated captures and a bounded named-child wildcard.
 Opt-in [straight-line dataflow rules](docs/dataflow.md) track modeled call returns
 and simple function parameters through assignments to sinks in JavaScript,
 TypeScript and TSX, with ordered text/SARIF traces and explicit scope refusals.
+An optional conservative branch-join policy handles conditionals and lexical
+blocks within finite budgets; it does not prove path feasibility.
 External tools are separately installed, explicitly trusted commands. Inspect
 `toolRecipes`, provide adapter argv in config, then opt in with `check --tools`.
 JSON, SARIF, ESLint, Ruff, Cargo, golangci-lint, PHPStan and ShellCheck output
